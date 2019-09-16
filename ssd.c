@@ -29,7 +29,7 @@ non_aged的ssd是新的ssd，无失效页，失效页的比例可以在初始化参数中设置；3，pre_pro
 *********************************************************************************************************************************/
 int  main()
 {
-	unsigned  int i,j,k;
+	unsigned  int i,ii,j,k;
 	struct ssd_info *ssd;
 
 	#ifdef DEBUG
@@ -44,21 +44,25 @@ int  main()
 	make_aged(ssd);
 	pre_process_page(ssd);
 
-	for (i=0;i<ssd->parameter->channel_number;i++)
+/************KXC:修改输出使其符合逻辑 2019.8.13**************/
+	for (i=0;i<ssd->parameter->channel_number;i++)//在屏幕输出初始化芯片的空白页信息
 	{
-		for (j=0;j<ssd->parameter->die_chip;j++)
-		{
-			for (k=0;k<ssd->parameter->plane_die;k++)
-			{
-				printf("%d,0,%d,%d:  %5d\n",i,j,k,ssd->channel_head[i].chip_head[0].die_head[j].plane_head[k].free_page);
-			}
-		}
+      for (ii=0;ii<ssd->parameter->chip_channel[i];ii++)
+       {
+         for (j=0;j<ssd->parameter->die_chip;j++)
+		   {
+			 for (k=0;k<ssd->parameter->plane_die;k++)
+			 {
+			  	printf("%d channel,%d chip,%d die,%d plane has free page num:  %5d\n",i,ii,j,k,ssd->channel_head[i].chip_head[ii].die_head[j].plane_head[k].free_page);
+			 }
+            }
+  	    }
 	}
 	fprintf(ssd->outputfile,"\t\t\t\t\t\t\t\t\tOUTPUT\n");
 	fprintf(ssd->outputfile,"****************** TRACE INFO ******************\n");
 
-	ssd=simulate(ssd);
-	statistic_output(ssd);  
+	ssd=simulate(ssd);                         //执行仿真
+	statistic_output(ssd);                     //负载具体结果输出至输出文件
 /*	free_all_node(ssd);*/
 
 	printf("\n");
@@ -107,7 +111,7 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 		if(flag == 1)
 		{   
 			//printf("once\n");
-			if (ssd->parameter->dram_capacity!=0)
+			if (ssd->parameter->dram_capacity!=0)           //是否有缓冲区
 			{
 				buffer_management(ssd);  
 				distribute(ssd); 
@@ -118,9 +122,9 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 			}		
 		}
 
-		process(ssd);    
+		process(ssd);                                      //执行处理过程
 		trace_output(ssd);
-		if(flag == 0 && ssd->request_queue == NULL)
+		if(flag == 0 && ssd->request_queue == NULL)        //负载执行完成，结束
 			flag = 100;
 	}
 
@@ -159,9 +163,9 @@ int get_requests(struct ssd_info *ssd)
 	if(feof(ssd->tracefile))
 		return 0; 
 
-	filepoint = ftell(ssd->tracefile);	
-	fgets(buffer, 200, ssd->tracefile); 
-	sscanf(buffer,"%lld %d %d %d %d",&time_t,&device,&lsn,&size,&ope);
+	filepoint = ftell(ssd->tracefile);	                  //ftell返回文件当前指针，也就是文件位置
+	fgets(buffer, 200, ssd->tracefile);                   //从负载文件中读取
+	sscanf(buffer,"%lld %d %d %d %d",&time_t,&device,&lsn,&size,&ope);   //获得请求参数
     
 	if ((device<0)&&(lsn<0)&&(size<0)&&(ope<0))
 	{
@@ -340,7 +344,7 @@ struct ssd_info *buffer_management(struct ssd_info *ssd)
 					printf("the subpage number is larger than 32!add some cases");
 					getchar(); 		   
 				}
-				else if((buffer_node->stored & mask)==mask)
+				else if((buffer_node->stored & mask)==mask)  //stored存的是对应的扇区是否在buffer中，若都在，则flag=1，表示读取成功
 				{
 					flag=1;
 					lsn_flag=lsn_flag&(~mask);
@@ -352,12 +356,12 @@ struct ssd_info *buffer_management(struct ssd_info *ssd)
 					{		
 						if(ssd->dram->buffer->buffer_tail==buffer_node)								
 						{			
-							buffer_node->LRU_link_pre->LRU_link_next=NULL;					
+							buffer_node->LRU_link_pre->LRU_link_next=NULL;		//尾节点断开			
 							ssd->dram->buffer->buffer_tail=buffer_node->LRU_link_pre;							
 						}				
 						else								
 						{				
-							buffer_node->LRU_link_pre->LRU_link_next=buffer_node->LRU_link_next;				
+							buffer_node->LRU_link_pre->LRU_link_next=buffer_node->LRU_link_next;		//中间节点断开		
 							buffer_node->LRU_link_next->LRU_link_pre=buffer_node->LRU_link_pre;								
 						}								
 						buffer_node->LRU_link_next=ssd->dram->buffer->buffer_head;
@@ -395,7 +399,7 @@ struct ssd_info *buffer_management(struct ssd_info *ssd)
 
 			if(lpn==first_lpn)
 			{
-				offset1=ssd->parameter->subpage_page-((lpn+1)*ssd->parameter->subpage_page-new_request->lsn);
+				offset1=ssd->parameter->subpage_page-((lpn+1)*ssd->parameter->subpage_page-new_request->lsn);//是请求的第一个LPN，需要计算请求的第一个lsn是否是LPN的第一个lsn即对齐操作
 				state=state&(0xffffffff<<offset1);
 			}
 			if(lpn==last_lpn)
@@ -517,7 +521,7 @@ struct ssd_info *distribute(struct ssd_info *ssd)
 				}
 
 			}
-			else
+			else                                          //distri_flag == 1读请求都在buffer中得到服务，直接返回服务时间。
 			{
 				req->begin_time=ssd->current_time;
 				req->response_time=ssd->current_time+1000;   
@@ -756,31 +760,35 @@ void trace_output(struct ssd_info* ssd){
 *******************************************************************************/
 void statistic_output(struct ssd_info *ssd)
 {
-	unsigned int lpn_count=0,i,j,k,m,erase=0,plane_erase=0;
+	unsigned int lpn_count=0,i,ii,j,k,m,erase=0,plane_erase=0;
 	double gc_energy=0.0;
 #ifdef DEBUG
 	printf("enter statistic_output,  current time:%lld\n",ssd->current_time);
 #endif
 
+/************KXC:修改输出使其符合逻辑  2019.8.12*********/
 	for(i=0;i<ssd->parameter->channel_number;i++)
 	{
-		for(j=0;j<ssd->parameter->die_chip;j++)
-		{
-			for(k=0;k<ssd->parameter->plane_die;k++)
-			{
+		for (ii=0;ii<ssd->parameter->chip_channel[i];ii++)
+        { 
+			for(j=0;j<ssd->parameter->die_chip;j++)
+		   {
+			  for(k=0;k<ssd->parameter->plane_die;k++)
+			  {
 				plane_erase=0;
 				for(m=0;m<ssd->parameter->block_plane;m++)
 				{
-					if(ssd->channel_head[i].chip_head[0].die_head[j].plane_head[k].blk_head[m].erase_count>0)
+					if(ssd->channel_head[i].chip_head[ii].die_head[j].plane_head[k].blk_head[m].erase_count>0)
 					{
-						erase=erase+ssd->channel_head[i].chip_head[0].die_head[j].plane_head[k].blk_head[m].erase_count;
-						plane_erase+=ssd->channel_head[i].chip_head[0].die_head[j].plane_head[k].blk_head[m].erase_count;
+						erase=erase+ssd->channel_head[i].chip_head[ii].die_head[j].plane_head[k].blk_head[m].erase_count;
+						plane_erase+=ssd->channel_head[i].chip_head[ii].die_head[j].plane_head[k].blk_head[m].erase_count;
 					}
 				}
-				fprintf(ssd->outputfile,"the %d channel, %d chip, %d die, %d plane has : %13d erase operations\n",i,j,k,m,plane_erase);
-				fprintf(ssd->statisticfile,"the %d channel, %d chip, %d die, %d plane has : %13d erase operations\n",i,j,k,m,plane_erase);
-			}
-		}
+				fprintf(ssd->outputfile,"the %d channel, %d chip, %d die, %d plane has : %13d erase operations\n",i,ii,j,k,plane_erase);
+				fprintf(ssd->statisticfile,"the %d channel, %d chip, %d die, %d plane has : %13d erase operations\n",i,ii,j,k,plane_erase);
+			  }
+		    }
+	    }
 	}
 
 	fprintf(ssd->outputfile,"\n");

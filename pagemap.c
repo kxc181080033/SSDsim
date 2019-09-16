@@ -67,6 +67,7 @@ void trace_assert(int64_t time_t,int device,unsigned int lsn,int size,int ope)//
 /************************************************************************************
 *函数的功能是根据物理页号ppn查找该物理页所在的channel，chip，die，plane，block，page
 *得到的channel，chip，die，plane，block，page放在结构location中并作为返回值
+//就是找到PPN处在第几个channel第几个chip第几个die第几个plane第几个block的第几个page（读请求）
 *************************************************************************************/
 struct local *find_location(struct ssd_info *ssd,unsigned int ppn)
 {
@@ -107,7 +108,8 @@ struct local *find_location(struct ssd_info *ssd,unsigned int ppn)
 
 /*****************************************************************************
 *这个函数的功能是根据参数channel，chip，die，plane，block，page，找到该物理页号
-*函数的返回值就是这个物理页号
+*函数的返回值就是这个物理页号，用在分配时，给出channel，chip，die，plane，block，page
+ 找到具体的PPN
 ******************************************************************************/
 unsigned int find_ppn(struct ssd_info * ssd,unsigned int channel,unsigned int chip,unsigned int die,unsigned int plane,unsigned int block,unsigned int page)
 {
@@ -126,7 +128,7 @@ unsigned int find_ppn(struct ssd_info * ssd,unsigned int channel,unsigned int ch
 	page_plane=ssd->parameter->page_block*ssd->parameter->block_plane;
 	page_die=page_plane*ssd->parameter->plane_die;
 	page_chip=page_die*ssd->parameter->die_chip;
-	while(i<ssd->parameter->channel_number)
+	while(i<ssd->parameter->channel_number)//计算每个通道下的页的数量
 	{
 		page_channel[i]=ssd->parameter->chip_channel[i]*page_chip;
 		i++;
@@ -136,7 +138,7 @@ unsigned int find_ppn(struct ssd_info * ssd,unsigned int channel,unsigned int ch
 	*计算物理页号ppn，ppn是channel，chip，die，plane，block，page中page个数的总和
 	*****************************************************************************/
 	i=0;
-	while(i<channel)
+	while(i<channel)//计算出给定channel之前所有channel的页数，channel从0开始编号
 	{
 		ppn=ppn+page_channel[i];
 		i++;
@@ -163,13 +165,14 @@ int set_entry_state(struct ssd_info *ssd,unsigned int lsn,unsigned int size)
 /**************************************************
 *读请求预处理函数，当读请求所读得页里面没有数据时，
 *需要预处理网该页里面写数据，以保证能读到数据
+*参考https://blog.csdn.net/JewelCCL/article/details/52739013
 ***************************************************/
 struct ssd_info *pre_process_page(struct ssd_info *ssd)
 {
 	int fl=0;
 	unsigned int device,lsn,size,ope,lpn,full_page;
 	unsigned int largest_lsn,sub_size,ppn,add_size=0;
-	unsigned int i=0,j,k;
+	unsigned int i=0,ii,j,k;
 	int map_entry_new,map_entry_old,modify;
 	int flag=0;
 	char buffer_request[200];
@@ -203,10 +206,13 @@ struct ssd_info *pre_process_page(struct ssd_info *ssd)
 			while(add_size<size)
 			{				
 				lsn=lsn%largest_lsn;                                    /*防止获得的lsn比最大的lsn还大*/		
-				sub_size=ssd->parameter->subpage_page-(lsn%ssd->parameter->subpage_page);		
+				sub_size=ssd->parameter->subpage_page-(lsn%ssd->parameter->subpage_page);	
+				/*这里的sub_size主要是为了定位好子请求操作位置的，这个位置是相对于某一个特定的page而言的，从这个page的第一个sub_page开始计算到这个特定的操作位置
+                 * 因此，sub_size其实就是从lsn扇区位置起始到该page末端的这部分内容，这部分内容是在这个page中需要被读取的。*/
+               	
 				if(add_size+sub_size>=size)                             /*只有当一个请求的大小小于一个page的大小时或者是处理一个请求的最后一个page时会出现这种情况*/
 				{		
-					sub_size=size-add_size;		
+					sub_size=size-add_size;		//这里是考虑了扇区对齐的操作，size为整个请求大小，add_size为真个请求已完成的大小
 					add_size+=sub_size;		
 				}
 
@@ -218,11 +224,14 @@ struct ssd_info *pre_process_page(struct ssd_info *ssd)
                 /*******************************************************************************************************
 				*利用逻辑扇区号lsn计算出逻辑页号lpn
 				*判断这个dram中映射表map中在lpn位置的状态
-				*A，这个状态==0，表示以前没有写过，现在需要直接将ub_size大小的子页写进去写进去
+				*A，这个状态==0，表示以前没有写过，现在需要直接将sub_size大小的子页写进去写进去
 				*B，这个状态>0，表示，以前有写过，这需要进一步比较状态，因为新写的状态可以与以前的状态有重叠的扇区的地方
+				*因此，状态==0的情况下，由于内存中映射状态无效，所以必须要重新分配出状态有效的物理页面给读操作请求，调用函数get_ppn_for_pre_process得到有效的物理页信息后
+                *再通过find_location()将物理页面地址信息存储并且更新该lpn对应的映射表信息。
+                *同样的，当状态>0时，证明该lpn位置处的内存映射表中的映射状态有效，有直接可以使用的有效物理页，所以ppn直接可以使用映射表中的pn
 				********************************************************************************************************/
 				lpn=lsn/ssd->parameter->subpage_page;
-				if(ssd->dram->map->map_entry[lpn].state==0)                 /*状态为0的情况*/
+				if(ssd->dram->map->map_entry[lpn].state==0)                 /*状态为0的情况,所有的映射项处于无效状态*/
 				{
 					/**************************************************************
 					*获得利用get_ppn_for_pre_process函数获得ppn，再得到location
@@ -230,7 +239,7 @@ struct ssd_info *pre_process_page(struct ssd_info *ssd)
 					***************************************************************/
 					ppn=get_ppn_for_pre_process(ssd,lsn);                  
 					location=find_location(ssd,ppn);
-					ssd->program_count++;	
+					ssd->program_count++;	                               //分配后需要写入读的数据，所以写次数加1
 					ssd->channel_head[location->channel].program_count++;
 					ssd->channel_head[location->channel].chip_head[location->chip].program_count++;		
 					ssd->dram->map->map_entry[lpn].pn=ppn;	
@@ -246,11 +255,11 @@ struct ssd_info *pre_process_page(struct ssd_info *ssd)
 				{
 					map_entry_new=set_entry_state(ssd,lsn,sub_size);      /*得到新的状态，并与原来的状态相或的到一个状态*/
 					map_entry_old=ssd->dram->map->map_entry[lpn].state;
-                    modify=map_entry_new|map_entry_old;
+                    modify=map_entry_new|map_entry_old;                  //取出原来页面里有效的扇区与新的状态有效的扇区的并集
 					ppn=ssd->dram->map->map_entry[lpn].pn;
 					location=find_location(ssd,ppn);
 
-					ssd->program_count++;	
+					ssd->program_count++;	                             //分配后需要写入读的数据，所以写次数加1
 					ssd->channel_head[location->channel].program_count++;
 					ssd->channel_head[location->channel].chip_head[location->chip].program_count++;		
 					ssd->dram->map->map_entry[lsn/ssd->parameter->subpage_page].state=modify; 
@@ -262,7 +271,7 @@ struct ssd_info *pre_process_page(struct ssd_info *ssd)
 				}//else if(ssd->dram->map->map_entry[lpn].state>0)
 				lsn=lsn+sub_size;                                         /*下个子请求的起始位置*/
 				add_size+=sub_size;                                       /*已经处理了的add_size大小变化*/
-			}//while(add_size<size)
+			}//while(add_size<size)                                       //这里state<0的情况说明所有扇区都有效，直接进行更新
 		}//if(ope==1) 
 	}	
 
@@ -271,11 +280,15 @@ struct ssd_info *pre_process_page(struct ssd_info *ssd)
 
 	fclose(ssd->tracefile);
 
+	//KXC:修改输出
 	for(i=0;i<ssd->parameter->channel_number;i++)
+	for(ii=0;ii<ssd->parameter->chip_channel[i];ii++)
     for(j=0;j<ssd->parameter->die_chip;j++)
 	for(k=0;k<ssd->parameter->plane_die;k++)
 	{
-		fprintf(ssd->outputfile,"chip:%d,die:%d,plane:%d have free page: %d\n",i,j,k,ssd->channel_head[i].chip_head[0].die_head[j].plane_head[k].free_page);				
+		
+		//fprintf(ssd->outputfile,"chip:%d,die:%d,plane:%d have free page: %d\n",i,j,k,ssd->channel_head[i].chip_head[0].die_head[j].plane_head[k].free_page);				
+		fprintf(ssd->outputfile,"channel:%d,chip:%d,die:%d,plane:%d have free page: %d\n",i,ii,j,k,ssd->channel_head[i].chip_head[ii].die_head[j].plane_head[k].free_page);
 		fflush(ssd->outputfile);
 	}
 	
@@ -298,7 +311,8 @@ unsigned int get_ppn_for_pre_process(struct ssd_info *ssd,unsigned int lsn)
 #endif
 
 	channel_num=ssd->parameter->channel_number;
-	chip_num=ssd->parameter->chip_channel[0];
+	chip_num=ssd->parameter->chip_channel[0];               //这里chip的数量对吗？对的，看下边的代码就知道了，每个通道下的芯片数应该一样
+	//chip_num=ssd->parameter->chip_num;                        
 	die_num=ssd->parameter->die_chip;
 	plane_num=ssd->parameter->plane_die;
 	lpn=lsn/ssd->parameter->subpage_page;
@@ -409,6 +423,7 @@ unsigned int get_ppn_for_pre_process(struct ssd_info *ssd,unsigned int lsn)
 /***************************************************************************************************
 *函数功能是在所给的channel，chip，die，plane里面找到一个active_block然后再在这个block里面找到一个页，
 *再利用find_ppn找到ppn。
+*与上述两个函数为了进行预处理，这里是在进行读写操作时，获取PPN
 ****************************************************************************************************/
 struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int chip,unsigned int die,unsigned int plane,struct sub_request *sub)
 {
@@ -444,10 +459,10 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 	active_block=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].active_block;
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].last_write_page++;	
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].free_page_num--;
-
-	if(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].last_write_page>63)
+    //KXC:修改page per block的值，使其随着输入参数改变
+	if(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].last_write_page>(ssd->parameter->page_block-1))
 	{
-		printf("error! the last write page larger than 64!!\n");
+		printf("error! the last write page larger than a block!!\n");
 		while(1){}
 	}
 
@@ -524,7 +539,7 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].page_head[page].free_state=((~(sub->state))&full_page);
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].page_head[page].written_count++;
 	ssd->write_flash_count++;
-
+   //在实际运行中暂时还并没有考虑主动垃圾回收
 	if (ssd->parameter->active_write==0)                                            /*如果没有主动策略，只采用gc_hard_threshold，并且无法中断GC过程*/
 	{                                                                               /*如果plane中的free_page的数目少于gc_hard_threshold所设定的阈值就产生gc操作*/
 		if (ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].free_page<(ssd->parameter->page_block*ssd->parameter->block_plane*ssd->parameter->gc_hard_threshold))
@@ -572,10 +587,10 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].last_write_page++;	
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].free_page_num--;
-
-	if(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].last_write_page>63)
+    //KSC:修改63
+	if(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].last_write_page>(ssd->parameter->page_block-1))
 	{
-		printf("error! the last write page larger than 64!!\n");
+		printf("error! the last write page larger than a block in get ppn for gc!!\n");
 		while(1){}
 	}
 
@@ -830,7 +845,7 @@ int gc_direct_erase(struct ssd_info *ssd,unsigned int channel,unsigned int chip,
 	}
 
 	/***************************************************************************************
-	*当能处理INTERLEAVE高级命令时，就在相应的channel，chip找到可以执行INTERLEAVE的两个block
+	*当能处理INTERLEAVE高级命令时，不同的die下的同样的plane下同样的block就在相应的channel，chip找到可以执行INTERLEAVE的两个block
 	*并置interleaver_flag为TRUE
 	****************************************************************************************/
 	if((ssd->parameter->advanced_commands&AD_INTERLEAVE)==AD_INTERLEAVE)
@@ -946,7 +961,7 @@ Status move_page(struct ssd_info * ssd, struct local *location, unsigned int * t
 		{
 			if (old_ppn%2!=ppn%2)
 			{
-				(* transfer_size)+=size(valid_state);
+				(* transfer_size)+=size(valid_state);    //不使用copyback命令
 			}
 			else
 			{
@@ -1377,7 +1392,7 @@ unsigned int gc(struct ssd_info *ssd,unsigned int channel, unsigned int flag)
 
 
 /**********************************************************
-*判断是否有子请求血药channel，若果没有返回1就可以发送gc操作
+*判断是否有子请求需要channel，若果没有返回1就可以发送gc操作
 *如果有返回0，就不能执行gc操作，gc操作被中断
 ***********************************************************/
 int decide_gc_invoke(struct ssd_info *ssd, unsigned int channel)      

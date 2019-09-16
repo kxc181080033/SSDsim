@@ -356,7 +356,7 @@ struct parameter_value *load_parameters(char parameter_file[30])
 	p = (struct parameter_value *)malloc(sizeof(struct parameter_value));
 	alloc_assert(p,"parameter_value");
 	memset(p,0,sizeof(struct parameter_value));
-	p->queue_length=5;
+	//p->queue_length=5;    KXC:次参数从配置文件中读取
 	memset(buf,0,BUFSIZE);
 	
 	fp=fopen(parameter_file,"r");

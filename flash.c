@@ -39,11 +39,11 @@ Status allocate_location(struct ssd_info * ssd ,struct sub_request *sub_req)
 		* 在动态分配中，因为页的更新操作使用不了copyback操作，
 		*需要产生一个读请求，并且只有这个读请求完成后才能进行这个页的写操作
 		*******************************************************************/
-		if (ssd->dram->map->map_entry[sub_req->lpn].state!=0)    
+		if (ssd->dram->map->map_entry[sub_req->lpn].state!=0)    //映射项中存在有效的扇区
 		{
 			if ((sub_req->state&ssd->dram->map->map_entry[sub_req->lpn].state)!=ssd->dram->map->map_entry[sub_req->lpn].state)
 			{
-				ssd->read_count++;
+				ssd->read_count++;             //产生读的原因是需要读出数据才能判断数据是否为写更新
 				ssd->update_read_count++;
 
 				update=(struct sub_request *)malloc(sizeof(struct sub_request));
@@ -313,8 +313,8 @@ struct ssd_info * insert2buffer(struct ssd_info *ssd,unsigned int lpn,int state,
 		}
 		if(flag==0)     
 		{
-			write_back_count=sector_count-free_sector;
-			ssd->dram->buffer->write_miss_hit=ssd->dram->buffer->write_miss_hit+write_back_count;
+			write_back_count=sector_count-free_sector;                //即需要从缓冲区剔除的扇区数
+			ssd->dram->buffer->write_miss_hit=ssd->dram->buffer->write_miss_hit+write_back_count;//这里有空间写入表示命中，无空间写入视为未命中
 			while(write_back_count>0)
 			{
 				sub_req=NULL;
@@ -375,7 +375,7 @@ struct ssd_info * insert2buffer(struct ssd_info *ssd,unsigned int lpn,int state,
 		new_node->LRU_link_pre = NULL;
 		new_node->LRU_link_next=ssd->dram->buffer->buffer_head;
 		if(ssd->dram->buffer->buffer_head != NULL){
-			ssd->dram->buffer->buffer_head->LRU_link_pre=new_node;
+			ssd->dram->buffer->buffer_head->LRU_link_pre=new_node;      //LRU
 		}else{
 			ssd->dram->buffer->buffer_tail = new_node;
 		}
@@ -939,7 +939,7 @@ Status services_2_r_data_trans(struct ssd_info * ssd,unsigned int channel,unsign
 			{
 				for(die=0;die<ssd->parameter->die_chip;die++)
 				{
-					sub=find_read_sub_request(ssd,channel,chip,die);                   /*在channel,chip,die中找到读子请求*/
+					sub=find_read_sub_request(ssd,channel,chip,die);                   /*在channel,chip,die中找到读子请求，数据已经读到寄存器中的读请求*/
 					if(sub!=NULL)
 					{
 						break;
@@ -1042,6 +1042,7 @@ Status services_2_r_data_trans(struct ssd_info * ssd,unsigned int channel,unsign
 
 /******************************************************
 *这个函数也是只服务读子请求，并且处于等待状态的读子请求
+KXC：感觉这里逻辑有错误，如果有TWOPLANE_READ则执行，否则应当判断是否有INTERLEAVING，而不是执行NORMAL
 *******************************************************/
 int services_2_r_wait(struct ssd_info * ssd,unsigned int channel,unsigned int * channel_busy_flag, unsigned int * change_current_time_flag)
 {
@@ -1311,7 +1312,7 @@ Status static_write(struct ssd_info * ssd, unsigned int channel,unsigned int chi
 	long long time=0;
 	if (ssd->dram->map->map_entry[sub->lpn].state!=0)                                    /*说明这个逻辑页之前有写过，需要使用先读出来，再写下去，否则直接写下去即可*/
 	{
-		if ((sub->state&ssd->dram->map->map_entry[sub->lpn].state)==ssd->dram->map->map_entry[sub->lpn].state)   /*可以覆盖*/
+		if ((sub->state&ssd->dram->map->map_entry[sub->lpn].state)==ssd->dram->map->map_entry[sub->lpn].state)   /*可以覆盖，即所有的扇区脏净是一致的*/
 		{
 			sub->next_state_predict_time=ssd->current_time+7*ssd->parameter->time_characteristics.tWC+(sub->size*ssd->parameter->subpage_capacity)*ssd->parameter->time_characteristics.tWC;
 		} 
@@ -1319,7 +1320,7 @@ Status static_write(struct ssd_info * ssd, unsigned int channel,unsigned int chi
 		{
 			sub->next_state_predict_time=ssd->current_time+7*ssd->parameter->time_characteristics.tWC+ssd->parameter->time_characteristics.tR+(size((ssd->dram->map->map_entry[sub->lpn].state^sub->state)))*ssd->parameter->time_characteristics.tRC+(sub->size*ssd->parameter->subpage_capacity)*ssd->parameter->time_characteristics.tWC;
 			ssd->read_count++;
-			ssd->update_read_count++;
+			ssd->update_read_count++;   //扇区对其合并时产生的读操作
 		}
 	} 
 	else
@@ -1330,7 +1331,7 @@ Status static_write(struct ssd_info * ssd, unsigned int channel,unsigned int chi
 	time=sub->complete_time;
 
 	get_ppn(ssd,sub->location->channel,sub->location->chip,sub->location->die,sub->location->plane,sub);
-
+    //get_ppn这个函数在这里就是写操作完成，需要更新activeblock和各个token，这是需要判断是否需要垃圾回收等等
     /****************************************************************
 	*执行copyback高级命令时，需要修改channel，chip的状态，以及时间等
 	*****************************************************************/
@@ -1557,7 +1558,7 @@ struct ssd_info *process(struct ssd_info *ssd)
 	{          
 		if((ssd->channel_head[i].subs_r_head==NULL)&&(ssd->channel_head[i].subs_w_head==NULL)&&(ssd->subs_w_head==NULL))
 		{
-			flag=1;
+			flag=1;                       //所有通道均无请求处理。上边一行，对于全动态分配策略的写请求，不挂在通道上，需要再分配
 		}
 		else
 		{
@@ -1568,7 +1569,7 @@ struct ssd_info *process(struct ssd_info *ssd)
 	if(flag==1)
 	{
 		ssd->flag=1;                                                                
-		if (ssd->gc_request>0)                                                            /*SSD中有gc操作的请求*/
+		if (ssd->gc_request>0)                                                            /*无读写请求，开始处理GC请求，SSD中有gc操作的请求*/
 		{
 			gc(ssd,0,1);                                                                  /*这个gc要求所有channel都必须遍历到*/
 		}
@@ -1599,7 +1600,7 @@ struct ssd_info *process(struct ssd_info *ssd)
 			{
 				if (ssd->channel_head[i].gc_command!=NULL)
 				{
-					flag_gc=gc(ssd,i,0);                                                 /*gc函数返回一个值，表示是否执行了gc操作，如果执行了gc操作，这个channel在这个时刻不能服务其他的请求*/
+					flag_gc=gc(ssd,i,0);                                                 /*gc函数返回一个值，表示是否执行了gc操作，如果执行了gc操作flag_gc=1，这个channel在这个时刻不能服务其他的请求*/
 				}
 				if (flag_gc==1)                                                          /*执行过gc操作，需要跳出此次循环*/
 				{
@@ -2353,6 +2354,7 @@ Status get_ppn_for_advanced_commands(struct ssd_info *ssd,unsigned int channel,u
 
 /***********************************************
 *函数的作用是让sub0，sub1的ppn所在的page位置相同
+*两个页满足高级命令的要求
 ************************************************/
 Status make_level_page(struct ssd_info * ssd, struct sub_request * sub0,struct sub_request * sub1)
 {
@@ -2876,7 +2878,7 @@ struct ssd_info *make_same_level(struct ssd_info *ssd,unsigned int channel,unsig
 		i++;
 	}
 
-	ssd->waste_page_count+=step;
+	ssd->waste_page_count+=step;//之前的页都浪费掉了
 
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[block].last_write_page=aim_page-1;
 
@@ -2911,6 +2913,7 @@ struct ssd_info *make_same_level(struct ssd_info *ssd,unsigned int channel,unsig
 /****************************************************************************
 *在处理高级命令的写子请求时，这个函数的功能就是计算处理时间以及处理的状态转变
 *功能还不是很完善，需要完善，修改时注意要分为静态分配和动态分配两种情况
+KXC：在处理高级命令时调用，不是很懂
 *****************************************************************************/
 struct ssd_info *compute_serve_time(struct ssd_info *ssd,unsigned int channel,unsigned int chip,unsigned int die,struct sub_request **subs, unsigned int subs_count,unsigned int command)
 {
@@ -3047,6 +3050,7 @@ struct ssd_info *compute_serve_time(struct ssd_info *ssd,unsigned int channel,un
 
 /*****************************************************************************************
 *函数的功能就是把子请求从ssd->subs_w_head或者ssd->channel_head[channel].subs_w_head上删除
+*只删除写子请求,读请求在完成时就直接删掉了
 ******************************************************************************************/
 struct ssd_info *delete_from_channel(struct ssd_info *ssd,unsigned int channel,struct sub_request * sub_req)
 {
@@ -3266,7 +3270,7 @@ struct ssd_info *un_greed_interleave_copyback(struct ssd_info *ssd,unsigned int 
 	return ssd;
 }
 
-
+//这个函数没有被调用过，相关的功能在gc()这个函数中也有
 struct ssd_info *un_greed_copyback(struct ssd_info *ssd,unsigned int channel,unsigned int chip,unsigned int die,struct sub_request *sub1)
 {
 	unsigned int old_ppn,ppn;
@@ -3275,12 +3279,12 @@ struct ssd_info *un_greed_copyback(struct ssd_info *ssd,unsigned int channel,uns
 	get_ppn(ssd,channel,chip,die,0,sub1);                                                     /*找出来的ppn一定是发生在与子请求相同的plane中,才能使用copyback操作*/
 	ppn=sub1->ppn;
 	
-	if (old_ppn%2==ppn%2)
+	if (old_ppn%2==ppn%2)        //奇偶校验一致
 	{
 		ssd->copy_back_count++;
 		sub1->current_state=SR_W_TRANSFER;
 		sub1->current_time=ssd->current_time;
-		sub1->next_state=SR_COMPLETE;
+		sub1->next_state=SR_COMPLETE;  //这里的时间包括读出传输至寄存器的时间，用tWC而不用tPROG，不是很清楚，在计算芯片的下个状态的预测时间用的是tPROG，这里的sub->size指的是扇区数量
 		sub1->next_state_predict_time=ssd->current_time+14*ssd->parameter->time_characteristics.tWC+ssd->parameter->time_characteristics.tR+(sub1->size*ssd->parameter->subpage_capacity)*ssd->parameter->time_characteristics.tWC;
 		sub1->complete_time=sub1->next_state_predict_time;
 
@@ -3298,7 +3302,7 @@ struct ssd_info *un_greed_copyback(struct ssd_info *ssd,unsigned int channel,uns
 	{
 		sub1->current_state=SR_W_TRANSFER;
 		sub1->current_time=ssd->current_time;
-		sub1->next_state=SR_COMPLETE;
+		sub1->next_state=SR_COMPLETE;   //这里非贪心策略，奇偶校验不通过，迁移到另一个plane里，因此两倍总线传输时间（twc）
 		sub1->next_state_predict_time=ssd->current_time+14*ssd->parameter->time_characteristics.tWC+ssd->parameter->time_characteristics.tR+2*(ssd->parameter->subpage_page*ssd->parameter->subpage_capacity)*ssd->parameter->time_characteristics.tWC;
 		sub1->complete_time=sub1->next_state_predict_time;
 
@@ -3504,7 +3508,7 @@ Status go_one_step(struct ssd_info * ssd, struct sub_request * sub1,struct sub_r
 				sub->next_state_predict_time=ssd->current_time+7*ssd->parameter->time_characteristics.tWC;									
 				sub->begin_time=ssd->current_time;
 
-				ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].add_reg_ppn=sub->ppn;
+				ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].add_reg_ppn=sub->ppn;//将PPN传到地址寄存器
 				ssd->read_count++;
 
 				ssd->channel_head[location->channel].current_state=CHANNEL_C_A_TRANSFER;									
@@ -3543,7 +3547,7 @@ Status go_one_step(struct ssd_info * ssd, struct sub_request * sub1,struct sub_r
 				ssd->channel_head[location->channel].chip_head[location->chip].next_state=CHIP_IDLE;			
 				ssd->channel_head[location->channel].chip_head[location->chip].next_state_predict_time=sub->next_state_predict_time;
 
-				ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].add_reg_ppn=-1;
+				ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].add_reg_ppn=-1;  //清空寄存器
 
 				break;
 			}
@@ -3558,7 +3562,7 @@ Status go_one_step(struct ssd_info * ssd, struct sub_request * sub1,struct sub_r
 				*******************************************************************************************************/
 				sub->current_time=ssd->current_time;
 				sub->current_state=SR_W_TRANSFER;
-				sub->next_state=SR_COMPLETE;
+				sub->next_state=SR_COMPLETE;        //写子请求将命令传输和数据传输的时间计算放在一起，因为这两个状态连续，且动作相同
 				sub->next_state_predict_time=ssd->current_time+7*ssd->parameter->time_characteristics.tWC+(sub->size*ssd->parameter->subpage_capacity)*ssd->parameter->time_characteristics.tWC;
 				sub->complete_time=sub->next_state_predict_time;		
 				time=sub->complete_time;
@@ -3566,12 +3570,12 @@ Status go_one_step(struct ssd_info * ssd, struct sub_request * sub1,struct sub_r
 				ssd->channel_head[location->channel].current_state=CHANNEL_TRANSFER;										
 				ssd->channel_head[location->channel].current_time=ssd->current_time;										
 				ssd->channel_head[location->channel].next_state=CHANNEL_IDLE;										
-				ssd->channel_head[location->channel].next_state_predict_time=time;
+				ssd->channel_head[location->channel].next_state_predict_time=time;   //数据传输完成后，通道状态变为空闲
 
 				ssd->channel_head[location->channel].chip_head[location->chip].current_state=CHIP_WRITE_BUSY;										
 				ssd->channel_head[location->channel].chip_head[location->chip].current_time=ssd->current_time;									
 				ssd->channel_head[location->channel].chip_head[location->chip].next_state=CHIP_IDLE;										
-				ssd->channel_head[location->channel].chip_head[location->chip].next_state_predict_time=time+ssd->parameter->time_characteristics.tPROG;
+				ssd->channel_head[location->channel].chip_head[location->chip].next_state_predict_time=time+ssd->parameter->time_characteristics.tPROG;//数据写入完成后，芯片变为空闲
 				
 				break;
 			}
