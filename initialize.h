@@ -98,7 +98,9 @@ Hao Luo         2011/01/01        2.0           Change               luohao13568
 #define PAGE(lsn) (lsn&0x0000)>>16 
 #define SUBPAGE(lsn) (lsn&0x0000)>>16  
 
-#define PG_SUB 0xffffffff			
+#define PG_SUB 0xffffffff		
+
+int *count;   //KXC:add a tabel to record the frequency
 
 /*****************************************
 *函数结果状态代码
@@ -271,7 +273,8 @@ struct plane_info{
 	int add_reg_ppn;                    //read，write时把地址传送到该变量，该变量代表地址寄存器。die由busy变为idle时，清除地址 //有可能因为一对多的映射，在一个读请求时，有多个相同的lpn，所以需要用ppn来区分  
 	unsigned int free_page;             //该plane中有多少free page
 	unsigned int ers_invalid;           //记录该plane中擦除失效的块数
-	unsigned int active_block;          //if a die has a active block, 该项表示其物理块号
+	unsigned int active_block[2];          //if a die has a active block, 该项表示其物理块号
+										//KXC:a array to record the active boloc 0 for cold and 1 for hot
 	int can_erase_block;                //记录在一个plane中准备在gc操作中被擦除操作的块,-1表示还没有找到合适的块
 	struct direct_erase *erase_node;    //用来记录可以直接删除的块号,在获取新的ppn时，每当出现invalid_page_num==64时，将其添加到这个指针上，供GC操作时直接删除
 	struct blk_info *blk_head;
@@ -373,6 +376,7 @@ struct sub_request{
 	unsigned int ppn;                  //分配那个物理子页给这个子请求。在multi_chip_page_mapping中，产生子页请求时可能就知道psn的值，其他时候psn的值由page_map_read,page_map_write等FTL最底层函数产生。 
 	unsigned int operation;            //表示该子请求的类型，除了读1 写0，还有擦除，two plane等操作 
 	int size;
+	int hot;                          //KXC:add a hot-cold flag
 
 	unsigned int current_state;        //表示该子请求所处的状态，见宏定义sub request
 	int64_t current_time;

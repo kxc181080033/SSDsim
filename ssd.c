@@ -44,6 +44,11 @@ int  main()
 	make_aged(ssd);
 	pre_process_page(ssd);
 
+	//KXC:allocate memory for count and initialize it to 0
+	count=(int*)malloc(sizeof(int)*ssd->page);
+	alloc_assert(count,"count");
+	memset(count,0,sizeof(int)*ssd->page);
+
 /************KXC:修改输出使其符合逻辑 2019.8.13**************/
 	for (i=0;i<ssd->parameter->channel_number;i++)//在屏幕输出初始化芯片的空白页信息
 	{
@@ -150,6 +155,7 @@ int get_requests(struct ssd_info *ssd)
 	char buffer[200];
 	unsigned int lsn=0;
 	int device,  size, ope,large_lsn, i = 0,j=0;
+	int lastlpn,firstlpn,p;
 	struct request *request1;
 	int flag = 1;
 	long filepoint; 
@@ -255,6 +261,17 @@ int get_requests(struct ssd_info *ssd)
 	request1->need_distr_flag = NULL;
 	request1->complete_lsn_count=0;         //record the count of lsn served by buffer
 	filepoint = ftell(ssd->tracefile);		// set the file point
+
+	//KXC:update the value of count
+	if (request1->operation==0)
+	{
+		lastlpn=(request1->lsn+request1->size-1)/ssd->parameter->subpage_page;
+		firstlpn=request1->lsn/ssd->parameter->subpage_page;
+		for(p=firstlpn;p<=lastlpn;p++)
+		{
+			count[p]++;
+		}
+	}
 
 	if(ssd->request_queue == NULL)          //The queue is empty
 	{

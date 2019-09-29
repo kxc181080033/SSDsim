@@ -532,22 +532,30 @@ struct ssd_info * insert2buffer(struct ssd_info *ssd,unsigned int lpn,int state,
 /**************************************************************************************
 *函数的功能是寻找活跃快，应为每个plane中都只有一个活跃块，只有这个活跃块中才能进行操作
 ***************************************************************************************/
-Status  find_active_block(struct ssd_info *ssd,unsigned int channel,unsigned int chip,unsigned int die,unsigned int plane)
+Status  find_active_block(struct ssd_info *ssd,unsigned int channel,unsigned int chip,unsigned int die,unsigned int plane,int hot)
 {
 	unsigned int active_block;
 	unsigned int free_page_num=0;
 	unsigned int count=0;
 	
-	active_block=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].active_block;
+	active_block=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].active_block[hot];
 	free_page_num=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].free_page_num;
 	//last_write_page=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].free_page_num;
 	while((free_page_num==0)&&(count<ssd->parameter->block_plane))
 	{
-		active_block=(active_block+1)%ssd->parameter->block_plane;	
-		free_page_num=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].free_page_num;
+		active_block=(active_block+1)%ssd->parameter->block_plane;
+		if (active_block==ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].active_block[((hot+1)%2)])
+		{
+			free_page_num=0;	
+		}
+		else
+		{
+			free_page_num=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].free_page_num;
+		}
 		count++;
+		
 	}
-	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].active_block=active_block;
+	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].active_block[hot]=active_block;
 	if(count<ssd->parameter->block_plane)
 	{
 		return SUCCESS;
@@ -625,7 +633,8 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 		sub->next_state = SR_R_C_A_TRANSFER;
 		sub->next_state_predict_time=MAX_INT64;
 		sub->lpn = lpn;
-		sub->size=size;                                                               /*需要计算出该子请求的请求大小*/
+		sub->size=size;   
+		sub->hot=0;                                                            /*需要计算出该子请求的请求大小*/
 
 		p_ch = &ssd->channel_head[loc->channel];	
 		sub->ppn = ssd->dram->map->map_entry[lpn].pn;
@@ -681,6 +690,17 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 		sub->size=size;
 		sub->state=state;
 		sub->begin_time=ssd->current_time;
+
+		//KXC:update the hot flag of subrequest according to count
+		if (count[sub->lpn]>3)
+		{
+			sub->hot=1;
+		}
+		else
+		{
+			sub->hot=0;
+		}
+		
       
 		if (allocate_location(ssd ,sub)==ERROR)
 		{
@@ -2388,8 +2408,8 @@ Status make_level_page(struct ssd_info * ssd, struct sub_request * sub0,struct s
 			plane1=ssd->channel_head[channel].chip_head[chip].die_head[die].token;
 			if(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane1].add_reg_ppn==-1)
 			{
-				find_active_block(ssd,channel,chip,die,plane1);                               /*在plane1中找到活跃块*/
-				block1=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane1].active_block;
+				find_active_block(ssd,channel,chip,die,plane1,0);                               /*在plane1中找到活跃块*/
+				block1=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane1].active_block[0];
 
 				/*********************************************************************************************
 				*只有找到的block1与block0相同，才能继续往下寻找相同的page
@@ -2438,8 +2458,8 @@ Status make_level_page(struct ssd_info * ssd, struct sub_request * sub0,struct s
 		plane1=sub1->location->plane;
 		if(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane1].add_reg_ppn==-1)
 		{
-			find_active_block(ssd,channel,chip,die,plane1);
-			block1=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane1].active_block;
+			find_active_block(ssd,channel,chip,die,plane1,0);
+			block1=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane1].active_block[0];
 			if(block1==block0)
 			{
 				page1=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane1].blk_head[block1].last_write_page+1;
@@ -2521,10 +2541,10 @@ Status find_level_page(struct ssd_info *ssd,unsigned int channel,unsigned int ch
 		planeA=subA->location->plane;
 		planeB=subB->location->plane;
 	}
-	find_active_block(ssd,channel,chip,die,planeA);                                          /*寻找active_block*/
-	find_active_block(ssd,channel,chip,die,planeB);
-	active_blockA=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[planeA].active_block;
-	active_blockB=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[planeB].active_block;
+	find_active_block(ssd,channel,chip,die,planeA,0);                                          /*寻找active_block*/
+	find_active_block(ssd,channel,chip,die,planeB,0);
+	active_blockA=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[planeA].active_block[0];
+	active_blockB=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[planeB].active_block[0];
 
 	
     
