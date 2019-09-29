@@ -1003,16 +1003,17 @@ Status move_page(struct ssd_info * ssd, struct local *location, unsigned int * t
 int uninterrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,unsigned int die,unsigned int plane)       
 {
 	unsigned int i=0,invalid_page=0;
-	unsigned int block,active_block,transfer_size,free_page,page_move_count=0;                           /*记录失效页最多的块号*/
+	unsigned int block,active_block1,active_block2,transfer_size,free_page,page_move_count=0;                           /*记录失效页最多的块号*/
 	struct local *  location=NULL;
 	unsigned int total_invalid_page_num=0;
 
-	if(find_active_block(ssd,channel,chip,die,plane,0)!=SUCCESS)                                           /*获取活跃块*/
+	if(((find_active_block(ssd,channel,chip,die,plane,0)!=SUCCESS))&&((find_active_block(ssd,channel,chip,die,plane,1)!=SUCCESS)))                                           /*获取活跃块*/
 	{
 		printf("\n\n Error in uninterrupt_gc().\n");
 		return ERROR;
 	}
-	active_block=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].active_block[0];
+	active_block1=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].active_block[0];
+	active_block2=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].active_block[1];
 
 	invalid_page=0;
 	transfer_size=0;
@@ -1020,7 +1021,7 @@ int uninterrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,u
 	for(i=0;i<ssd->parameter->block_plane;i++)                                                           /*查找最多invalid_page的块号，以及最大的invalid_page_num*/
 	{	
 		total_invalid_page_num+=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num;
-		if((active_block!=i)&&(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num>invalid_page))						
+		if((active_block1!=i)&&(active_block2!=i)&&(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num>invalid_page))						
 		{				
 			invalid_page=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num;
 			block=i;						
@@ -1106,16 +1107,17 @@ int uninterrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,u
 ********************************************************************************************************************************************/
 int interrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,unsigned int die,unsigned int plane,struct gc_operation *gc_node)        
 {
-	unsigned int i,block,active_block,transfer_size,invalid_page=0;
+	unsigned int i,block,active_block1,active_block2,transfer_size,invalid_page=0;
 	struct local *location;
 
-	active_block=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].active_block[0];
+	active_block1=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].active_block[0];
+	active_block2=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].active_block[1];
 	transfer_size=0;
 	if (gc_node->block>=ssd->parameter->block_plane)
 	{
 		for(i=0;i<ssd->parameter->block_plane;i++)
 		{			
-			if((active_block!=i)&&(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num>invalid_page))						
+			if((active_block1!=i)&&(active_block2!=i)&&(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num>invalid_page))						
 			{				
 				invalid_page=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num;
 				block=i;						
