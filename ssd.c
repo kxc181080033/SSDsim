@@ -155,7 +155,7 @@ int get_requests(struct ssd_info *ssd)
 	char buffer[200];
 	unsigned int lsn=0;
 	int device,  size, ope,large_lsn, i = 0,j=0;
-	int lastlpn,firstlpn,p;
+	int lastlpn,firstlpn,p,pp;
 	struct request *request1;
 	int flag = 1;
 	long filepoint; 
@@ -265,6 +265,13 @@ int get_requests(struct ssd_info *ssd)
 	//KXC:update the value of count
 	if (request1->operation==0)
 	{
+		if ((ssd->write_request_count%500)==0)
+		{
+			for (pp=0;p<ssd->page;pp++)
+			{
+				count[pp]=0.6*count[pp];
+			}
+		}
 		lastlpn=(request1->lsn+request1->size-1)/ssd->parameter->subpage_page;
 		firstlpn=request1->lsn/ssd->parameter->subpage_page;
 		for(p=firstlpn;p<=lastlpn;p++)
