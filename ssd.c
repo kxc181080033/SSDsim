@@ -267,7 +267,7 @@ int get_requests(struct ssd_info *ssd)
 	{
 		if ((ssd->write_request_count%500)==0)
 		{
-			for (pp=0;p<ssd->page;pp++)
+			for (pp=0;pp<ssd->page;pp++)
 			{
 				count[pp]=0.6*count[pp];
 			}
