@@ -170,6 +170,7 @@ struct ssd_info{
 	int64_t write_avg;                   //��¼���ڼ���д����ƽ����Ӧʱ���ʱ��
 	int64_t read_avg;                    //��¼���ڼ��������ƽ����Ӧʱ���ʱ��
 	float av_write_count;               //KXC:add to judge whether hot of cold
+	int write_no;
 	unsigned int min_lsn;
 	unsigned int max_lsn;
 	unsigned long read_count;
