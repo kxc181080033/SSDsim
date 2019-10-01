@@ -692,7 +692,7 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 		sub->begin_time=ssd->current_time;
 
 		//KXC:update the hot flag of subrequest according to count
-		if (count[sub->lpn]>4)
+		if (count[sub->lpn]>(ssd->av_write_count>4?ssd->av_write_count:4))
 		{
 			sub->hot=1;
 		}

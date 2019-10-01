@@ -155,7 +155,7 @@ int get_requests(struct ssd_info *ssd)
 	char buffer[200];
 	unsigned int lsn=0;
 	int device,  size, ope,large_lsn, i = 0,j=0;
-	int lastlpn,firstlpn,p,pp;
+	int lastlpn,firstlpn,p,pp,ppp,acount=0;
 	struct request *request1;
 	int flag = 1;
 	long filepoint; 
@@ -272,6 +272,12 @@ int get_requests(struct ssd_info *ssd)
 				count[pp]=0.6*count[pp];
 			}
 		}
+		for (ppp=0;ppp<ssd->page;ppp++)
+		{
+			if (count[ppp]!=0)
+			acount++;
+		}
+		ssd->av_write_count=(ssd->av_write_count+1)/acount;
 		lastlpn=(request1->lsn+request1->size-1)/ssd->parameter->subpage_page;
 		firstlpn=request1->lsn/ssd->parameter->subpage_page;
 		for(p=firstlpn;p<=lastlpn;p++)

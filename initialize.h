@@ -2,7 +2,7 @@
 This project was supported by the National Basic Research 973 Program of China under Grant No.2011CB302301
 Huazhong University of Science and Technology (HUST)   Wuhan National Laboratory for Optoelectronics
 
-FileName£º initialize.h
+FileNameï¿½ï¿½ initialize.h
 Author: Hu Yang		Version: 2.1	Date:2011/12/02
 Description: 
 
@@ -49,9 +49,9 @@ Hao Luo         2011/01/01        2.0           Change               luohao13568
 #define WRITE 0
 
 /*********************************all states of each objects************************************************
-*Ò»ÏÂ¶¨ÒåÁËchannelµÄ¿ÕÏĞ£¬ÃüÁîµØÖ·´«Êä£¬Êı¾İ´«Êä£¬´«Êä£¬ÆäËûµÈ×´Ì¬
-*»¹ÓĞchipµÄ¿ÕÏĞ£¬Ğ´Ã¦£¬¶ÁÃ¦£¬ÃüÁîµØÖ·´«Êä£¬Êı¾İ´«Êä£¬²Á³ıÃ¦£¬copybackÃ¦£¬ÆäËûµÈ×´Ì¬
-*»¹ÓĞ¶ÁĞ´×ÓÇëÇó£¨sub£©µÄµÈ´ı£¬¶ÁÃüÁîµØÖ·´«Êä£¬¶Á£¬¶ÁÊı¾İ´«Êä£¬Ğ´ÃüÁîµØÖ·´«Êä£¬Ğ´Êı¾İ´«Êä£¬Ğ´´«Êä£¬Íê³ÉµÈ×´Ì¬
+*Ò»ï¿½Â¶ï¿½ï¿½ï¿½ï¿½ï¿½channelï¿½Ä¿ï¿½ï¿½Ğ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ä£¬ï¿½ï¿½ï¿½İ´ï¿½ï¿½ä£¬ï¿½ï¿½ï¿½ä£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬
+*ï¿½ï¿½ï¿½ï¿½chipï¿½Ä¿ï¿½ï¿½Ğ£ï¿½Ğ´Ã¦ï¿½ï¿½ï¿½ï¿½Ã¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ä£¬ï¿½ï¿½ï¿½İ´ï¿½ï¿½ä£¬ï¿½ï¿½ï¿½ï¿½Ã¦ï¿½ï¿½copybackÃ¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬
+*ï¿½ï¿½ï¿½Ğ¶ï¿½Ğ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½subï¿½ï¿½ï¿½ÄµÈ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ä£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½İ´ï¿½ï¿½ä£¬Ğ´ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ä£¬Ğ´ï¿½ï¿½ï¿½İ´ï¿½ï¿½ä£¬Ğ´ï¿½ï¿½ï¿½ä£¬ï¿½ï¿½Éµï¿½×´Ì¬
 ************************************************************************************************************/
 
 #define CHANNEL_IDLE 000
@@ -80,8 +80,8 @@ Hao Luo         2011/01/01        2.0           Change               luohao13568
 #define SR_W_TRANSFER 206
 #define SR_COMPLETE 299
 
-#define REQUEST_IN 300         //ÏÂÒ»ÌõÇëÇóµ½´ïµÄÊ±¼ä
-#define OUTPUT 301             //ÏÂÒ»´ÎÊı¾İÊä³öµÄÊ±¼ä
+#define REQUEST_IN 300         //ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½óµ½´ï¿½ï¿½Ê±ï¿½ï¿½
+#define OUTPUT 301             //ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
 
 #define GC_WAIT 400
 #define GC_ERASE_C_A 401
@@ -103,8 +103,8 @@ Hao Luo         2011/01/01        2.0           Change               luohao13568
 int *count;   //KXC:add a tabel to record the frequency
 
 /*****************************************
-*º¯Êı½á¹û×´Ì¬´úÂë
-*Status ÊÇº¯ÊıÀàĞÍ£¬ÆäÖµÊÇº¯Êı½á¹û×´Ì¬´úÂë
+*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½
+*Status ï¿½Çºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í£ï¿½ï¿½ï¿½Öµï¿½Çºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½
 ******************************************/
 #define TRUE		1
 #define FALSE		0
@@ -154,22 +154,22 @@ struct ac_time_characteristics{
 
 
 struct ssd_info{ 
-	double ssd_energy;                   //SSDµÄÄÜºÄ£¬ÊÇÊ±¼äºÍĞ¾Æ¬ÊıµÄº¯Êı,ÄÜºÄÒò×Ó
-	int64_t current_time;                //¼ÇÂ¼ÏµÍ³Ê±¼ä
+	double ssd_energy;                   //SSDï¿½ï¿½ï¿½ÜºÄ£ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ğ¾Æ¬ï¿½ï¿½ï¿½Äºï¿½ï¿½ï¿½,ï¿½Üºï¿½ï¿½ï¿½ï¿½ï¿½
+	int64_t current_time;                //ï¿½ï¿½Â¼ÏµÍ³Ê±ï¿½ï¿½
 	int64_t next_request_time;
-	unsigned int real_time_subreq;       //¼ÇÂ¼ÊµÊ±µÄĞ´ÇëÇó¸öÊı£¬ÓÃÔÚÈ«¶¯Ì¬·ÖÅäÊ±£¬channelÓÅÏÈµÄÇé¿ö
+	unsigned int real_time_subreq;       //ï¿½ï¿½Â¼ÊµÊ±ï¿½ï¿½Ğ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½channelï¿½ï¿½ï¿½Èµï¿½ï¿½ï¿½ï¿½
 	int flag;
-	int active_flag;                     //¼ÇÂ¼Ö÷¶¯Ğ´ÊÇ·ñ×èÈû£¬Èç¹û·¢ÏÖÖùÈû£¬ĞèÒª½«Ê±¼äÏòÇ°ÍÆ½ø,0±íÊ¾Ã»ÓĞ×èÈû£¬1±íÊ¾±»×èÈû£¬ĞèÒªÏòÇ°ÍÆ½øÊ±¼ä
+	int active_flag;                     //ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½Ğ´ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Ç°ï¿½Æ½ï¿½,0ï¿½ï¿½Ê¾Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½Ç°ï¿½Æ½ï¿½Ê±ï¿½ï¿½
 	unsigned int page;
 
-	unsigned int token;                  //ÔÚ¶¯Ì¬·ÖÅäÖĞ£¬Îª·ÀÖ¹Ã¿´Î·ÖÅäÔÚµÚÒ»¸öchannelĞèÒªÎ¬³ÖÒ»¸öÁîÅÆ£¬Ã¿´Î´ÓÁîÅÆËùÖ¸µÄÎ»ÖÃ¿ªÊ¼·ÖÅä
-	unsigned int gc_request;             //¼ÇÂ¼ÔÚSSDÖĞ£¬µ±Ç°Ê±¿ÌÓĞ¶àÉÙgc²Ù×÷µÄÇëÇó
+	unsigned int token;                  //ï¿½Ú¶ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½Ğ£ï¿½Îªï¿½ï¿½Ö¹Ã¿ï¿½Î·ï¿½ï¿½ï¿½ï¿½Úµï¿½Ò»ï¿½ï¿½channelï¿½ï¿½ÒªÎ¬ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½Ã¿ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½Î»ï¿½Ã¿ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½
+	unsigned int gc_request;             //ï¿½ï¿½Â¼ï¿½ï¿½SSDï¿½Ğ£ï¿½ï¿½ï¿½Ç°Ê±ï¿½ï¿½ï¿½Ğ¶ï¿½ï¿½ï¿½gcï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-	unsigned int write_request_count;    //¼ÇÂ¼Ğ´²Ù×÷µÄ´ÎÊı
-	unsigned int read_request_count;     //¼ÇÂ¼¶Á²Ù×÷µÄ´ÎÊı
-	int64_t write_avg;                   //¼ÇÂ¼ÓÃÓÚ¼ÆËãĞ´ÇëÇóÆ½¾ùÏìÓ¦Ê±¼äµÄÊ±¼ä
-	int64_t read_avg;                    //¼ÇÂ¼ÓÃÓÚ¼ÆËã¶ÁÇëÇóÆ½¾ùÏìÓ¦Ê±¼äµÄÊ±¼ä
-
+	unsigned int write_request_count;    //ï¿½ï¿½Â¼Ğ´ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½
+	unsigned int read_request_count;     //ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½
+	int64_t write_avg;                   //ï¿½ï¿½Â¼ï¿½ï¿½ï¿½Ú¼ï¿½ï¿½ï¿½Ğ´ï¿½ï¿½ï¿½ï¿½Æ½ï¿½ï¿½ï¿½ï¿½Ó¦Ê±ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
+	int64_t read_avg;                    //ï¿½ï¿½Â¼ï¿½ï¿½ï¿½Ú¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ½ï¿½ï¿½ï¿½ï¿½Ó¦Ê±ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
+	float av_write_count;               //KXC:add to judge whether hot of cold
 	unsigned int min_lsn;
 	unsigned int max_lsn;
 	unsigned long read_count;
@@ -187,12 +187,12 @@ struct ssd_info{
 	unsigned long mplane_erase_conut;
 	unsigned long interleave_mplane_erase_count;
 	unsigned long gc_copy_back;
-	unsigned long write_flash_count;     //Êµ¼Ê²úÉúµÄ¶ÔflashµÄĞ´²Ù×÷
-	unsigned long waste_page_count;      //¼ÇÂ¼ÒòÎª¸ß¼¶ÃüÁîµÄÏŞÖÆµ¼ÖÂµÄÒ³ÀË·Ñ
+	unsigned long write_flash_count;     //Êµï¿½Ê²ï¿½ï¿½ï¿½ï¿½Ä¶ï¿½flashï¿½ï¿½Ğ´ï¿½ï¿½ï¿½ï¿½
+	unsigned long waste_page_count;      //ï¿½ï¿½Â¼ï¿½ï¿½Îªï¿½ß¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æµï¿½ï¿½Âµï¿½Ò³ï¿½Ë·ï¿½
 	float ave_read_size;
 	float ave_write_size;
 	unsigned int request_queue_length;
-	unsigned int update_read_count;      //¼ÇÂ¼ÒòÎª¸üĞÂ²Ù×÷µ¼ÖÂµÄ¶îÍâ¶Á³ö²Ù×÷
+	unsigned int update_read_count;      //ï¿½ï¿½Â¼ï¿½ï¿½Îªï¿½ï¿½ï¿½Â²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÂµÄ¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 	char parameterfilename[30];
 	char tracefilename[30];
@@ -205,51 +205,51 @@ struct ssd_info{
 	FILE * statisticfile;
 	FILE * statisticfile2;
 
-    struct parameter_value *parameter;   //SSD²ÎÊıÒò×Ó
+    struct parameter_value *parameter;   //SSDï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	struct dram_info *dram;
 	struct request *request_queue;       //dynamic request queue
 	struct request *request_tail;	     // the tail of the request queue
-	struct sub_request *subs_w_head;     //µ±²ÉÓÃÈ«¶¯Ì¬·ÖÅäÊ±£¬·ÖÅäÊÇ²»ÖªµÀÓ¦¸Ã¹ÒÔØÄÄ¸öchannelÉÏ£¬ËùÒÔÏÈ¹ÒÔÚssdÉÏ£¬µÈ½øÈëprocessº¯ÊıÊ±²Å¹Òµ½ÏàÓ¦µÄchannelµÄ¶ÁÇëÇó¶ÓÁĞÉÏ
+	struct sub_request *subs_w_head;     //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç²ï¿½Öªï¿½ï¿½Ó¦ï¿½Ã¹ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½channelï¿½Ï£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¹ï¿½ï¿½ï¿½ssdï¿½Ï£ï¿½ï¿½È½ï¿½ï¿½ï¿½processï¿½ï¿½ï¿½ï¿½Ê±ï¿½Å¹Òµï¿½ï¿½ï¿½Ó¦ï¿½ï¿½channelï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	struct sub_request *subs_w_tail;
-	struct event_node *event;            //ÊÂ¼ş¶ÓÁĞ£¬Ã¿²úÉúÒ»¸öĞÂµÄÊÂ¼ş£¬°´ÕÕÊ±¼äË³Ğò¼Óµ½Õâ¸ö¶ÓÁĞ£¬ÔÚsimulateº¯Êı×îºó£¬¸ù¾İÕâ¸ö¶ÓÁĞ¶ÓÊ×µÄÊ±¼ä£¬È·¶¨Ê±¼ä
-	struct channel_info *channel_head;   //Ö¸Ïòchannel½á¹¹ÌåÊı×éµÄÊ×µØÖ·
+	struct event_node *event;            //ï¿½Â¼ï¿½ï¿½ï¿½ï¿½Ğ£ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Âµï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Ë³ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ£ï¿½ï¿½ï¿½simulateï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ó£¬¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¶ï¿½ï¿½×µï¿½Ê±ï¿½ä£¬È·ï¿½ï¿½Ê±ï¿½ï¿½
+	struct channel_info *channel_head;   //Ö¸ï¿½ï¿½channelï¿½á¹¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×µï¿½Ö·
 };
 
 
 struct channel_info{
-	int chip;                            //±íÊ¾ÔÚ¸Ã×ÜÏßÉÏÓĞ¶àÉÙ¿ÅÁ£
+	int chip;                            //ï¿½ï¿½Ê¾ï¿½Ú¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¶ï¿½ï¿½Ù¿ï¿½ï¿½ï¿½
 	unsigned long read_count;
 	unsigned long program_count;
 	unsigned long erase_count;
-	unsigned int token;                  //ÔÚ¶¯Ì¬·ÖÅäÖĞ£¬Îª·ÀÖ¹Ã¿´Î·ÖÅäÔÚµÚÒ»¸öchipĞèÒªÎ¬³ÖÒ»¸öÁîÅÆ£¬Ã¿´Î´ÓÁîÅÆËùÖ¸µÄÎ»ÖÃ¿ªÊ¼·ÖÅä
+	unsigned int token;                  //ï¿½Ú¶ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½Ğ£ï¿½Îªï¿½ï¿½Ö¹Ã¿ï¿½Î·ï¿½ï¿½ï¿½ï¿½Úµï¿½Ò»ï¿½ï¿½chipï¿½ï¿½ÒªÎ¬ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½Ã¿ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½Î»ï¿½Ã¿ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½
 
 	int current_state;                   //channel has serveral states, including idle, command/address transfer,data transfer,unknown
 	int next_state;
-	int64_t current_time;                //¼ÇÂ¼¸ÃÍ¨µÀµÄµ±Ç°Ê±¼ä
+	int64_t current_time;                //ï¿½ï¿½Â¼ï¿½ï¿½Í¨ï¿½ï¿½ï¿½Äµï¿½Ç°Ê±ï¿½ï¿½
 	int64_t next_state_predict_time;     //the predict time of next state, used to decide the sate at the moment
 
 	struct event_node *event;
-	struct sub_request *subs_r_head;     //channelÉÏµÄ¶ÁÇëÇó¶ÓÁĞÍ·£¬ÏÈ·şÎñ´¦ÓÚ¶ÓÁĞÍ·µÄ×ÓÇëÇó
-	struct sub_request *subs_r_tail;     //channelÉÏµÄ¶ÁÇëÇó¶ÓÁĞÎ²£¬ĞÂ¼Ó½øÀ´µÄ×ÓÇëÇó¼Óµ½¶ÓÎ²
-	struct sub_request *subs_w_head;     //channelÉÏµÄĞ´ÇëÇó¶ÓÁĞÍ·£¬ÏÈ·şÎñ´¦ÓÚ¶ÓÁĞÍ·µÄ×ÓÇëÇó
-	struct sub_request *subs_w_tail;     //channelÉÏµÄĞ´ÇëÇó¶ÓÁĞ£¬ĞÂ¼Ó½øÀ´µÄ×ÓÇëÇó¼Óµ½¶ÓÎ²
-	struct gc_operation *gc_command;     //¼ÇÂ¼ĞèÒª²úÉúgcµÄÎ»ÖÃ
+	struct sub_request *subs_r_head;     //channelï¿½ÏµÄ¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½ï¿½È·ï¿½ï¿½ï¿½ï¿½Ú¶ï¿½ï¿½ï¿½Í·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	struct sub_request *subs_r_tail;     //channelï¿½ÏµÄ¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î²ï¿½ï¿½ï¿½Â¼Ó½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½Î²
+	struct sub_request *subs_w_head;     //channelï¿½Ïµï¿½Ğ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½ï¿½È·ï¿½ï¿½ï¿½ï¿½Ú¶ï¿½ï¿½ï¿½Í·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	struct sub_request *subs_w_tail;     //channelï¿½Ïµï¿½Ğ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ£ï¿½ï¿½Â¼Ó½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½Î²
+	struct gc_operation *gc_command;     //ï¿½ï¿½Â¼ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½gcï¿½ï¿½Î»ï¿½ï¿½
 	struct chip_info *chip_head;        
 };
 
 
 struct chip_info{
-	unsigned int die_num;               //±íÊ¾Ò»¸ö¿ÅÁ£ÖĞÓĞ¶àÉÙ¸ödie
+	unsigned int die_num;               //ï¿½ï¿½Ê¾Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¶ï¿½ï¿½Ù¸ï¿½die
 	unsigned int plane_num_die;         //indicate how many planes in a die
 	unsigned int block_num_plane;       //indicate how many blocks in a plane
 	unsigned int page_num_block;        //indicate how many pages in a block
 	unsigned int subpage_num_page;      //indicate how many subpage in a page
-	unsigned int ers_limit;             //¸ÃchipÖĞÃ¿¿éÄÜ¹»±»²Á³ıµÄ´ÎÊı
-	unsigned int token;                 //ÔÚ¶¯Ì¬·ÖÅäÖĞ£¬Îª·ÀÖ¹Ã¿´Î·ÖÅäÔÚµÚÒ»¸ödieĞèÒªÎ¬³ÖÒ»¸öÁîÅÆ£¬Ã¿´Î´ÓÁîÅÆËùÖ¸µÄÎ»ÖÃ¿ªÊ¼·ÖÅä
+	unsigned int ers_limit;             //ï¿½ï¿½chipï¿½ï¿½Ã¿ï¿½ï¿½ï¿½Ü¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½
+	unsigned int token;                 //ï¿½Ú¶ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½Ğ£ï¿½Îªï¿½ï¿½Ö¹Ã¿ï¿½Î·ï¿½ï¿½ï¿½ï¿½Úµï¿½Ò»ï¿½ï¿½dieï¿½ï¿½ÒªÎ¬ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½Ã¿ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½Î»ï¿½Ã¿ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½
 	
 	int current_state;                  //channel has serveral states, including idle, command/address transfer,data transfer,unknown
 	int next_state;
-	int64_t current_time;               //¼ÇÂ¼¸ÃÍ¨µÀµÄµ±Ç°Ê±¼ä
+	int64_t current_time;               //ï¿½ï¿½Â¼ï¿½ï¿½Í¨ï¿½ï¿½ï¿½Äµï¿½Ç°Ê±ï¿½ï¿½
 	int64_t next_state_predict_time;    //the predict time of next state, used to decide the sate at the moment
  
 	unsigned long read_count;           //how many read count in the process of workload
@@ -263,38 +263,38 @@ struct chip_info{
 
 struct die_info{
 
-	unsigned int token;                 //ÔÚ¶¯Ì¬·ÖÅäÖĞ£¬Îª·ÀÖ¹Ã¿´Î·ÖÅäÔÚµÚÒ»¸öplaneĞèÒªÎ¬³ÖÒ»¸öÁîÅÆ£¬Ã¿´Î´ÓÁîÅÆËùÖ¸µÄÎ»ÖÃ¿ªÊ¼·ÖÅä
+	unsigned int token;                 //ï¿½Ú¶ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½Ğ£ï¿½Îªï¿½ï¿½Ö¹Ã¿ï¿½Î·ï¿½ï¿½ï¿½ï¿½Úµï¿½Ò»ï¿½ï¿½planeï¿½ï¿½ÒªÎ¬ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½Ã¿ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½Î»ï¿½Ã¿ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½
 	struct plane_info *plane_head;
 	
 };
 
 
 struct plane_info{
-	int add_reg_ppn;                    //read£¬writeÊ±°ÑµØÖ·´«ËÍµ½¸Ã±äÁ¿£¬¸Ã±äÁ¿´ú±íµØÖ·¼Ä´æÆ÷¡£dieÓÉbusy±äÎªidleÊ±£¬Çå³ıµØÖ· //ÓĞ¿ÉÄÜÒòÎªÒ»¶Ô¶àµÄÓ³Éä£¬ÔÚÒ»¸ö¶ÁÇëÇóÊ±£¬ÓĞ¶à¸öÏàÍ¬µÄlpn£¬ËùÒÔĞèÒªÓÃppnÀ´Çø·Ö  
-	unsigned int free_page;             //¸ÃplaneÖĞÓĞ¶àÉÙfree page
-	unsigned int ers_invalid;           //¼ÇÂ¼¸ÃplaneÖĞ²Á³ıÊ§Ğ§µÄ¿éÊı
-	unsigned int active_block[2];          //if a die has a active block, ¸ÃÏî±íÊ¾ÆäÎïÀí¿éºÅ
+	int add_reg_ppn;                    //readï¿½ï¿½writeÊ±ï¿½Ñµï¿½Ö·ï¿½ï¿½ï¿½Íµï¿½ï¿½Ã±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½dieï¿½ï¿½busyï¿½ï¿½ÎªidleÊ±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö· //ï¿½Ğ¿ï¿½ï¿½ï¿½ï¿½ï¿½ÎªÒ»ï¿½Ô¶ï¿½ï¿½Ó³ï¿½ä£¬ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ğ¶ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½lpnï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ppnï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  
+	unsigned int free_page;             //ï¿½ï¿½planeï¿½ï¿½ï¿½Ğ¶ï¿½ï¿½ï¿½free page
+	unsigned int ers_invalid;           //ï¿½ï¿½Â¼ï¿½ï¿½planeï¿½Ğ²ï¿½ï¿½ï¿½Ê§Ğ§ï¿½Ä¿ï¿½ï¿½ï¿½
+	unsigned int active_block[2];          //if a die has a active block, ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 										//KXC:a array to record the active boloc 0 for cold and 1 for hot
-	int can_erase_block;                //¼ÇÂ¼ÔÚÒ»¸öplaneÖĞ×¼±¸ÔÚgc²Ù×÷ÖĞ±»²Á³ı²Ù×÷µÄ¿é,-1±íÊ¾»¹Ã»ÓĞÕÒµ½ºÏÊÊµÄ¿é
-	struct direct_erase *erase_node;    //ÓÃÀ´¼ÇÂ¼¿ÉÒÔÖ±½ÓÉ¾³ıµÄ¿éºÅ,ÔÚ»ñÈ¡ĞÂµÄppnÊ±£¬Ã¿µ±³öÏÖinvalid_page_num==64Ê±£¬½«ÆäÌí¼Óµ½Õâ¸öÖ¸ÕëÉÏ£¬¹©GC²Ù×÷Ê±Ö±½ÓÉ¾³ı
+	int can_erase_block;                //ï¿½ï¿½Â¼ï¿½ï¿½Ò»ï¿½ï¿½planeï¿½ï¿½×¼ï¿½ï¿½ï¿½ï¿½gcï¿½ï¿½ï¿½ï¿½ï¿½Ğ±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½,-1ï¿½ï¿½Ê¾ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½ÊµÄ¿ï¿½
+	struct direct_erase *erase_node;    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½Ö±ï¿½ï¿½É¾ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½,ï¿½Ú»ï¿½È¡ï¿½Âµï¿½ppnÊ±ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½invalid_page_num==64Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½Ï£ï¿½ï¿½ï¿½GCï¿½ï¿½ï¿½ï¿½Ê±Ö±ï¿½ï¿½É¾ï¿½ï¿½
 	struct blk_info *blk_head;
 };
 
 
 struct blk_info{
-	unsigned int erase_count;          //¿éµÄ²Á³ı´ÎÊı£¬¸ÃÏî¼ÇÂ¼ÔÚramÖĞ£¬ÓÃÓÚGC
-	unsigned int free_page_num;        //¼ÇÂ¼¸Ã¿éÖĞµÄfreeÒ³¸öÊı£¬Í¬ÉÏ
-	unsigned int invalid_page_num;     //¼ÇÂ¼¸Ã¿éÖĞÊ§Ğ§Ò³µÄ¸öÊı£¬Í¬ÉÏ
-	int last_write_page;               //¼ÇÂ¼×î½üÒ»´ÎĞ´²Ù×÷Ö´ĞĞµÄÒ³Êı,-1±íÊ¾¸Ã¿éÃ»ÓĞÒ»Ò³±»Ğ´¹ı
-	struct page_info *page_head;       //¼ÇÂ¼Ã¿Ò»×ÓÒ³µÄ×´Ì¬
+	unsigned int erase_count;          //ï¿½ï¿½Ä²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ramï¿½Ğ£ï¿½ï¿½ï¿½ï¿½ï¿½GC
+	unsigned int free_page_num;        //ï¿½ï¿½Â¼ï¿½Ã¿ï¿½ï¿½Ğµï¿½freeÒ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½
+	unsigned int invalid_page_num;     //ï¿½ï¿½Â¼ï¿½Ã¿ï¿½ï¿½ï¿½Ê§Ğ§Ò³ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½
+	int last_write_page;               //ï¿½ï¿½Â¼ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Ğ´ï¿½ï¿½ï¿½ï¿½Ö´ï¿½Ğµï¿½Ò³ï¿½ï¿½,-1ï¿½ï¿½Ê¾ï¿½Ã¿ï¿½Ã»ï¿½ï¿½Ò»Ò³ï¿½ï¿½Ğ´ï¿½ï¿½
+	struct page_info *page_head;       //ï¿½ï¿½Â¼Ã¿Ò»ï¿½ï¿½Ò³ï¿½ï¿½×´Ì¬
 };
 
 
-struct page_info{                      //lpn¼ÇÂ¼¸ÃÎïÀíÒ³´æ´¢µÄÂß¼­Ò³£¬µ±¸ÃÂß¼­Ò³ÓĞĞ§Ê±£¬valid_state´óÓÚ0£¬free_state´óÓÚ0£»
+struct page_info{                      //lpnï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³ï¿½æ´¢ï¿½ï¿½ï¿½ß¼ï¿½Ò³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¼ï¿½Ò³ï¿½ï¿½Ğ§Ê±ï¿½ï¿½valid_stateï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½free_stateï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½
 	int valid_state;                   //indicate the page is valid or invalid
 	int free_state;                    //each bit indicates the subpage is free or occupted. 1 indicates that the bit is free and 0 indicates that the bit is used
 	unsigned int lpn;                 
-	unsigned int written_count;        //¼ÇÂ¼¸ÃÒ³±»Ğ´µÄ´ÎÊı
+	unsigned int written_count;        //ï¿½ï¿½Â¼ï¿½ï¿½Ò³ï¿½ï¿½Ğ´ï¿½Ä´ï¿½ï¿½ï¿½
 };
 
 
@@ -310,16 +310,16 @@ struct dram_info{
 
 
 /*********************************************************************************************
-*bufferÖĞµÄÒÑĞ´»ØµÄÒ³µÄ¹ÜÀí·½·¨:ÔÚbuffer_infoÖĞÎ¬³ÖÒ»¸ö¶ÓÁĞ:written¡£Õâ¸ö¶ÓÁĞÓĞ¶ÓÊ×£¬¶ÓÎ²¡£
-*Ã¿´Îbuffer managementÖĞ£¬ÇëÇóÃüÖĞÊ±£¬Õâ¸ögroupÒªÒÆµ½LRUµÄ¶ÓÊ×£¬Í¬Ê±¿´Õâ¸ögroupÖĞÊÇ·ñÓĞÒÑ
-*Ğ´»ØµÄlsn£¬ÓĞµÄ»°£¬ĞèÒª½«Õâ¸ögroupÍ¬Ê±ÒÆ¶¯µ½written¶ÓÁĞµÄ¶ÓÎ²¡£Õâ¸ö¶ÓÁĞµÄÔö³¤ºÍ¼õÉÙµÄ·½·¨
-*ÈçÏÂ:µ±ĞèÒªÍ¨¹ıÉ¾³ıÒÑĞ´»ØµÄlsnÎªĞÂµÄĞ´ÇëÇóÌÚ³ö¿Õ¼äÊ±£¬ÔÚwritten¶ÓÊ×ÖĞÕÒ³ö¿ÉÒÔÉ¾³ıµÄlsn¡£
-*µ±ĞèÒªÔö¼ÓĞÂµÄĞ´»ØlsnÊ±£¬ÕÒµ½¿ÉÒÔĞ´»ØµÄÒ³£¬½«Õâ¸ögroup¼Óµ½Ö¸Õëwritten_insertËùÖ¸¶ÓÁĞwritten
-*½ÚµãÇ°¡£ÎÒÃÇĞèÒªÔÙÎ¬³ÖÒ»¸öÖ¸Õë£¬ÔÚbufferµÄLRU¶ÓÁĞÖĞÖ¸Ïò×îÀÏµÄÒ»¸öĞ´»ØÁËµÄÒ³£¬ÏÂ´ÎÒªÔÙĞ´»ØÊ±£¬
-*Ö»ĞèÓÉÕâ¸öÖ¸Õë»ØÍËµ½Ç°Ò»¸ögroupĞ´»Ø¼´¿É¡£
+*bufferï¿½Ğµï¿½ï¿½ï¿½Ğ´ï¿½Øµï¿½Ò³ï¿½Ä¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:ï¿½ï¿½buffer_infoï¿½ï¿½Î¬ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:writtenï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¶ï¿½ï¿½×£ï¿½ï¿½ï¿½Î²ï¿½ï¿½
+*Ã¿ï¿½ï¿½buffer managementï¿½Ğ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½groupÒªï¿½Æµï¿½LRUï¿½Ä¶ï¿½ï¿½×£ï¿½Í¬Ê±ï¿½ï¿½ï¿½ï¿½ï¿½groupï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½
+*Ğ´ï¿½Øµï¿½lsnï¿½ï¿½ï¿½ĞµÄ»ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½groupÍ¬Ê±ï¿½Æ¶ï¿½ï¿½ï¿½writtenï¿½ï¿½ï¿½ĞµÄ¶ï¿½Î²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ÙµÄ·ï¿½ï¿½ï¿½
+*ï¿½ï¿½ï¿½ï¿½:ï¿½ï¿½ï¿½ï¿½ÒªÍ¨ï¿½ï¿½É¾ï¿½ï¿½ï¿½ï¿½Ğ´ï¿½Øµï¿½lsnÎªï¿½Âµï¿½Ğ´ï¿½ï¿½ï¿½ï¿½ï¿½Ú³ï¿½ï¿½Õ¼ï¿½Ê±ï¿½ï¿½ï¿½ï¿½writtenï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³ï¿½ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½ï¿½ï¿½lsnï¿½ï¿½
+*ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½Ğ´ï¿½ï¿½lsnÊ±ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½Ğ´ï¿½Øµï¿½Ò³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½groupï¿½Óµï¿½Ö¸ï¿½ï¿½written_insertï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½written
+*ï¿½Úµï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½Î¬ï¿½ï¿½Ò»ï¿½ï¿½Ö¸ï¿½ë£¬ï¿½ï¿½bufferï¿½ï¿½LRUï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½Ò»ï¿½ï¿½Ğ´ï¿½ï¿½ï¿½Ëµï¿½Ò³ï¿½ï¿½ï¿½Â´ï¿½Òªï¿½ï¿½Ğ´ï¿½ï¿½Ê±ï¿½ï¿½
+*Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½Ëµï¿½Ç°Ò»ï¿½ï¿½groupĞ´ï¿½Ø¼ï¿½ï¿½É¡ï¿½
 **********************************************************************************************/
 typedef struct buffer_group{
-	TREE_NODE node;                     //Ê÷½ÚµãµÄ½á¹¹Ò»¶¨Òª·ÅÔÚÓÃ»§×Ô¶¨Òå½á¹¹µÄ×îÇ°Ãæ£¬×¢Òâ!
+	TREE_NODE node;                     //ï¿½ï¿½ï¿½Úµï¿½Ä½á¹¹Ò»ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½á¹¹ï¿½ï¿½ï¿½ï¿½Ç°ï¿½æ£¬×¢ï¿½ï¿½!
 	struct buffer_group *LRU_link_next;	// next node in LRU list
 	struct buffer_group *LRU_link_pre;	// previous node in LRU list
 
@@ -339,23 +339,23 @@ struct dram_parameter{
 
 
 struct map_info{
-	struct entry *map_entry;            //¸ÃÏîÊÇÓ³Éä±í½á¹¹ÌåÖ¸Õë,each entry indicate a mapping information
+	struct entry *map_entry;            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó³ï¿½ï¿½ï¿½ï¿½á¹¹ï¿½ï¿½Ö¸ï¿½ï¿½,each entry indicate a mapping information
 	struct buffer_info *attach_info;	// info about attach map
 };
 
 
 struct controller_info{
-	unsigned int frequency;             //±íÊ¾¸Ã¿ØÖÆÆ÷µÄ¹¤×÷ÆµÂÊ
-	int64_t clock_time;                 //±íÊ¾Ò»¸öÊ±ÖÓÖÜÆÚµÄÊ±¼ä
-	float power;                        //±íÊ¾¿ØÖÆÆ÷µ¥Î»Ê±¼äµÄÄÜºÄ
+	unsigned int frequency;             //ï¿½ï¿½Ê¾ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¹ï¿½ï¿½ï¿½Æµï¿½ï¿½
+	int64_t clock_time;                 //ï¿½ï¿½Ê¾Ò»ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½Ê±ï¿½ï¿½
+	float power;                        //ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»Ê±ï¿½ï¿½ï¿½ï¿½Üºï¿½
 };
 
 
 struct request{
-	int64_t time;                      //ÇëÇóµ½´ïµÄÊ±¼ä£¬µ¥Î»Îªus,ÕâÀïºÍÍ¨³£µÄÏ°¹ß²»Ò»Ñù£¬Í¨³£µÄÊÇmsÎªµ¥Î»£¬ÕâÀïĞèÒªÓĞ¸öµ¥Î»±ä»»¹ı³Ì
-	unsigned int lsn;                  //ÇëÇóµÄÆğÊ¼µØÖ·£¬Âß¼­µØÖ·
-	unsigned int size;                 //ÇëÇóµÄ´óĞ¡£¬¼È¶àÉÙ¸öÉÈÇø
-	unsigned int operation;            //ÇëÇóµÄÖÖÀà£¬1Îª¶Á£¬0ÎªĞ´
+	int64_t time;                      //ï¿½ï¿½ï¿½óµ½´ï¿½ï¿½Ê±ï¿½ä£¬ï¿½ï¿½Î»Îªus,ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ß²ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½msÎªï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½Ğ¸ï¿½ï¿½ï¿½Î»ï¿½ä»»ï¿½ï¿½ï¿½ï¿½
+	unsigned int lsn;                  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ß¼ï¿½ï¿½ï¿½Ö·
+	unsigned int size;                 //ï¿½ï¿½ï¿½ï¿½Ä´ï¿½Ğ¡ï¿½ï¿½ï¿½È¶ï¿½ï¿½Ù¸ï¿½ï¿½ï¿½ï¿½ï¿½
+	unsigned int operation;            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à£¬1Îªï¿½ï¿½ï¿½ï¿½0ÎªĞ´
 
 	unsigned int* need_distr_flag;
 	unsigned int complete_lsn_count;   //record the count of lsn served by buffer
@@ -364,54 +364,54 @@ struct request{
 
 	int64_t begin_time;
 	int64_t response_time;
-	double energy_consumption;         //¼ÇÂ¼¸ÃÇëÇóµÄÄÜÁ¿ÏûºÄ£¬µ¥Î»ÎªuJ
+	double energy_consumption;         //ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½Î»ÎªuJ
 
-	struct sub_request *subs;          //Á´½Óµ½ÊôÓÚ¸ÃÇëÇóµÄËùÓĞ×ÓÇëÇó
-	struct request *next_node;         //Ö¸ÏòÏÂÒ»¸öÇëÇó½á¹¹Ìå
+	struct sub_request *subs;          //ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½Ú¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	struct request *next_node;         //Ö¸ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½á¹¹ï¿½ï¿½
 };
 
 
 struct sub_request{
-	unsigned int lpn;                  //ÕâÀï±íÊ¾¸Ã×ÓÇëÇóµÄÂß¼­Ò³ºÅ
-	unsigned int ppn;                  //·ÖÅäÄÇ¸öÎïÀí×ÓÒ³¸øÕâ¸ö×ÓÇëÇó¡£ÔÚmulti_chip_page_mappingÖĞ£¬²úÉú×ÓÒ³ÇëÇóÊ±¿ÉÄÜ¾ÍÖªµÀpsnµÄÖµ£¬ÆäËûÊ±ºòpsnµÄÖµÓÉpage_map_read,page_map_writeµÈFTL×îµ×²ãº¯Êı²úÉú¡£ 
-	unsigned int operation;            //±íÊ¾¸Ã×ÓÇëÇóµÄÀàĞÍ£¬³ıÁË¶Á1 Ğ´0£¬»¹ÓĞ²Á³ı£¬two planeµÈ²Ù×÷ 
+	unsigned int lpn;                  //ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¼ï¿½Ò³ï¿½ï¿½
+	unsigned int ppn;                  //ï¿½ï¿½ï¿½ï¿½ï¿½Ç¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½multi_chip_page_mappingï¿½Ğ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ü¾ï¿½Öªï¿½ï¿½psnï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½psnï¿½ï¿½Öµï¿½ï¿½page_map_read,page_map_writeï¿½ï¿½FTLï¿½ï¿½×²ãº¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
+	unsigned int operation;            //ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í£ï¿½ï¿½ï¿½ï¿½Ë¶ï¿½1 Ğ´0ï¿½ï¿½ï¿½ï¿½ï¿½Ğ²ï¿½ï¿½ï¿½ï¿½ï¿½two planeï¿½È²ï¿½ï¿½ï¿½ 
 	int size;
 	int hot;                          //KXC:add a hot-cold flag
 
-	unsigned int current_state;        //±íÊ¾¸Ã×ÓÇëÇóËù´¦µÄ×´Ì¬£¬¼ûºê¶¨Òåsub request
+	unsigned int current_state;        //ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ê¶¨ï¿½ï¿½sub request
 	int64_t current_time;
 	unsigned int next_state;
 	int64_t next_state_predict_time;
-	 unsigned int state;              //Ê¹ÓÃstateµÄ×î¸ßÎ»±íÊ¾¸Ã×ÓÇëÇóÊÇ·ñÊÇÒ»¶Ô¶àÓ³Éä¹ØÏµÖĞµÄÒ»¸ö£¬ÊÇµÄ»°£¬ĞèÒª¶Áµ½bufferÖĞ¡£1±íÊ¾ÊÇÒ»¶Ô¶à£¬0±íÊ¾²»ÓÃĞ´µ½buffer
-	                                  //¶ÁÇëÇó²»ĞèÒªÕâ¸ö³ÉÔ±£¬lsn¼Ósize¾Í¿ÉÒÔ·Ö±æ³ö¸ÃÒ³µÄ×´Ì¬;µ«ÊÇĞ´ÇëÇóĞèÒªÕâ¸ö³ÉÔ±£¬´ó²¿·ÖĞ´×ÓÇëÇóÀ´×ÔÓÚbufferĞ´»Ø²Ù×÷£¬¿ÉÄÜÓĞÀàËÆ×ÓÒ³²»Á¬ĞøµÄÇé¿ö£¬ËùÒÔĞèÒªµ¥¶ÀÎ¬³Ö¸Ã³ÉÔ±
+	 unsigned int state;              //Ê¹ï¿½ï¿½stateï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½Ò»ï¿½Ô¶ï¿½Ó³ï¿½ï¿½ï¿½Ïµï¿½Ğµï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ÇµÄ»ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½bufferï¿½Ğ¡ï¿½1ï¿½ï¿½Ê¾ï¿½ï¿½Ò»ï¿½Ô¶à£¬0ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½Ğ´ï¿½ï¿½buffer
+	                                  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Ô±ï¿½ï¿½lsnï¿½ï¿½sizeï¿½Í¿ï¿½ï¿½Ô·Ö±ï¿½ï¿½ï¿½ï¿½Ò³ï¿½ï¿½×´Ì¬;ï¿½ï¿½ï¿½ï¿½Ğ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Ô±ï¿½ï¿½ï¿½ó²¿·ï¿½Ğ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½bufferĞ´ï¿½Ø²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Î¬ï¿½Ö¸Ã³ï¿½Ô±
 
-	int64_t begin_time;               //×ÓÇëÇó¿ªÊ¼Ê±¼ä
-	int64_t complete_time;            //¼ÇÂ¼¸Ã×ÓÇëÇóµÄ´¦ÀíÊ±¼ä,¼ÈÕæÕıĞ´Èë»òÕß¶Á³öÊı¾İµÄÊ±¼ä
+	int64_t begin_time;               //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼Ê±ï¿½ï¿½
+	int64_t complete_time;            //ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½Ê±ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ´ï¿½ï¿½ï¿½ï¿½ß¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½İµï¿½Ê±ï¿½ï¿½
 
-	struct local *location;           //ÔÚ¾²Ì¬·ÖÅäºÍ»ìºÏ·ÖÅä·½Ê½ÖĞ£¬ÒÑÖªlpn¾ÍÖªµÀ¸Ãlpn¸Ã·ÖÅäµ½ÄÇ¸öchannel£¬chip£¬die£¬plane£¬Õâ¸ö½á¹¹ÌåÓÃÀ´±£´æ¼ÆËãµÃµ½µÄµØÖ·
-	struct sub_request *next_subs;    //Ö¸ÏòÊôÓÚÍ¬Ò»¸örequestµÄ×ÓÇëÇó
-	struct sub_request *next_node;    //Ö¸ÏòÍ¬Ò»¸öchannelÖĞÏÂÒ»¸ö×ÓÇëÇó½á¹¹Ìå
-	struct sub_request *update;       //ÒòÎªÔÚĞ´²Ù×÷ÖĞ´æÔÚ¸üĞÂ²Ù×÷£¬ÒòÎªÔÚ¶¯Ì¬·ÖÅä·½Ê½ÖĞÎŞ·¨Ê¹ÓÃcopyback²Ù×÷£¬ĞèÒª½«Ô­À´µÄÒ³¶Á³öºó²ÅÄÜ½øĞĞĞ´²Ù×÷£¬ËùÒÔ£¬½«Òò¸üĞÂ²úÉúµÄ¶Á²Ù×÷¹ÒÔÚÕâ¸öÖ¸ÕëÉÏ
+	struct local *location;           //ï¿½Ú¾ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½Í»ï¿½Ï·ï¿½ï¿½ä·½Ê½ï¿½Ğ£ï¿½ï¿½ï¿½Öªlpnï¿½ï¿½Öªï¿½ï¿½ï¿½ï¿½lpnï¿½Ã·ï¿½ï¿½äµ½ï¿½Ç¸ï¿½channelï¿½ï¿½chipï¿½ï¿½dieï¿½ï¿½planeï¿½ï¿½ï¿½ï¿½ï¿½ï¿½á¹¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½ï¿½Äµï¿½Ö·
+	struct sub_request *next_subs;    //Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬Ò»ï¿½ï¿½requestï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	struct sub_request *next_node;    //Ö¸ï¿½ï¿½Í¬Ò»ï¿½ï¿½channelï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½á¹¹ï¿½ï¿½
+	struct sub_request *update;       //ï¿½ï¿½Îªï¿½ï¿½Ğ´ï¿½ï¿½ï¿½ï¿½ï¿½Ğ´ï¿½ï¿½Ú¸ï¿½ï¿½Â²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½Ú¶ï¿½Ì¬ï¿½ï¿½ï¿½ä·½Ê½ï¿½ï¿½ï¿½Ş·ï¿½Ê¹ï¿½ï¿½copybackï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½Ô­ï¿½ï¿½ï¿½ï¿½Ò³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü½ï¿½ï¿½ï¿½Ğ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â²ï¿½ï¿½ï¿½ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½
 };
 
 
 /***********************************************************************
-*ÊÂ¼ş½Úµã¿ØÖÆÊ±¼äµÄÔö³¤£¬Ã¿´ÎÊ±¼äµÄÔö¼ÓÊÇ¸ù¾İÊ±¼ä×î½üµÄÒ»¸öÊÂ¼şÀ´È·¶¨µÄ
+*ï¿½Â¼ï¿½ï¿½Úµï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¸ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½È·ï¿½ï¿½ï¿½ï¿½
 ************************************************************************/
 struct event_node{
-	int type;                        //¼ÇÂ¼¸ÃÊÂ¼şµÄÀàĞÍ£¬1±íÊ¾ÃüÁîÀàĞÍ£¬2±íÊ¾Êı¾İ´«ÊäÀàĞÍ
-	int64_t predict_time;            //¼ÇÂ¼Õâ¸öÊ±¼ä¿ªÊ¼µÄÔ¤¼ÆÊ±¼ä£¬·ÀÖ¹ÌáÇ°Ö´ĞĞÕâ¸öÊ±¼ä
+	int type;                        //ï¿½ï¿½Â¼ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í£ï¿½1ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í£ï¿½2ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½İ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	int64_t predict_time;            //ï¿½ï¿½Â¼ï¿½ï¿½ï¿½Ê±ï¿½ä¿ªÊ¼ï¿½ï¿½Ô¤ï¿½ï¿½Ê±ï¿½ä£¬ï¿½ï¿½Ö¹ï¿½ï¿½Ç°Ö´ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
 	struct event_node *next_node;
 	struct event_node *pre_node;
 };
 
 struct parameter_value{
-	unsigned int chip_num;          //¼ÇÂ¼Ò»¸öSSDÖĞÓĞ¶àÉÙ¸ö¿ÅÁ£
-	unsigned int dram_capacity;     //¼ÇÂ¼SSDÖĞDRAM capacity
-	unsigned int cpu_sdram;         //¼ÇÂ¼Æ¬ÄÚÓĞ¶àÉÙ
+	unsigned int chip_num;          //ï¿½ï¿½Â¼Ò»ï¿½ï¿½SSDï¿½ï¿½ï¿½Ğ¶ï¿½ï¿½Ù¸ï¿½ï¿½ï¿½ï¿½ï¿½
+	unsigned int dram_capacity;     //ï¿½ï¿½Â¼SSDï¿½ï¿½DRAM capacity
+	unsigned int cpu_sdram;         //ï¿½ï¿½Â¼Æ¬ï¿½ï¿½ï¿½Ğ¶ï¿½ï¿½ï¿½
 
-	unsigned int channel_number;    //¼ÇÂ¼SSDÖĞÓĞ¶àÉÙ¸öÍ¨µÀ£¬Ã¿¸öÍ¨µÀÊÇµ¥¶ÀµÄbus
-	unsigned int chip_channel[100]; //ÉèÖÃSSDÖĞchannelÊıºÍÃ¿channelÉÏ¿ÅÁ£µÄÊıÁ¿
+	unsigned int channel_number;    //ï¿½ï¿½Â¼SSDï¿½ï¿½ï¿½Ğ¶ï¿½ï¿½Ù¸ï¿½Í¨ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½Í¨ï¿½ï¿½ï¿½Çµï¿½ï¿½ï¿½ï¿½ï¿½bus
+	unsigned int chip_channel[100]; //ï¿½ï¿½ï¿½ï¿½SSDï¿½ï¿½channelï¿½ï¿½ï¿½ï¿½Ã¿channelï¿½Ï¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 	unsigned int die_chip;    
 	unsigned int plane_die;
@@ -423,16 +423,16 @@ struct parameter_value{
 	unsigned int subpage_capacity;
 
 
-	unsigned int ers_limit;         //¼ÇÂ¼Ã¿¸ö¿é¿É²Á³ıµÄ´ÎÊı
-	int address_mapping;            //¼ÇÂ¼Ó³ÉäµÄÀàĞÍ£¬1£ºpage£»2£ºblock£»3£ºfast
-	int wear_leveling;              // WLËã·¨
-	int gc;                         //¼ÇÂ¼gc²ßÂÔ
-	int clean_in_background;        //Çå³ı²Ù×÷ÊÇ·ñÔÚÇ°Ì¨Íê³É
-	int alloc_pool;                 //allocation pool ´óĞ¡(plane£¬die£¬chip£¬channel),Ò²¾ÍÊÇÓµÓĞactive_blockµÄµ¥Î»
+	unsigned int ers_limit;         //ï¿½ï¿½Â¼Ã¿ï¿½ï¿½ï¿½ï¿½É²ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½
+	int address_mapping;            //ï¿½ï¿½Â¼Ó³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í£ï¿½1ï¿½ï¿½pageï¿½ï¿½2ï¿½ï¿½blockï¿½ï¿½3ï¿½ï¿½fast
+	int wear_leveling;              // WLï¿½ã·¨
+	int gc;                         //ï¿½ï¿½Â¼gcï¿½ï¿½ï¿½ï¿½
+	int clean_in_background;        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½Ç°Ì¨ï¿½ï¿½ï¿½
+	int alloc_pool;                 //allocation pool ï¿½ï¿½Ğ¡(planeï¿½ï¿½dieï¿½ï¿½chipï¿½ï¿½channel),Ò²ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½active_blockï¿½Äµï¿½Î»
 	float overprovide;
-	float gc_threshold;             //µ±´ïµ½Õâ¸öãĞÖµÊ±£¬¿ªÊ¼GC²Ù×÷£¬ÔÚÖ÷¶¯Ğ´²ßÂÔÖĞ£¬¿ªÊ¼GC²Ù×÷ºó¿ÉÒÔÁÙÊ±ÖĞ¶ÏGC²Ù×÷£¬·şÎñĞÂµ½µÄÇëÇó£»ÔÚÆÕÍ¨²ßÂÔÖĞ£¬GC²»¿ÉÖĞ¶Ï
+	float gc_threshold;             //ï¿½ï¿½ï¿½ïµ½ï¿½ï¿½ï¿½ï¿½ï¿½ÖµÊ±ï¿½ï¿½ï¿½ï¿½Ê¼GCï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ´ï¿½ï¿½ï¿½ï¿½ï¿½Ğ£ï¿½ï¿½ï¿½Ê¼GCï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½Ğ¶ï¿½GCï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½Ğ£ï¿½GCï¿½ï¿½ï¿½ï¿½ï¿½Ğ¶ï¿½
 
-	double operating_current;       //NAND FLASHµÄ¹¤×÷µçÁ÷µ¥Î»ÊÇuA
+	double operating_current;       //NAND FLASHï¿½Ä¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½uA
 	double supply_voltage;	
 	double dram_active_current;     //cpu sdram work current   uA
 	double dram_standby_current;    //cpu sdram work current   uA
@@ -440,41 +440,41 @@ struct parameter_value{
 	double dram_voltage;            //cpu sdram work voltage  V
 
 	int buffer_management;          //indicates that there are buffer management or not
-	int scheduling_algorithm;       //¼ÇÂ¼Ê¹ÓÃÄÄÖÖµ÷¶ÈËã·¨£¬1:FCFS
+	int scheduling_algorithm;       //ï¿½ï¿½Â¼Ê¹ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ã·¨ï¿½ï¿½1:FCFS
 	float quick_radio;
 	int related_mapping;
 
 	unsigned int time_step;
 	unsigned int small_large_write; //the threshould of large write, large write do not occupt buffer, which is written back to flash directly
 
-	int striping;                   //±íÊ¾ÊÇ·ñÊ¹ÓÃÁËstriping·½Ê½£¬0±íÊ¾Ã»ÓĞ£¬1±íÊ¾ÓĞ
+	int striping;                   //ï¿½ï¿½Ê¾ï¿½Ç·ï¿½Ê¹ï¿½ï¿½ï¿½ï¿½stripingï¿½ï¿½Ê½ï¿½ï¿½0ï¿½ï¿½Ê¾Ã»ï¿½Ğ£ï¿½1ï¿½ï¿½Ê¾ï¿½ï¿½
 	int interleaving;
 	int pipelining;
 	int threshold_fixed_adjust;
 	int threshold_value;
-	int active_write;               //±íÊ¾ÊÇ·ñÖ´ĞĞÖ÷¶¯Ğ´²Ù×÷1,yes;0,no
-	float gc_hard_threshold;        //ÆÕÍ¨²ßÂÔÖĞÓÃ²»µ½¸Ã²ÎÊı£¬Ö»ÓĞÔÚÖ÷¶¯Ğ´²ßÂÔÖĞ£¬µ±Âú×ãÕâ¸öãĞÖµÊ±£¬GC²Ù×÷²»¿ÉÖĞ¶Ï
-	int allocation_scheme;          //¼ÇÂ¼·ÖÅä·½Ê½µÄÑ¡Ôñ£¬0±íÊ¾¶¯Ì¬·ÖÅä£¬1±íÊ¾¾²Ì¬·ÖÅä
-	int static_allocation;          //¼ÇÂ¼ÊÇÄÇÖÖ¾²Ì¬·ÖÅä·½Ê½£¬ÈçICS09ÄÇÆªÎÄÕÂËùÊöµÄËùÓĞ¾²Ì¬·ÖÅä·½Ê½
-	int dynamic_allocation;         //¼ÇÂ¼¶¯Ì¬·ÖÅäµÄ·½Ê½
+	int active_write;               //ï¿½ï¿½Ê¾ï¿½Ç·ï¿½Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ´ï¿½ï¿½ï¿½ï¿½1,yes;0,no
+	float gc_hard_threshold;        //ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã²ï¿½ï¿½ï¿½ï¿½Ã²ï¿½ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ´ï¿½ï¿½ï¿½ï¿½ï¿½Ğ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÖµÊ±ï¿½ï¿½GCï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¶ï¿½
+	int allocation_scheme;          //ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ä·½Ê½ï¿½ï¿½Ñ¡ï¿½ï¿½0ï¿½ï¿½Ê¾ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ä£¬1ï¿½ï¿½Ê¾ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½
+	int static_allocation;          //ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½Ì¬ï¿½ï¿½ï¿½ä·½Ê½ï¿½ï¿½ï¿½ï¿½ICS09ï¿½ï¿½Æªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¾ï¿½Ì¬ï¿½ï¿½ï¿½ä·½Ê½
+	int dynamic_allocation;         //ï¿½ï¿½Â¼ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½Ä·ï¿½Ê½
 	int advanced_commands;  
 	int ad_priority;                //record the priority between two plane operation and interleave operation
 	int ad_priority2;               //record the priority of channel-level, 0 indicates that the priority order of channel-level is highest; 1 indicates the contrary
 	int greed_CB_ad;                //0 don't use copyback advanced commands greedily; 1 use copyback advanced commands greedily
 	int greed_MPW_ad;               //0 don't use multi-plane write advanced commands greedily; 1 use multi-plane write advanced commands greedily
-	int aged;                       //1±íÊ¾ĞèÒª½«Õâ¸öSSD±ä³Éaged£¬0±íÊ¾ĞèÒª½«Õâ¸öSSD±£³Önon-aged
+	int aged;                       //1ï¿½ï¿½Ê¾ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½SSDï¿½ï¿½ï¿½agedï¿½ï¿½0ï¿½ï¿½Ê¾ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½SSDï¿½ï¿½ï¿½ï¿½non-aged
 	float aged_ratio; 
-	int queue_length;               //ÇëÇó¶ÓÁĞµÄ³¤¶ÈÏŞÖÆ
+	int queue_length;               //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ĞµÄ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 	struct ac_time_characteristics time_characteristics;
 };
 
 /********************************************************
-*mapping information,stateµÄ×î¸ßÎ»±íÊ¾ÊÇ·ñÓĞ¸½¼ÓÓ³Éä¹ØÏµ
+*mapping information,stateï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½Ê¾ï¿½Ç·ï¿½ï¿½Ğ¸ï¿½ï¿½ï¿½Ó³ï¿½ï¿½ï¿½Ïµ
 *********************************************************/
 struct entry{                       
-	unsigned int pn;                //ÎïÀíºÅ£¬¼È¿ÉÒÔ±íÊ¾ÎïÀíÒ³ºÅ£¬Ò²¿ÉÒÔ±íÊ¾ÎïÀí×ÓÒ³ºÅ£¬Ò²¿ÉÒÔ±íÊ¾ÎïÀí¿éºÅ
-	int state;                      //Ê®Áù½øÖÆ±íÊ¾µÄ»°ÊÇ0000-FFFF£¬Ã¿Î»±íÊ¾ÏàÓ¦µÄ×ÓÒ³ÊÇ·ñÓĞĞ§£¨Ò³Ó³Éä£©¡£±ÈÈçÔÚÕâ¸öÒ³ÖĞ£¬0£¬1ºÅ×ÓÒ³ÓĞĞ§£¬2£¬3ÎŞĞ§£¬Õâ¸öÓ¦¸ÃÊÇ0x0003.
+	unsigned int pn;                //ï¿½ï¿½ï¿½ï¿½ï¿½Å£ï¿½ï¿½È¿ï¿½ï¿½Ô±ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½Ò³ï¿½Å£ï¿½Ò²ï¿½ï¿½ï¿½Ô±ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³ï¿½Å£ï¿½Ò²ï¿½ï¿½ï¿½Ô±ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	int state;                      //Ê®ï¿½ï¿½ï¿½ï¿½ï¿½Æ±ï¿½Ê¾ï¿½Ä»ï¿½ï¿½ï¿½0000-FFFFï¿½ï¿½Ã¿Î»ï¿½ï¿½Ê¾ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½Ò³ï¿½Ç·ï¿½ï¿½ï¿½Ğ§ï¿½ï¿½Ò³Ó³ï¿½ä£©ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³ï¿½Ğ£ï¿½0ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½Ò³ï¿½ï¿½Ğ§ï¿½ï¿½2ï¿½ï¿½3ï¿½ï¿½Ğ§ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½0x0003.
 };
 
 
@@ -490,11 +490,11 @@ struct local{
 
 
 struct gc_info{
-	int64_t begin_time;            //¼ÇÂ¼Ò»¸öplaneÊ²Ã´Ê±ºò¿ªÊ¼gc²Ù×÷µÄ
+	int64_t begin_time;            //ï¿½ï¿½Â¼Ò»ï¿½ï¿½planeÊ²Ã´Ê±ï¿½ï¿½Ê¼gcï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	int copy_back_count;    
 	int erase_count;
-	int64_t process_time;          //¸Ãplane»¨ÁË¶àÉÙÊ±¼äÔÚgc²Ù×÷ÉÏ
-	double energy_consumption;     //¸Ãplane»¨ÁË¶àÉÙÄÜÁ¿ÔÚgc²Ù×÷ÉÏ
+	int64_t process_time;          //ï¿½ï¿½planeï¿½ï¿½ï¿½Ë¶ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½gcï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	double energy_consumption;     //ï¿½ï¿½planeï¿½ï¿½ï¿½Ë¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½gcï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 };
 
 
@@ -505,16 +505,16 @@ struct direct_erase{
 
 
 /**************************************************************************************
- *µ±²úÉúÒ»¸öGC²Ù×÷Ê±£¬½«Õâ¸ö½á¹¹¹ÒÔÚÏàÓ¦µÄchannelÉÏ£¬µÈ´ıchannel¿ÕÏĞÊ±£¬·¢³öGC²Ù×÷ÃüÁî
+ *ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½GCï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½á¹¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½channelï¿½Ï£ï¿½ï¿½È´ï¿½channelï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GCï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 ***************************************************************************************/
 struct gc_operation{          
 	unsigned int chip;
 	unsigned int die;
 	unsigned int plane;
-	unsigned int block;           //¸Ã²ÎÊıÖ»ÔÚ¿ÉÖĞ¶ÏµÄgcº¯ÊıÖĞÊ¹ÓÃ£¨gc_interrupt£©£¬ÓÃÀ´¼ÇÂ¼ÒÑ½üÕÒ³öÀ´µÄÄ¿±ê¿éºÅ
-	unsigned int page;            //¸Ã²ÎÊıÖ»ÔÚ¿ÉÖĞ¶ÏµÄgcº¯ÊıÖĞÊ¹ÓÃ£¨gc_interrupt£©£¬ÓÃÀ´¼ÇÂ¼ÒÑ¾­Íê³ÉµÄÊı¾İÇ¨ÒÆµÄÒ³ºÅ
-	unsigned int state;           //¼ÇÂ¼µ±Ç°gcÇëÇóµÄ×´Ì¬
-	unsigned int priority;        //¼ÇÂ¼¸Ãgc²Ù×÷µÄÓÅÏÈ¼¶£¬1±íÊ¾²»¿ÉÖĞ¶Ï£¬0±íÊ¾¿ÉÖĞ¶Ï£¨ÈíãĞÖµ²úÉúµÄgcÇëÇó£©
+	unsigned int block;           //ï¿½Ã²ï¿½ï¿½ï¿½Ö»ï¿½Ú¿ï¿½ï¿½Ğ¶Ïµï¿½gcï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½Ã£ï¿½gc_interruptï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½Ñ½ï¿½ï¿½Ò³ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½
+	unsigned int page;            //ï¿½Ã²ï¿½ï¿½ï¿½Ö»ï¿½Ú¿ï¿½ï¿½Ğ¶Ïµï¿½gcï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½Ã£ï¿½gc_interruptï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½Ñ¾ï¿½ï¿½ï¿½Éµï¿½ï¿½ï¿½ï¿½ï¿½Ç¨ï¿½Æµï¿½Ò³ï¿½ï¿½
+	unsigned int state;           //ï¿½ï¿½Â¼ï¿½ï¿½Ç°gcï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬
+	unsigned int priority;        //ï¿½ï¿½Â¼ï¿½ï¿½gcï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¼ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¶Ï£ï¿½0ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½Ğ¶Ï£ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½gcï¿½ï¿½ï¿½ï¿½
 	struct gc_operation *next_node;
 };
 
