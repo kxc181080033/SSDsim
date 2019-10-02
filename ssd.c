@@ -115,8 +115,8 @@ struct ssd_info *simulate(struct ssd_info *ssd)
  		nq=0;
 		while(nq<ssd->parameter->queue_length)
 		{
-		   if(ssd->next_request_time!=ssd->current_req_time)
-		   break;
+		   nq++;
+
 		   flag=get_requests(ssd);
 		   if(flag == 1)
 		  {   
@@ -131,7 +131,8 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 				no_buffer_distribute(ssd);
 			}		
 		  }
-		 nq++;
+		  if(ssd->next_request_time!=ssd->current_req_time)
+		   break;
 
 		}
 
