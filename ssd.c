@@ -88,6 +88,7 @@ int  main()
 struct ssd_info *simulate(struct ssd_info *ssd)
 {
 	int flag=1,flag1=0;
+	int nq;
 	double output_step=0;
 	unsigned int a=0,b=0;
 	//errno_t err;
@@ -111,10 +112,14 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 	while(flag!=100)      
 	{
         
-		flag=get_requests(ssd);
-
-		if(flag == 1)
-		{   
+ 		nq=0;
+		while(nq<ssd->parameter->queue_length)
+		{
+		   if(ssd->next_request_time!=ssd->current_req_time)
+		   break;
+		   flag=get_requests(ssd);
+		   if(flag == 1)
+		  {   
 			//printf("once\n");
 			if (ssd->parameter->dram_capacity!=0)           //是否有缓冲区
 			{
@@ -125,6 +130,9 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 			{
 				no_buffer_distribute(ssd);
 			}		
+		  }
+		 nq++;
+
 		}
 
 		process(ssd);                                      //执行处理过程
@@ -248,6 +256,7 @@ int get_requests(struct ssd_info *ssd)
 	alloc_assert(request1,"request");
 	memset(request1,0, sizeof(struct request));
 
+	ssd->current_req_time=time_t;     //KXC:update the time of current request
 	request1->time = time_t;
 	request1->lsn = lsn;
 	request1->size = size;

@@ -1,9 +1,9 @@
 #parameter file
 dram capacity = 0;     #the unit is B�ֽ�
-chip number[0] = 2;
-chip number[1] = 2;
-chip number[2] = 0;
-chip number[3] = 0;
+chip number[0] = 1;
+chip number[1] = 1;
+chip number[2] = 1;
+chip number[3] = 1;
 chip number[4] = 0;
 chip number[5] = 0;
 chip number[6] = 0;
@@ -19,7 +19,7 @@ chip number[15] = 0;
 chip number[16] = 0;
 chip number[17] = 0;
 chip number[18] = 0;
-channel number = 2;   #the number of channel
+channel number = 4;   #the number of channel
 chip number = 4;
 die number = 2;      
 plane number = 4;
