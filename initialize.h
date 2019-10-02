@@ -161,7 +161,7 @@ struct ssd_info{
 	int flag;
 	int active_flag;                     //��¼����д�Ƿ����������������������Ҫ��ʱ����ǰ�ƽ�,0��ʾû��������1��ʾ����������Ҫ��ǰ�ƽ�ʱ��
 	unsigned int page;
-	int64_t current_req_time            //KXC:add a variable to record the time of current request
+	int64_t current_req_time;            //KXC:add a variable to record the time of current request
 	unsigned int token;                  //�ڶ�̬�����У�Ϊ��ֹÿ�η����ڵ�һ��channel��Ҫά��һ�����ƣ�ÿ�δ�������ָ��λ�ÿ�ʼ����
 	unsigned int gc_request;             //��¼��SSD�У���ǰʱ���ж���gc����������
 
