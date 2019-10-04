@@ -49,6 +49,11 @@ int  main()
 	alloc_assert(count,"count");
 	memset(count,0,sizeof(int)*ssd->page);
 
+	//KXC:allocate memory for lrulist and initialize it to 0
+	lrulist=(int*)malloc(sizeof(int)*ssd->lrulength);
+	alloc_assert(lrulist,"lrulist");
+	memset(lrulist,0,sizeof(int)*ssd->lrulength);
+
 /************KXC:修改输出使其符合逻辑 2019.8.13**************/
 	for (i=0;i<ssd->parameter->channel_number;i++)//在屏幕输出初始化芯片的空白页信息
 	{
@@ -164,7 +169,7 @@ int get_requests(struct ssd_info *ssd)
 	char buffer[200];
 	unsigned int lsn=0;
 	int device,  size, ope,large_lsn, i = 0,j=0;
-	int lastlpn,firstlpn,p,pp;
+	int lastlpn,firstlpn,p,pp,q,hitflag,templpn,qq,hitpo,qqq;
 	struct request *request1;
 	int flag = 1;
 	long filepoint; 
@@ -275,18 +280,48 @@ int get_requests(struct ssd_info *ssd)
 	//KXC:update the value of count
 	if (request1->operation==0)
 	{
-		if ((ssd->write_request_count%500)==0)
+		/* 		if ((ssd->write_request_count%500)==0)
 		{
 			for (pp=0;pp<ssd->page;pp++)
 			{
 				count[pp]=0.6*count[pp];
 			}
-		}
+		} */
 	
-
+        
 		lastlpn=(request1->lsn+request1->size-1)/ssd->parameter->subpage_page;
 		firstlpn=request1->lsn/ssd->parameter->subpage_page;
 		for(p=firstlpn;p<=lastlpn;p++)
+		{
+			for(q=0;q<ssd->lrulength;q++)
+			{
+				if(lrulist[q]==p)
+				{
+					hitflag=1;
+					hitpo=q;
+					break;
+				}
+			}
+			if(hitflag==1)
+			{
+				for(qq=hitpo;qq>0;qq--)
+				{
+					lrulist[qq]=lrulist[qq-1];
+				}
+				lrulist[0]=p;
+			}
+			else
+			{
+				lrulist[0]=p;
+				for(qqq=ssd->lrulength;qqq>0;qqq--)
+				{
+					lrulist[qqq]=lrulist[qqq-1];
+				}
+			}
+			
+		}
+
+		/* 		for(p=firstlpn;p<=lastlpn;p++)
 		{
 			if (count[p]==0)
 			{
@@ -294,7 +329,7 @@ int get_requests(struct ssd_info *ssd)
 			}
 			count[p]++;
 		}
-		ssd->av_write_count=(ssd->av_write_count+lastlpn-firstlpn+1)/ssd->write_no;
+		ssd->av_write_count=(ssd->av_write_count+lastlpn-firstlpn+1)/ssd->write_no; */
 		
 	}
 

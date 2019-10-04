@@ -599,6 +599,7 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 	struct channel_info * p_ch=NULL;
 	struct local * loc=NULL;
 	unsigned int flag=0;
+	int i,hotflag;
 
 	sub = (struct sub_request*)malloc(sizeof(struct sub_request));                        /*申请一个子请求的结构*/
 	alloc_assert(sub,"sub_request");
@@ -692,7 +693,25 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 		sub->begin_time=ssd->current_time;
 
 		//KXC:update the hot flag of subrequest according to count
-		if (count[sub->lpn]>4)
+		/* 		if (count[sub->lpn]>4)
+		{
+			sub->hot=1;
+		}
+		else
+		{
+			sub->hot=0;
+		} */
+		for(i=0;i<ssd->lrulength;i++)
+		{
+			if(lrulist[i]==sub->lpn)
+			{
+				sub->hot=1;
+				hotflag=1;
+				break;
+			}		
+
+		}
+        if (hotflag==1)
 		{
 			sub->hot=1;
 		}
@@ -701,7 +720,6 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 			sub->hot=0;
 		}
 		
-      
 		if (allocate_location(ssd ,sub)==ERROR)
 		{
 			free(sub->location);

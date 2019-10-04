@@ -105,6 +105,7 @@ struct ssd_info *initiation(struct ssd_info *ssd)
 	parameters=load_parameters(ssd->parameterfilename);
 	ssd->parameter=parameters;
 	ssd->av_write_count=0;    //KXC:initialize the added varialbes
+	ssd->lrulength=10000;     //KXC:initialize the value of lrulength
 	ssd->write_no=0;
 	ssd->min_lsn=0x7fffffff;
 	ssd->page=ssd->parameter->chip_num*ssd->parameter->die_chip*ssd->parameter->plane_die*ssd->parameter->block_plane*ssd->parameter->page_block;

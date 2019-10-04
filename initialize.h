@@ -101,6 +101,7 @@ Hao Luo         2011/01/01        2.0           Change               luohao13568
 #define PG_SUB 0xffffffff		
 
 int *count;   //KXC:add a tabel to record the frequency
+int *lrulist;  //KXC:add a lru queue to identify the hot of cold
 
 /*****************************************
 *�������״̬����
@@ -162,6 +163,7 @@ struct ssd_info{
 	int active_flag;                     //��¼����д�Ƿ����������������������Ҫ��ʱ����ǰ�ƽ�,0��ʾû��������1��ʾ����������Ҫ��ǰ�ƽ�ʱ��
 	unsigned int page;
 	int64_t current_req_time;            //KXC:add a variable to record the time of current request
+	int lrulength;                       //KXC:the length of lru queue
 	unsigned int token;                  //�ڶ�̬�����У�Ϊ��ֹÿ�η����ڵ�һ��channel��Ҫά��һ�����ƣ�ÿ�δ�������ָ��λ�ÿ�ʼ����
 	unsigned int gc_request;             //��¼��SSD�У���ǰʱ���ж���gc����������
 
