@@ -50,9 +50,9 @@ int  main()
 	memset(count,0,sizeof(int)*ssd->page);
 
 	//KXC:allocate memory for lrulist and initialize it to 0
-	lrulist=(int*)malloc(sizeof(int)*ssd->lrulength);
+	lrulist=(double*)malloc(sizeof(double)*ssd->lrulength);
 	alloc_assert(lrulist,"lrulist");
-	memset(lrulist,0,sizeof(int)*ssd->lrulength);
+	memset(lrulist,0,sizeof(double)*ssd->lrulength);
 
 /************KXC:修改输出使其符合逻辑 2019.8.13**************/
 	for (i=0;i<ssd->parameter->channel_number;i++)//在屏幕输出初始化芯片的空白页信息
@@ -295,11 +295,13 @@ int get_requests(struct ssd_info *ssd)
 		{
 			for(q=0;q<ssd->lrulength;q++)
 			{
-				if(lrulist[q]==p)
+				if(lrulist[q]==p||lrulist[q]==0.1*p)
 				{
 					hitflag=1;
 					hitpo=q;
+					//lrulist[q]=0.001*p;
 					break;
+					
 				}
 			}
 			if(hitflag==1)
@@ -308,7 +310,7 @@ int get_requests(struct ssd_info *ssd)
 				{
 					lrulist[qq]=lrulist[qq-1];
 				}
-				lrulist[0]=p;
+				lrulist[0]=0.001*p;
 			}
 			else
 			{

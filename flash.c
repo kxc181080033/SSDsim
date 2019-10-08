@@ -703,7 +703,7 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 		} */
 		for(i=0;i<ssd->lrulength;i++)
 		{
-			if(lrulist[i]==sub->lpn)
+			if(lrulist[i]==(double)sub->lpn*0.001)
 			{
 				sub->hot=1;
 				hotflag=1;
