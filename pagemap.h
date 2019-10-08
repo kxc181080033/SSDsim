@@ -2,7 +2,7 @@
 This project was supported by the National Basic Research 973 Program of China under Grant No.2011CB302301
 Huazhong University of Science and Technology (HUST)   Wuhan National Laboratory for Optoelectronics
 
-FileName£º pagemap.h
+FileNameï¿½ï¿½ pagemap.h
 Author: Hu Yang		Version: 2.1	Date:2011/12/02
 Description: 
 
@@ -38,7 +38,7 @@ int uninterrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,u
 int interrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,unsigned int die,unsigned int plane,struct gc_operation *gc_node);
 int decide_gc_invoke(struct ssd_info *ssd, unsigned int channel);
 int set_entry_state(struct ssd_info *ssd,unsigned int lsn,unsigned int size);
-unsigned int get_ppn_for_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,unsigned int die,unsigned int plane);
+unsigned int get_ppn_for_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,unsigned int die,unsigned int plane,int hot);
 
 int erase_operation(struct ssd_info * ssd,unsigned int channel ,unsigned int chip ,unsigned int die,unsigned int plane ,unsigned int block);
 int erase_planes(struct ssd_info * ssd, unsigned int channel, unsigned int chip, unsigned int die1, unsigned int plane1,unsigned int command);
