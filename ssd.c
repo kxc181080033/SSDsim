@@ -106,9 +106,10 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 	while(flag!=100)      
 	{
         
-		flag=get_requests(ssd);
+		if(ssd->next==1)
+			flag=get_requests(ssd);
 
-		if(flag == 1)
+		if(flag == 1||ssd->next==0)
 		{   
 			//printf("once\n");
 			if (ssd->parameter->dram_capacity!=0)           //�Ƿ��л�����
@@ -1078,7 +1079,10 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 		{
 			//fseek(ssd->tracefile,filepoint,0); 
 			if(ssd->current_time<=nearest_event_time)
-				ssd->current_time=nearest_event_time;
+				{
+					ssd->current_time=nearest_event_time;
+					ssd->next=0;
+				}
 			return -1;
 		}
 		else
@@ -1087,15 +1091,17 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 			{
 				//fseek(ssd->tracefile,filepoint,0);
 				ssd->current_time=nearest_event_time;
+				ssd->next=0;
 				return -1;
 			} 
 			else
 			{
 				ssd->current_time=req->time;
+				ssd->next=1;
 			}
 		}
 	}
-	
+
 	ssd->dram->current_time=ssd->current_time;
 
 	if(req->operation==READ)        

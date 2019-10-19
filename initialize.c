@@ -106,7 +106,7 @@ struct ssd_info *initiation(struct ssd_info *ssd)
 	ssd->parameter=parameters;
 	ssd->min_lsn=0x7fffffff;
 	ssd->page=ssd->parameter->chip_num*ssd->parameter->die_chip*ssd->parameter->plane_die*ssd->parameter->block_plane*ssd->parameter->page_block;
-
+	ssd->next=1;
 	//³õÊ¼»¯ dram
 	ssd->dram = (struct dram_info *)malloc(sizeof(struct dram_info));
 	alloc_assert(ssd->dram,"ssd->dram");
