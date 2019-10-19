@@ -618,6 +618,8 @@ void trace_output(struct ssd_info* ssd){
 			{		
 				//fprintf(ssd->outputfile,"%10I64u %10u %6u %2u %16I64u %16I64u %10I64u\n",req->time,req->lsn, req->size, req->operation, start_time, end_time, end_time-req->time);
 				fprintf(ssd->outputfile,"%16lld %10d %6d %2d %16lld %16lld %10lld\n",req->time,req->lsn, req->size, req->operation, start_time, end_time, end_time-req->time);
+				if (ssd->request_queue->subs==NULL)
+					ssd->finish=1;
 				fflush(ssd->outputfile);
 
 				if(end_time-start_time==0)
@@ -1068,10 +1070,6 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 		ssd->next=1;
 		return -1;
 	}       
-	lsn=req->lsn;
-	lpn=req->lsn/ssd->parameter->subpage_page;
-	last_lpn=(req->lsn+req->size-1)/ssd->parameter->subpage_page;
-	first_lpn=req->lsn/ssd->parameter->subpage_page;
 
 	nearest_event_time=find_nearest_event(ssd);
 	if (nearest_event_time==MAX_INT64)
@@ -1093,22 +1091,33 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 		}
 		else
 		{
-			if (ssd->request_queue_length>=ssd->parameter->queue_length)
-			{
-				//fseek(ssd->tracefile,filepoint,0);
-				ssd->current_time=nearest_event_time;
-				ssd->next=0;
-				return -1;
-			} 
-			else
+			if (ssd->finish==1)	
 			{
 				ssd->current_time=req->time;
-				ssd->next=1;
+			}
+			else
+			{	
+				if (ssd->request_queue_length>=ssd->parameter->queue_length)
+				{
+					//fseek(ssd->tracefile,filepoint,0);
+					ssd->current_time=nearest_event_time;
+					ssd->next=0;
+					return -1;
+				} 
+				else
+				{
+					ssd->current_time=req->time;
+					ssd->next=1;
+				}
 			}
 		}
 	}
 
 	ssd->dram->current_time=ssd->current_time;
+	lsn=req->lsn;
+	lpn=req->lsn/ssd->parameter->subpage_page;
+	last_lpn=(req->lsn+req->size-1)/ssd->parameter->subpage_page;
+	first_lpn=req->lsn/ssd->parameter->subpage_page;
 
 	if(req->operation==READ)        
 	{		
