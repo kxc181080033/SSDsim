@@ -1063,7 +1063,7 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 
 	
 	req=ssd->request_tail;
-	if (req=NULL)
+	if (req==NULL)
 	{
 		ssd->next=1;
 		return -1;
