@@ -1062,7 +1062,12 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 	unsigned int sub_state=0;
 
 	
-	req=ssd->request_tail;       
+	req=ssd->request_tail;
+	if (req=NULL)
+	{
+		ssd->next=1;
+		return -1;
+	}       
 	lsn=req->lsn;
 	lpn=req->lsn/ssd->parameter->subpage_page;
 	last_lpn=(req->lsn+req->size-1)/ssd->parameter->subpage_page;
