@@ -1071,7 +1071,12 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 	{
 		ssd->next=1;
 		return -1;
-	}       
+	}
+	else
+	{
+		ssd->next=0;
+	}
+	       
 
 	nearest_event_time=find_nearest_event(ssd);
 	if (nearest_event_time==MAX_INT64)
@@ -1153,7 +1158,7 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 			lpn++;
 		}
 	}
-
+	ssd->finish=0;
 	return ssd;
 }
 
