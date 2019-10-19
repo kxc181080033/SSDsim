@@ -1071,7 +1071,8 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 	nearest_event_time=find_nearest_event(ssd);
 	if (nearest_event_time==MAX_INT64)
 	{
-		ssd->current_time=req->time;           
+		ssd->current_time=req->time;
+		ssd->next=0;           
 	}
 	else
 	{   
