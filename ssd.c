@@ -654,6 +654,9 @@ void trace_output(struct ssd_info* ssd){
 					tmp=NULL;
 					
 				}
+				//KXC:to judge the request finish or not
+				if (ssd->request_queue->subs==NULL)
+					ssd->finish=1;
 				
 				if(pre_node == NULL)
 				{
@@ -702,9 +705,7 @@ void trace_output(struct ssd_info* ssd){
 					}
 
 				}
-					//KXC:to judge the request finish or not
-					if (ssd->request_queue->subs==NULL)
-						ssd->finish=1;
+
 			}
 			else
 			{	
