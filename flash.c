@@ -60,7 +60,8 @@ Status allocate_location(struct ssd_info * ssd ,struct sub_request *sub_req)
 				update->update=NULL;						
 				location = find_location(ssd,ssd->dram->map->map_entry[sub_req->lpn].pn);
 				update->location=location;
-				update->begin_time = ssd->current_time;
+				//update->begin_time = ssd->current_time;
+				update->begin_time=sub_req->begin_time;
 				update->current_state = SR_WAIT;
 				update->current_time=MAX_INT64;
 				update->next_state = SR_R_C_A_TRANSFER;
@@ -226,7 +227,8 @@ Status allocate_location(struct ssd_info * ssd ,struct sub_request *sub_req)
 				update->update=NULL;						
 				location = find_location(ssd,ssd->dram->map->map_entry[sub_req->lpn].pn);
 				update->location=location;
-				update->begin_time = ssd->current_time;
+				//update->begin_time = ssd->current_time;
+				update->begin_time=sub_req->begin_time;
 				update->current_state = SR_WAIT;
 				update->current_time=MAX_INT64;
 				update->next_state = SR_R_C_A_TRANSFER;
@@ -619,7 +621,7 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 	{	
 		loc = find_location(ssd,ssd->dram->map->map_entry[lpn].pn);
 		sub->location=loc;
-		sub->begin_time = ssd->current_time;
+		sub->begin_time = ssd->current_time>req->time?ssd->current_time:req->time;
 		sub->current_state = SR_WAIT;
 		sub->current_time=MAX_INT64;
 		sub->next_state = SR_R_C_A_TRANSFER;
@@ -680,7 +682,7 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 		sub->lpn=lpn;
 		sub->size=size;
 		sub->state=state;
-		sub->begin_time=ssd->current_time;
+		sub->begin_time=ssd->current_time>req->time?ssd->current_time:req->time;
       
 		if (allocate_location(ssd ,sub)==ERROR)
 		{

@@ -1060,7 +1060,7 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 	unsigned int sub_size=0;
 	unsigned int sub_state=0;
 
-	ssd->dram->current_time=ssd->current_time;
+	
 	req=ssd->request_tail;       
 	lsn=req->lsn;
 	lpn=req->lsn/ssd->parameter->subpage_page;
@@ -1095,7 +1095,8 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 			}
 		}
 	}
-
+	
+	ssd->dram->current_time=ssd->current_time;
 
 	if(req->operation==READ)        
 	{		
