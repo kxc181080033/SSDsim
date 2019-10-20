@@ -85,6 +85,7 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 	int flag=1,flag1=0;
 	double output_step=0;
 	unsigned int a=0,b=0;
+	int nq;
 	//errno_t err;
 
 	printf("\n");
@@ -105,13 +106,16 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 
 	while(flag!=100)      
 	{
-        
-		flag=get_requests(ssd);
+        nq=0;
+		while(nq<ssd->parameter->queue_length)
+		{
+		   nq++;
 
-		if(flag == 1)
-		{   
+		   flag=get_requests(ssd);
+		   if(flag == 1)
+		  {   
 			//printf("once\n");
-			if (ssd->parameter->dram_capacity!=0)           //ï¿½Ç·ï¿½ï¿½Ð»ï¿½ï¿½ï¿½ï¿½ï¿½
+			if (ssd->parameter->dram_capacity!=0)           //ÊÇ·ñÓÐ»º³åÇø
 			{
 				buffer_management(ssd);  
 				distribute(ssd); 
@@ -120,6 +124,10 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 			{
 				no_buffer_distribute(ssd);
 			}		
+		  }
+		   if(ssd->next_request_time!=ssd->current_request_time)
+		   break;
+
 		}
 
 		process(ssd);                                      //Ö´ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
@@ -282,7 +290,7 @@ int get_requests(struct ssd_info *ssd)
 		ssd->ave_write_size=(ssd->ave_write_size*ssd->write_request_count+request1->size)/(ssd->write_request_count+1);
 	}
 
-	
+	ssd->current_request_time=time_t;
 	filepoint = ftell(ssd->tracefile);	
 	fgets(buffer, 200, ssd->tracefile);    //Ñ°ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Äµï¿½ï¿½ï¿½Ê±ï¿½ï¿?
 	sscanf(buffer,"%lld %d %d %d %d",&time_t,&device,&lsn,&size,&ope);
