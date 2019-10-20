@@ -155,6 +155,8 @@ struct ssd_info{
 	double ssd_energy;                   //SSD的能耗，是时间和芯片数的函数,能耗因子
 	int64_t current_time;                //记录系统时间
 	int64_t next_request_time;
+	int64_t current_request_time;        //KXC:to record the current request's arriving time
+	int64_t previous_response_time;      //KXC:to calculate the wait time
 	unsigned int real_time_subreq;       //记录实时的写请求个数，用在全动态分配时，channel优先的情况
 	int flag;
 	int active_flag;                     //记录主动写是否阻塞，如果发现柱塞，需要将时间向前推进,0表示没有阻塞，1表示被阻塞，需要向前推进时间
@@ -167,6 +169,9 @@ struct ssd_info{
 	unsigned int read_request_count;     //记录读操作的次数
 	int64_t write_avg;                   //记录用于计算写请求平均响应时间的时间
 	int64_t read_avg;                    //记录用于计算读请求平均响应时间的时间
+	int64_t wait_avg;                    //KXC:to record the average wait time of all the request
+	int64_t write_wait_avg;              //KXC:to record the average wait time of write request
+	int64_t read_wait_avg;               //KXC:to record the average wait time of read request
 
 	unsigned int min_lsn;
 	unsigned int max_lsn;

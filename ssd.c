@@ -2,7 +2,7 @@
 This project was supported by the National Basic Research 973 Program of China under Grant No.2011CB302301
 Huazhong University of Science and Technology (HUST)   Wuhan National Laboratory for Optoelectronics
 
-FileName£º ssd.c
+FileNameï¿½ï¿½ ssd.c
 Author: Hu Yang		Version: 2.1	Date:2011/12/02
 Description: 
 
@@ -21,11 +21,11 @@ Hao Luo         2011/01/01        2.0           Change               luohao13568
 #include "ssd.h"
 
 /********************************************************************************************************************************
-1£¬mainº¯ÊýÖÐinitiatio()º¯ÊýÓÃÀ´³õÊ¼»¯ssd,£»2£¬make_aged()º¯ÊýÊ¹SSD³ÉÎªaged£¬agedµÄssdÏàµ±ÓÚÊ¹ÓÃ¹ýÒ»¶ÎÊ±¼äµÄssd£¬ÀïÃæÓÐÊ§Ð§Ò³£¬
-non_agedµÄssdÊÇÐÂµÄssd£¬ÎÞÊ§Ð§Ò³£¬Ê§Ð§Ò³µÄ±ÈÀý¿ÉÒÔÔÚ³õÊ¼»¯²ÎÊýÖÐÉèÖÃ£»3£¬pre_process_page()º¯ÊýÌáÇ°É¨Ò»±é¶ÁÇëÇó£¬°Ñ¶ÁÇëÇó
-µÄlpn<--->ppnÓ³Éä¹ØÏµÊÂÏÈ½¨Á¢ºÃ£¬Ð´ÇëÇóµÄlpn<--->ppnÓ³Éä¹ØÏµÔÚÐ´µÄÊ±ºòÔÙ½¨Á¢£¬Ô¤´¦Àítrace·ÀÖ¹¶ÁÇëÇóÊÇ¶Á²»µ½Êý¾Ý£»4£¬simulate()ÊÇ
-ºËÐÄ´¦Àíº¯Êý£¬traceÎÄ¼þ´Ó¶Á½øÀ´µ½´¦ÀíÍê³É¶¼ÓÉÕâ¸öº¯ÊýÀ´Íê³É£»5£¬statistic_output()º¯Êý½«ssd½á¹¹ÖÐµÄÐÅÏ¢Êä³öµ½Êä³öÎÄ¼þ£¬Êä³öµÄÊÇ
-Í³¼ÆÊý¾ÝºÍÆ½¾ùÊý¾Ý£¬Êä³öÎÄ¼þ½ÏÐ¡£¬trace_outputÎÄ¼þÔòºÜ´óºÜÏêÏ¸£»6£¬free_all_node()º¯ÊýÊÍ·ÅÕû¸ömainº¯ÊýÖÐÉêÇëµÄ½Úµã
+1ï¿½ï¿½mainï¿½ï¿½ï¿½ï¿½ï¿½ï¿½initiatio()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ssd,ï¿½ï¿½2ï¿½ï¿½make_aged()ï¿½ï¿½ï¿½ï¿½Ê¹SSDï¿½ï¿½Îªagedï¿½ï¿½agedï¿½ï¿½ssdï¿½àµ±ï¿½ï¿½Ê¹ï¿½Ã¹ï¿½Ò»ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ssdï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§Ð§Ò³ï¿½ï¿½
+non_agedï¿½ï¿½ssdï¿½ï¿½ï¿½Âµï¿½ssdï¿½ï¿½ï¿½ï¿½Ê§Ð§Ò³ï¿½ï¿½Ê§Ð§Ò³ï¿½Ä±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú³ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã£ï¿½3ï¿½ï¿½pre_process_page()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°É¨Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ó£?°Ñ¶ï¿½ï¿½ï¿½ï¿½ï¿½
+ï¿½ï¿½lpn<--->ppnÓ³ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½È½ï¿½ï¿½ï¿½ï¿½Ã£ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½lpn<--->ppnÓ³ï¿½ï¿½ï¿½Ïµï¿½ï¿½Ð´ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ù½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¤ï¿½ï¿½ï¿½ï¿½traceï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½4ï¿½ï¿½simulate()ï¿½ï¿½
+ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½traceï¿½Ä¼ï¿½ï¿½Ó¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É£ï¿?5ï¿½ï¿½statistic_output()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ssdï¿½á¹¹ï¿½Ðµï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿?
+Í³ï¿½ï¿½ï¿½ï¿½ï¿½Ýºï¿½Æ½ï¿½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½trace_outputï¿½Ä¼ï¿½ï¿½ï¿½Ü´ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ï¿½6ï¿½ï¿½free_all_node()ï¿½ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½ï¿½ï¿½ï¿½mainï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä½Úµï¿?
 *********************************************************************************************************************************/
 int  main()
 {
@@ -44,8 +44,8 @@ int  main()
 	make_aged(ssd);
 	pre_process_page(ssd);
 
-/************KXC:ÐÞ¸ÄÊä³öÊ¹Æä·ûºÏÂß¼­ 2019.8.13**************/
-	for (i=0;i<ssd->parameter->channel_number;i++)//ÔÚÆÁÄ»Êä³ö³õÊ¼»¯Ð¾Æ¬µÄ¿Õ°×Ò³ÐÅÏ¢
+/************KXC:ï¿½Þ¸ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¼ï¿½ 2019.8.13**************/
+	for (i=0;i<ssd->parameter->channel_number;i++)//ï¿½ï¿½ï¿½ï¿½Ä»ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½Ð¾Æ?ï¿½Ä¿Õ°ï¿½Ò³ï¿½ï¿½Ï¢
 	{
       for (ii=0;ii<ssd->parameter->chip_channel[i];ii++)
        {
@@ -61,8 +61,8 @@ int  main()
 	fprintf(ssd->outputfile,"\t\t\t\t\t\t\t\t\tOUTPUT\n");
 	fprintf(ssd->outputfile,"****************** TRACE INFO ******************\n");
 
-	ssd=simulate(ssd);                         //Ö´ÐÐ·ÂÕæ
-	statistic_output(ssd);                     //¸ºÔØ¾ßÌå½á¹ûÊä³öÖÁÊä³öÎÄ¼þ
+	ssd=simulate(ssd);                         //Ö´ï¿½Ð·ï¿½ï¿½ï¿½
+	statistic_output(ssd);                     //ï¿½ï¿½ï¿½Ø¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½
 /*	free_all_node(ssd);*/
 
 	printf("\n");
@@ -74,11 +74,11 @@ int  main()
 
 
 /******************simulate() *********************************************************************
-*simulate()ÊÇºËÐÄ´¦Àíº¯Êý£¬Ö÷ÒªÊµÏÖµÄ¹¦ÄÜ°üÀ¨
-*1,´ÓtraceÎÄ¼þÖÐ»ñÈ¡Ò»ÌõÇëÇó£¬¹Òµ½ssd->request
-*2£¬¸ù¾ÝssdÊÇ·ñÓÐdram·Ö±ð´¦Àí¶Á³öÀ´µÄÇëÇó£¬°ÑÕâÐ©ÇëÇó´¦Àí³ÉÎª¶ÁÐ´×ÓÇëÇó£¬¹Òµ½ssd->channel»òÕßssdÉÏ
-*3£¬°´ÕÕÊÂ¼þµÄÏÈºóÀ´´¦ÀíÕâÐ©¶ÁÐ´×ÓÇëÇó¡£
-*4£¬Êä³öÃ¿ÌõÇëÇóµÄ×ÓÇëÇó¶¼´¦ÀíÍêºóµÄÏà¹ØÐÅÏ¢µ½outputfileÎÄ¼þÖÐ
+*simulate()ï¿½Çºï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÒªÊµï¿½ÖµÄ¹ï¿½ï¿½Ü°ï¿½ï¿½ï¿½
+*1,ï¿½ï¿½traceï¿½Ä¼ï¿½ï¿½Ð»ï¿½È¡Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ó£¬¹Òµï¿½ssd->request
+*2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ssdï¿½Ç·ï¿½ï¿½ï¿½dramï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ó£¬°ï¿½ï¿½ï¿½Ð©ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ó£¬¹Òµï¿½ssd->channelï¿½ï¿½ï¿½ï¿½ssdï¿½ï¿½
+*3ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½Èºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð©ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+*4ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ó¶¼´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï?ï¿½ï¿½outputfileï¿½Ä¼ï¿½ï¿½ï¿½
 **************************************************************************************************/
 struct ssd_info *simulate(struct ssd_info *ssd)
 {
@@ -100,7 +100,7 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 		return NULL;
 	}
 
-	fprintf(ssd->outputfile,"      arrive           lsn     size ope     begin time    response time    process time\n");	
+	fprintf(ssd->outputfile,"      arrive           lsn     size ope     begin time    response time    process time    wait time\n");	
 	fflush(ssd->outputfile);
 
 	while(flag!=100)      
@@ -111,7 +111,7 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 		if(flag == 1)
 		{   
 			//printf("once\n");
-			if (ssd->parameter->dram_capacity!=0)           //ÊÇ·ñÓÐ»º³åÇø
+			if (ssd->parameter->dram_capacity!=0)           //ï¿½Ç·ï¿½ï¿½Ð»ï¿½ï¿½ï¿½ï¿½ï¿½
 			{
 				buffer_management(ssd);  
 				distribute(ssd); 
@@ -122,9 +122,9 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 			}		
 		}
 
-		process(ssd);                                      //Ö´ÐÐ´¦Àí¹ý³Ì
+		process(ssd);                                      //Ö´ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		trace_output(ssd);
-		if(flag == 0 && ssd->request_queue == NULL)        //¸ºÔØÖ´ÐÐÍê³É£¬½áÊø
+		if(flag == 0 && ssd->request_queue == NULL)        //ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ï¿½É£ï¿½ï¿½ï¿½ï¿½ï¿?
 			flag = 100;
 	}
 
@@ -140,10 +140,10 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 *	return	0: reach the end of the trace
 *			-1: no request has been added
 *			1: add one request to list
-*SSDÄ£ÄâÆ÷ÓÐÈýÖÖÇý¶¯·½Ê½:Ê±ÖÓÇý¶¯(¾«È·£¬Ì«Âý) ÊÂ¼þÇý¶¯(±¾³ÌÐò²ÉÓÃ) traceÇý¶¯()£¬
-*Á½ÖÖ·½Ê½ÍÆ½øÊÂ¼þ£ºchannel/chip×´Ì¬¸Ä±ä¡¢traceÎÄ¼þÇëÇó´ïµ½¡£
-*channel/chip×´Ì¬¸Ä±äºÍtraceÎÄ¼þÇëÇóµ½´ïÊÇÉ¢²¼ÔÚÊ±¼äÖáÉÏµÄµã£¬Ã¿´Î´Óµ±Ç°×´Ì¬µ½´ï
-*ÏÂÒ»¸ö×´Ì¬¶¼Òªµ½´ï×î½üµÄÒ»¸ö×´Ì¬£¬Ã¿µ½´ïÒ»¸öµãÖ´ÐÐÒ»´Îprocess
+*SSDÄ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½:Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½È·ï¿½ï¿½Ì«ï¿½ï¿½) ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿?) traceï¿½ï¿½ï¿½ï¿½()ï¿½ï¿½
+*ï¿½ï¿½ï¿½Ö·ï¿½Ê½ï¿½Æ½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½channel/chip×´Ì¬ï¿½Ä±ä¡¢traceï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ïµ½ï¿½ï¿?
+*channel/chip×´Ì¬ï¿½Ä±ï¿½ï¿½traceï¿½Ä¼ï¿½ï¿½ï¿½ï¿½óµ½´ï¿½ï¿½ï¿½É¢ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ÏµÄµã£¬Ã¿ï¿½Î´Óµï¿½Ç°×´Ì¬ï¿½ï¿½ï¿½ï¿½
+*ï¿½ï¿½Ò»ï¿½ï¿½×´Ì¬ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½×´Ì?ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½Ò»ï¿½ï¿½process
 ********************************************************************************/
 int get_requests(struct ssd_info *ssd)  
 {  
@@ -161,11 +161,15 @@ int get_requests(struct ssd_info *ssd)
 	#endif
 
 	if(feof(ssd->tracefile))
-		return 0; 
+	{
+		ssd->current_time=find_nearest_event(ssd);
+		return 0;
+	}
+		 
 
-	filepoint = ftell(ssd->tracefile);	                  //ftell·µ»ØÎÄ¼þµ±Ç°Ö¸Õë£¬Ò²¾ÍÊÇÎÄ¼þÎ»ÖÃ
-	fgets(buffer, 200, ssd->tracefile);                   //´Ó¸ºÔØÎÄ¼þÖÐ¶ÁÈ¡
-	sscanf(buffer,"%lld %d %d %d %d",&time_t,&device,&lsn,&size,&ope);   //»ñµÃÇëÇó²ÎÊý
+	filepoint = ftell(ssd->tracefile);	                  //ftellï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½Ç°Ö¸ï¿½ë£¬Ò²ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½Î»ï¿½ï¿½
+	fgets(buffer, 200, ssd->tracefile);                   //ï¿½Ó¸ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½Ð¶ï¿½È¡
+	sscanf(buffer,"%lld %d %d %d %d",&time_t,&device,&lsn,&size,&ope);   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     
 	if ((device<0)&&(lsn<0)&&(size<0)&&(ope<0))
 	{
@@ -176,10 +180,10 @@ int get_requests(struct ssd_info *ssd)
 	if (lsn>ssd->max_lsn)
 		ssd->max_lsn=lsn;
 	/******************************************************************************************************
-	*ÉÏ²ãÎÄ¼þÏµÍ³·¢ËÍ¸øSSDµÄÈÎºÎ¶ÁÐ´ÃüÁî°üÀ¨Á½¸ö²¿·Ö£¨LSN£¬size£© LSNÊÇÂß¼­ÉÈÇøºÅ£¬¶ÔÓÚÎÄ¼þÏµÍ³¶øÑÔ£¬ËüËù¿´µ½µÄ´æ
-	*´¢¿Õ¼äÊÇÒ»¸öÏßÐÔµÄÁ¬Ðø¿Õ¼ä¡£ÀýÈç£¬¶ÁÇëÇó£¨260£¬6£©±íÊ¾µÄÊÇÐèÒª¶ÁÈ¡´ÓÉÈÇøºÅÎª260µÄÂß¼­ÉÈÇø¿ªÊ¼£¬×Ü¹²6¸öÉÈÇø¡£
-	*large_lsn: channelÏÂÃæÓÐ¶àÉÙ¸ösubpage£¬¼´¶àÉÙ¸ösector¡£overprovideÏµÊý£ºSSDÖÐ²¢²»ÊÇËùÓÐµÄ¿Õ¼ä¶¼¿ÉÒÔ¸øÓÃ»§Ê¹ÓÃ£¬
-	*±ÈÈç32GµÄSSD¿ÉÄÜÓÐ10%µÄ¿Õ¼ä±£ÁôÏÂÀ´Áô×÷ËûÓÃ£¬ËùÒÔ³ËÒÔ1-provide
+	*ï¿½Ï²ï¿½ï¿½Ä¼ï¿½ÏµÍ³ï¿½ï¿½ï¿½Í¸ï¿½SSDï¿½ï¿½ï¿½ÎºÎ¶ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö£ï¿½LSNï¿½ï¿½sizeï¿½ï¿½ LSNï¿½ï¿½ï¿½ß¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ÏµÍ³ï¿½ï¿½ï¿½Ô£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½
+	*ï¿½ï¿½ï¿½Õ¼ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ôµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ¼ä¡£ï¿½ï¿½ï¿½ç£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½260ï¿½ï¿½6ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª260ï¿½ï¿½ï¿½ß¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½Ü¹ï¿½6ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	*large_lsn: channelï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½Ù¸ï¿½subpageï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¸ï¿½sectorï¿½ï¿½overprovideÏµï¿½ï¿½ï¿½ï¿½SSDï¿½Ð²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÐµÄ¿Õ¼ä¶¼ï¿½ï¿½ï¿½Ô¸ï¿½ï¿½Ã»ï¿½Ê¹ï¿½Ã£ï¿½
+	*ï¿½ï¿½ï¿½ï¿½32Gï¿½ï¿½SSDï¿½ï¿½ï¿½ï¿½ï¿½ï¿½10%ï¿½Ä¿Õ¼ä±£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã£ï¿½ï¿½ï¿½ï¿½Ô³ï¿½ï¿½ï¿½1-provide
 	***********************************************************************************************************/
 	large_lsn=(int)((ssd->parameter->subpage_page*ssd->parameter->page_block*ssd->parameter->block_plane*ssd->parameter->plane_die*ssd->parameter->die_chip*ssd->parameter->chip_num)*(1-ssd->parameter->overprovide));
 	lsn = lsn%large_lsn;
@@ -189,7 +193,7 @@ int get_requests(struct ssd_info *ssd)
 	{
 		ssd->current_time=time_t;           
 		                                                  
-		//if (ssd->request_queue_length>ssd->parameter->queue_length)    //Èç¹ûÇëÇó¶ÓÁÐµÄ³¤¶È³¬¹ýÁËÅäÖÃÎÄ¼þÖÐËùÉèÖÃµÄ³¤¶È                     
+		//if (ssd->request_queue_length>ssd->parameter->queue_length)    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÐµÄ³ï¿½ï¿½È³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÃµÄ³ï¿½ï¿½ï¿½                     
 		//{
 			//printf("error in get request , the queue length is too long\n");
 		//}
@@ -199,12 +203,12 @@ int get_requests(struct ssd_info *ssd)
 		if(nearest_event_time<time_t)
 		{
 			/*******************************************************************************
-			*»Ø¹ö£¬¼´Èç¹ûÃ»ÓÐ°Ñtime_t¸³¸øssd->current_time£¬ÔòtraceÎÄ¼þÒÑ¶ÁµÄÒ»Ìõ¼ÇÂ¼»Ø¹ö
-			*filepoint¼ÇÂ¼ÁËÖ´ÐÐfgetsÖ®Ç°µÄÎÄ¼þÖ¸ÕëÎ»ÖÃ£¬»Ø¹öµ½ÎÄ¼þÍ·+filepoint´¦
-			*int fseek(FILE *stream, long offset, int fromwhere);º¯ÊýÉèÖÃÎÄ¼þÖ¸ÕëstreamµÄÎ»ÖÃ¡£
-			*Èç¹ûÖ´ÐÐ³É¹¦£¬stream½«Ö¸ÏòÒÔfromwhere£¨Æ«ÒÆÆðÊ¼Î»ÖÃ£ºÎÄ¼þÍ·0£¬µ±Ç°Î»ÖÃ1£¬ÎÄ¼þÎ²2£©Îª»ù×¼£¬
-			*Æ«ÒÆoffset£¨Ö¸ÕëÆ«ÒÆÁ¿£©¸ö×Ö½ÚµÄÎ»ÖÃ¡£Èç¹ûÖ´ÐÐÊ§°Ü(±ÈÈçoffset³¬¹ýÎÄ¼þ×ÔÉí´óÐ¡)£¬Ôò²»¸Ä±ästreamÖ¸ÏòµÄÎ»ÖÃ¡£
-			*ÎÄ±¾ÎÄ¼þÖ»ÄÜ²ÉÓÃÎÄ¼þÍ·0µÄ¶¨Î»·½Ê½£¬±¾³ÌÐòÖÐ´ò¿ªÎÄ¼þ·½Ê½ÊÇ"r":ÒÔÖ»¶Á·½Ê½´ò¿ªÎÄ±¾ÎÄ¼þ	
+			*ï¿½Ø¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½Ð°ï¿½time_tï¿½ï¿½ï¿½ï¿½ssd->current_timeï¿½ï¿½ï¿½ï¿½traceï¿½Ä¼ï¿½ï¿½Ñ¶ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Â¼ï¿½Ø¹ï¿½
+			*filepointï¿½ï¿½Â¼ï¿½ï¿½Ö´ï¿½ï¿½fgetsÖ®Ç°ï¿½ï¿½ï¿½Ä¼ï¿½Ö¸ï¿½ï¿½Î»ï¿½Ã£ï¿½ï¿½Ø¹ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½Í·+filepointï¿½ï¿½
+			*int fseek(FILE *stream, long offset, int fromwhere);ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½Ö¸ï¿½ï¿½streamï¿½ï¿½Î»ï¿½Ã¡ï¿½
+			*ï¿½ï¿½ï¿½Ö´ï¿½Ð³É¹ï¿½ï¿½ï¿½streamï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½fromwhereï¿½ï¿½Æ«ï¿½ï¿½ï¿½ï¿½Ê¼Î»ï¿½Ã£ï¿½ï¿½Ä¼ï¿½Í·0ï¿½ï¿½ï¿½ï¿½Ç°Î»ï¿½ï¿½1ï¿½ï¿½ï¿½Ä¼ï¿½Î²2ï¿½ï¿½Îªï¿½ï¿½×¼ï¿½ï¿½
+			*Æ«ï¿½ï¿½offsetï¿½ï¿½Ö¸ï¿½ï¿½Æ«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö½Úµï¿½Î»ï¿½Ã¡ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½Ê§ï¿½ï¿?(ï¿½ï¿½ï¿½ï¿½offsetï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡)ï¿½ï¿½ï¿½ò²»¸Ä±ï¿½streamÖ¸ï¿½ï¿½ï¿½Î»ï¿½Ã¡ï¿?
+			*ï¿½Ä±ï¿½ï¿½Ä¼ï¿½Ö»ï¿½Ü²ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½Í·0ï¿½Ä¶ï¿½Î»ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½Ê½ï¿½ï¿½"r":ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½Ä¼ï¿½	
 			**********************************************************************************/
 			fseek(ssd->tracefile,filepoint,0); 
 			if(ssd->current_time<=nearest_event_time)
@@ -269,7 +273,7 @@ int get_requests(struct ssd_info *ssd)
 		ssd->request_queue_length++;
 	}
 
-	if (request1->operation==1)             //¼ÆËãÆ½¾ùÇëÇó´óÐ¡ 1Îª¶Á 0ÎªÐ´
+	if (request1->operation==1)             //ï¿½ï¿½ï¿½ï¿½Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð? 1Îªï¿½ï¿½ 0ÎªÐ´
 	{
 		ssd->ave_read_size=(ssd->ave_read_size*ssd->read_request_count+request1->size)/(ssd->read_request_count+1);
 	} 
@@ -280,7 +284,7 @@ int get_requests(struct ssd_info *ssd)
 
 	
 	filepoint = ftell(ssd->tracefile);	
-	fgets(buffer, 200, ssd->tracefile);    //Ñ°ÕÒÏÂÒ»ÌõÇëÇóµÄµ½´ïÊ±¼ä
+	fgets(buffer, 200, ssd->tracefile);    //Ñ°ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Äµï¿½ï¿½ï¿½Ê±ï¿½ï¿?
 	sscanf(buffer,"%lld %d %d %d %d",&time_t,&device,&lsn,&size,&ope);
 	ssd->next_request_time=time_t;
 	fseek(ssd->tracefile,filepoint,0);
@@ -289,15 +293,15 @@ int get_requests(struct ssd_info *ssd)
 }
 
 /**********************************************************************************************************************************************
-*Ê×ÏÈbufferÊÇ¸öÐ´buffer£¬¾ÍÊÇÎªÐ´ÇëÇó·þÎñµÄ£¬ÒòÎª¶ÁflashµÄÊ±¼ätRÎª20us£¬Ð´flashµÄÊ±¼ätprogÎª200us£¬ËùÒÔÎªÐ´·þÎñ¸üÄÜ½ÚÊ¡Ê±¼ä
-*  ¶Á²Ù×÷£ºÈç¹ûÃüÖÐÁËbuffer£¬´Óbuffer¶Á£¬²»Õ¼ÓÃchannelµÄI/O×ÜÏß£¬Ã»ÓÐÃüÖÐbuffer£¬´Óflash¶Á£¬Õ¼ÓÃchannelµÄI/O×ÜÏß£¬µ«ÊÇ²»½øbufferÁË
-*  Ð´²Ù×÷£ºÊ×ÏÈrequest·Ö³Ésub_request×ÓÇëÇó£¬Èç¹ûÊÇ¶¯Ì¬·ÖÅä£¬sub_request¹Òµ½ssd->sub_requestÉÏ£¬ÒòÎª²»ÖªµÀÒªÏÈ¹Òµ½ÄÄ¸öchannelµÄsub_requestÉÏ
-*          Èç¹ûÊÇ¾²Ì¬·ÖÅäÔòsub_request¹Òµ½channelµÄsub_requestÁ´ÉÏ,Í¬Ê±²»¹Ü¶¯Ì¬·ÖÅä»¹ÊÇ¾²Ì¬·ÖÅäsub_request¶¼Òª¹Òµ½requestµÄsub_requestÁ´ÉÏ
-*		   ÒòÎªÃ¿´¦ÀíÍêÒ»¸örequest£¬¶¼ÒªÔÚtraceoutputÎÄ¼þÖÐÊä³ö¹ØÓÚÕâ¸örequestµÄÐÅÏ¢¡£´¦ÀíÍêÒ»¸ösub_request,¾Í½«Æä´ÓchannelµÄsub_requestÁ´
-*		   »òssdµÄsub_requestÁ´ÉÏÕª³ý£¬µ«ÊÇÔÚtraceoutputÎÄ¼þÊä³öÒ»ÌõºóÔÙÇå¿ÕrequestµÄsub_requestÁ´¡£
-*		   sub_requestÃüÖÐbufferÔòÔÚbufferÀïÃæÐ´¾ÍÐÐÁË£¬²¢ÇÒ½«¸Ãsub_pageÌáµ½bufferÁ´Í·(LRU)£¬ÈôÃ»ÓÐÃüÖÐÇÒbufferÂú£¬ÔòÏÈ½«bufferÁ´Î²µÄsub_request
-*		   Ð´Èëflash(Õâ»á²úÉúÒ»¸ösub_requestÐ´ÇëÇó£¬¹Òµ½Õâ¸öÇëÇórequestµÄsub_requestÁ´ÉÏ£¬Í¬Ê±ÊÓ¶¯Ì¬·ÖÅä»¹ÊÇ¾²Ì¬·ÖÅä¹Òµ½channel»òssdµÄ
-*		   sub_requestÁ´ÉÏ),ÔÚ½«ÒªÐ´µÄsub_pageÐ´ÈëbufferÁ´Í·
+*ï¿½ï¿½ï¿½ï¿½bufferï¿½Ç¸ï¿½Ð´bufferï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÎªÐ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½Îªï¿½ï¿½flashï¿½ï¿½Ê±ï¿½ï¿½tRÎª20usï¿½ï¿½Ð´flashï¿½ï¿½Ê±ï¿½ï¿½tprogÎª200usï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÎªÐ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü½ï¿½Ê¡Ê±ï¿½ï¿?
+*  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½bufferï¿½ï¿½ï¿½ï¿½bufferï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ¼ï¿½ï¿½channelï¿½ï¿½I/Oï¿½ï¿½ï¿½ß£ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½bufferï¿½ï¿½ï¿½ï¿½flashï¿½ï¿½ï¿½ï¿½Õ¼ï¿½ï¿½channelï¿½ï¿½I/Oï¿½ï¿½ï¿½ß£ï¿½ï¿½ï¿½ï¿½Ç²ï¿½ï¿½ï¿½bufferï¿½ï¿½
+*  Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½requestï¿½Ö³ï¿½sub_requestï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¶ï¿½Ì?ï¿½ï¿½ï¿½ä£¬sub_requestï¿½Òµï¿½ssd->sub_requestï¿½Ï£ï¿½ï¿½ï¿½Îªï¿½ï¿½Öªï¿½ï¿½Òªï¿½È¹Òµï¿½ï¿½Ä¸ï¿½channelï¿½ï¿½sub_requestï¿½ï¿½
+*          ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½Ì?ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½sub_requestï¿½Òµï¿½channelï¿½ï¿½sub_requestï¿½ï¿½ï¿½ï¿½,Í¬Ê±ï¿½ï¿½ï¿½Ü¶ï¿½Ì¬ï¿½ï¿½ï¿½ä»¹ï¿½Ç¾ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½sub_requestï¿½ï¿½Òªï¿½Òµï¿½requestï¿½ï¿½sub_requestï¿½ï¿½ï¿½ï¿½
+*		   ï¿½ï¿½ÎªÃ¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½requestï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½traceoutputï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½requestï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½sub_request,ï¿½Í½ï¿½ï¿½ï¿½ï¿½channelï¿½ï¿½sub_requestï¿½ï¿½
+*		   ï¿½ï¿½ssdï¿½ï¿½sub_requestï¿½ï¿½ï¿½ï¿½Õªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½traceoutputï¿½Ä¼ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½requestï¿½ï¿½sub_requestï¿½ï¿½ï¿½ï¿½
+*		   sub_requestï¿½ï¿½ï¿½ï¿½bufferï¿½ï¿½ï¿½ï¿½bufferï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½Ë£ï¿½ï¿½ï¿½ï¿½Ò½ï¿½ï¿½ï¿½sub_pageï¿½áµ½bufferï¿½ï¿½Í·(LRU)ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½bufferï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È½ï¿½bufferï¿½ï¿½Î²ï¿½ï¿½sub_request
+*		   Ð´ï¿½ï¿½flash(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½sub_requestÐ´ï¿½ï¿½ï¿½ó£¬¹Òµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½requestï¿½ï¿½sub_requestï¿½ï¿½ï¿½Ï£ï¿½Í¬Ê±ï¿½Ó¶ï¿½Ì¬ï¿½ï¿½ï¿½ä»¹ï¿½Ç¾ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½Òµï¿½channelï¿½ï¿½ssdï¿½ï¿½
+*		   sub_requestï¿½ï¿½ï¿½ï¿½),ï¿½Ú½ï¿½ÒªÐ´ï¿½ï¿½sub_pageÐ´ï¿½ï¿½bufferï¿½ï¿½Í·
 ***********************************************************************************************************************************************/
 struct ssd_info *buffer_management(struct ssd_info *ssd)
 {   
@@ -328,8 +332,8 @@ struct ssd_info *buffer_management(struct ssd_info *ssd)
 		while(lpn<=last_lpn)      		
 		{
 			/************************************************************************************************
-			 *need_distb_flag±íÊ¾ÊÇ·ñÐèÒªÖ´ÐÐdistributionº¯Êý£¬1±íÊ¾ÐèÒªÖ´ÐÐ£¬bufferÖÐÃ»ÓÐ£¬0±íÊ¾²»ÐèÒªÖ´ÐÐ
-             *¼´1±íÊ¾ÐèÒª·Ö·¢£¬0±íÊ¾²»ÐèÒª·Ö·¢£¬¶ÔÓ¦µã³õÊ¼È«²¿¸³Îª1
+			 *need_distb_flagï¿½ï¿½Ê¾ï¿½Ç·ï¿½ï¿½ï¿½ÒªÖ´ï¿½ï¿½distributionï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¾ï¿½ï¿½ÒªÖ´ï¿½Ð£ï¿½bufferï¿½ï¿½Ã»ï¿½Ð£ï¿½0ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ÒªÖ´ï¿½ï¿½
+             *ï¿½ï¿½1ï¿½ï¿½Ê¾ï¿½ï¿½Òªï¿½Ö·ï¿½ï¿½ï¿½0ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½Òªï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Ê¼È?ï¿½ï¿½ï¿½ï¿½Îª1
 			*************************************************************************************************/
 			need_distb_flag=full_page;   
 			key.group=lpn;
@@ -344,24 +348,24 @@ struct ssd_info *buffer_management(struct ssd_info *ssd)
 					printf("the subpage number is larger than 32!add some cases");
 					getchar(); 		   
 				}
-				else if((buffer_node->stored & mask)==mask)  //stored´æµÄÊÇ¶ÔÓ¦µÄÉÈÇøÊÇ·ñÔÚbufferÖÐ£¬Èô¶¼ÔÚ£¬Ôòflag=1£¬±íÊ¾¶ÁÈ¡³É¹¦
+				else if((buffer_node->stored & mask)==mask)  //storedï¿½ï¿½ï¿½ï¿½Ç¶ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½bufferï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú£ï¿½ï¿½ï¿½flag=1ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½È¡ï¿½É¹ï¿½
 				{
 					flag=1;
 					lsn_flag=lsn_flag&(~mask);
 				}
 
 				if(flag==1)				
-				{	//Èç¹û¸Ãbuffer½Úµã²»ÔÚbufferµÄ¶ÓÊ×£¬ÐèÒª½«Õâ¸ö½ÚµãÌáµ½¶ÓÊ×£¬ÊµÏÖÁËLRUËã·¨£¬Õâ¸öÊÇÒ»¸öË«Ïò¶ÓÁÐ¡£		       		
+				{	//ï¿½ï¿½ï¿½ï¿½ï¿½bufferï¿½Úµã²»ï¿½ï¿½bufferï¿½Ä¶ï¿½ï¿½×£ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½áµ½ï¿½ï¿½ï¿½×£ï¿½Êµï¿½ï¿½ï¿½ï¿½LRUï¿½ã·¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Ë?ï¿½ï¿½ï¿½ï¿½Ð¡ï¿?		       		
 					if(ssd->dram->buffer->buffer_head!=buffer_node)     
 					{		
 						if(ssd->dram->buffer->buffer_tail==buffer_node)								
 						{			
-							buffer_node->LRU_link_pre->LRU_link_next=NULL;		//Î²½Úµã¶Ï¿ª			
+							buffer_node->LRU_link_pre->LRU_link_next=NULL;		//Î²ï¿½Úµï¿½Ï¿ï¿?			
 							ssd->dram->buffer->buffer_tail=buffer_node->LRU_link_pre;							
 						}				
 						else								
 						{				
-							buffer_node->LRU_link_pre->LRU_link_next=buffer_node->LRU_link_next;		//ÖÐ¼ä½Úµã¶Ï¿ª		
+							buffer_node->LRU_link_pre->LRU_link_next=buffer_node->LRU_link_next;		//ï¿½Ð¼ï¿½Úµï¿½Ï¿ï¿½		
 							buffer_node->LRU_link_next->LRU_link_pre=buffer_node->LRU_link_pre;								
 						}								
 						buffer_node->LRU_link_next=ssd->dram->buffer->buffer_head;
@@ -399,7 +403,7 @@ struct ssd_info *buffer_management(struct ssd_info *ssd)
 
 			if(lpn==first_lpn)
 			{
-				offset1=ssd->parameter->subpage_page-((lpn+1)*ssd->parameter->subpage_page-new_request->lsn);//ÊÇÇëÇóµÄµÚÒ»¸öLPN£¬ÐèÒª¼ÆËãÇëÇóµÄµÚÒ»¸ölsnÊÇ·ñÊÇLPNµÄµÚÒ»¸ölsn¼´¶ÔÆë²Ù×÷
+				offset1=ssd->parameter->subpage_page-((lpn+1)*ssd->parameter->subpage_page-new_request->lsn);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Äµï¿½Ò»ï¿½ï¿½LPNï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Äµï¿½Ò»ï¿½ï¿½lsnï¿½Ç·ï¿½ï¿½ï¿½LPNï¿½Äµï¿½Ò»ï¿½ï¿½lsnï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿?
 				state=state&(0xffffffff<<offset1);
 			}
 			if(lpn==last_lpn)
@@ -422,8 +426,8 @@ struct ssd_info *buffer_management(struct ssd_info *ssd)
 	}
 
 	/*************************************************************
-	*Èç¹ûÇëÇóÒÑ¾­±»È«²¿ÓÉbuffer·þÎñ£¬¸ÃÇëÇó¿ÉÒÔ±»Ö±½ÓÏìÓ¦£¬Êä³ö½á¹û
-	*ÕâÀï¼ÙÉèdramµÄ·þÎñÊ±¼äÎª1000ns
+	*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½È?ï¿½ï¿½ï¿½ï¿½bufferï¿½ï¿½ï¿½ñ£¬¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô±ï¿½Ö±ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿?
+	*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½dramï¿½Ä·ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Îª1000ns
 	**************************************************************/
 	if((complete_flag == 1)&&(new_request->subs==NULL))               
 	{
@@ -435,7 +439,7 @@ struct ssd_info *buffer_management(struct ssd_info *ssd)
 }
 
 /*****************************
-*lpnÏòppnµÄ×ª»»
+*lpnï¿½ï¿½ppnï¿½ï¿½×ªï¿½ï¿½
 ******************************/
 unsigned int lpn2ppn(struct ssd_info *ssd,unsigned int lsn)
 {
@@ -450,9 +454,9 @@ unsigned int lpn2ppn(struct ssd_info *ssd,unsigned int lsn)
 }
 
 /**********************************************************************************
-*¶ÁÇëÇó·ÖÅä×ÓÇëÇóº¯Êý£¬ÕâÀïÖ»´¦Àí¶ÁÇëÇó£¬Ð´ÇëÇóÒÑ¾­ÔÚbuffer_management()º¯ÊýÖÐ´¦ÀíÁË
-*¸ù¾ÝÇëÇó¶ÓÁÐºÍbufferÃüÖÐµÄ¼ì²é£¬½«Ã¿¸öÇëÇó·Ö½â³É×ÓÇëÇó£¬½«×ÓÇëÇó¶ÓÁÐ¹ÒÔÚchannelÉÏ£¬
-*²»Í¬µÄchannelÓÐ×Ô¼ºµÄ×ÓÇëÇó¶ÓÁÐ
+*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½buffer_management()ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½
+*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðºï¿½bufferï¿½ï¿½ï¿½ÐµÄ¼ï¿½é£?ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ó£¬½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¹ï¿½ï¿½ï¿½channelï¿½Ï£ï¿½
+*ï¿½ï¿½Í¬ï¿½ï¿½channelï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿?
 **********************************************************************************/
 
 struct ssd_info *distribute(struct ssd_info *ssd) 
@@ -482,7 +486,7 @@ struct ssd_info *distribute(struct ssd_info *ssd)
 	{
 		if(req->distri_flag == 0)
 		{
-			//Èç¹û»¹ÓÐÒ»Ð©¶ÁÇëÇóÐèÒª´¦Àí
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»Ð©ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò?ï¿½ï¿½ï¿½ï¿½
 			if(req->complete_lsn_count != ssd->request_tail->size)
 			{		
 				first_lsn = req->lsn;				
@@ -495,10 +499,10 @@ struct ssd_info *distribute(struct ssd_info *ssd)
 				while(i >= 0)
 				{	
 					/*************************************************************************************
-					*Ò»¸ö32Î»µÄÕûÐÍÊý¾ÝµÄÃ¿Ò»Î»´ú±íÒ»¸ö×ÓÒ³£¬32/ssd->parameter->subpage_page¾Í±íÊ¾ÓÐ¶àÉÙÒ³£¬
-					*ÕâÀïµÄÃ¿Ò»Ò³µÄ×´Ì¬¶¼´æ·ÅÔÚÁË req->need_distr_flagÖÐ£¬Ò²¾ÍÊÇcompltÖÐ£¬Í¨¹ý±È½ÏcompltµÄ
-					*Ã¿Ò»ÏîÓëfull_page£¬¾Í¿ÉÒÔÖªµÀ£¬ÕâÒ»Ò³ÊÇ·ñ´¦ÀíÍê³É¡£Èç¹ûÃ»´¦ÀíÍê³ÉÔòÍ¨¹ýcreat_sub_request
-					º¯Êý´´½¨×ÓÇëÇó¡£
+					*Ò»ï¿½ï¿½32Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ýµï¿½Ã¿Ò»Î»ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ò³ï¿½ï¿½32/ssd->parameter->subpage_pageï¿½Í±ï¿½Ê¾ï¿½Ð¶ï¿½ï¿½ï¿½Ò³ï¿½ï¿½
+					*ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿Ò»Ò³ï¿½ï¿½×´Ì?ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿? req->need_distr_flagï¿½Ð£ï¿½Ò²ï¿½ï¿½ï¿½ï¿½compltï¿½Ð£ï¿½Í¨ï¿½ï¿½ï¿½È½ï¿½compltï¿½ï¿½
+					*Ã¿Ò»ï¿½ï¿½ï¿½ï¿½full_pageï¿½ï¿½ï¿½Í¿ï¿½ï¿½ï¿½Öªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»Ò³ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½É¡ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í?ï¿½ï¿½creat_sub_request
+					ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 					*************************************************************************************/
 					for(j=0; j<32/ssd->parameter->subpage_page; j++)
 					{	
@@ -521,7 +525,7 @@ struct ssd_info *distribute(struct ssd_info *ssd)
 				}
 
 			}
-			else                                          //distri_flag == 1¶ÁÇëÇó¶¼ÔÚbufferÖÐµÃµ½·þÎñ£¬Ö±½Ó·µ»Ø·þÎñÊ±¼ä¡£
+			else                                          //distri_flag == 1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½bufferï¿½ÐµÃµï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Ó·ï¿½ï¿½Ø·ï¿½ï¿½ï¿½Ê±ï¿½ä¡£
 			{
 				req->begin_time=ssd->current_time;
 				req->response_time=ssd->current_time+1000;   
@@ -534,12 +538,12 @@ struct ssd_info *distribute(struct ssd_info *ssd)
 
 
 /**********************************************************************
-*trace_output()º¯ÊýÊÇÔÚÃ¿Ò»ÌõÇëÇóµÄËùÓÐ×ÓÇëÇó¾­¹ýprocess()º¯Êý´¦ÀíÍêºó£¬
-*´òÓ¡Êä³öÏà¹ØµÄÔËÐÐ½á¹ûµ½outputfileÎÄ¼þÖÐ£¬ÕâÀïµÄ½á¹ûÖ÷ÒªÊÇÔËÐÐµÄÊ±¼ä
+*trace_output()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ó¾?¹ï¿½process()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿?
+*ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½Ð½ï¿½ï¿½ï¿½ï¿½outputfileï¿½Ä¼ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½Ä½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½Ê±ï¿½ï¿½
 **********************************************************************/
 void trace_output(struct ssd_info* ssd){
 	int flag = 1;	
-	int64_t start_time, end_time;
+	int64_t start_time, end_time,wait_time;
 	struct request *req, *pre_node;
 	struct sub_request *sub, *tmp;
 
@@ -655,8 +659,18 @@ void trace_output(struct ssd_info* ssd){
 
 			if (flag == 1)
 			{		
+				//KXC:to calcute the wait time
+				if (start_time>=req->time)
+				{
+					wait_time=start_time-req->time;
+				}
+				else
+				{
+					wait_time=0;
+				}
+							
 				//fprintf(ssd->outputfile,"%10I64u %10u %6u %2u %16I64u %16I64u %10I64u\n",req->time,req->lsn, req->size, req->operation, start_time, end_time, end_time-req->time);
-				fprintf(ssd->outputfile,"%16lld %10d %6d %2d %16lld %16lld %10lld\n",req->time,req->lsn, req->size, req->operation, start_time, end_time, end_time-req->time);
+				fprintf(ssd->outputfile,"%16lld %10d %6d %2d %16lld %16lld %10lld %16lld\n",req->time,req->lsn, req->size, req->operation, start_time, end_time, end_time-req->time,wait_time);
 				fflush(ssd->outputfile);
 
 				if(end_time-start_time==0)
@@ -664,16 +678,20 @@ void trace_output(struct ssd_info* ssd){
 					printf("the response time is 0?? \n");
 					getchar();
 				}
-
+				//KXC:to update the value
+				ssd->previous_response_time=end_time;
+				ssd->wait_avg=ssd->wait_avg+wait_time;
 				if (req->operation==READ)
 				{
 					ssd->read_request_count++;
 					ssd->read_avg=ssd->read_avg+(end_time-req->time);
+					ssd->read_wait_avg=ssd->read_wait_avg+wait_time;
 				} 
 				else
 				{
 					ssd->write_request_count++;
 					ssd->write_avg=ssd->write_avg+(end_time-req->time);
+					ssd->write_wait_avg=ssd->write_wait_avg+wait_time;
 				}
 
 				while(req->subs!=NULL)
@@ -753,10 +771,10 @@ void trace_output(struct ssd_info* ssd){
 
 
 /*******************************************************************************
-*statistic_output()º¯ÊýÖ÷ÒªÊÇÊä³ö´¦ÀíÍêÒ»ÌõÇëÇóºóµÄÏà¹Ø´¦ÀíÐÅÏ¢¡£
-*1£¬¼ÆËã³öÃ¿¸öplaneµÄ²Á³ý´ÎÊý¼´plane_eraseºÍ×ÜµÄ²Á³ý´ÎÊý¼´erase
-*2£¬´òÓ¡min_lsn£¬max_lsn£¬read_count£¬program_countµÈÍ³¼ÆÐÅÏ¢µ½ÎÄ¼þoutputfileÖÐ¡£
-*3£¬´òÓ¡ÏàÍ¬µÄÐÅÏ¢µ½ÎÄ¼þstatisticfileÖÐ
+*statistic_output()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø´ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½
+*1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½planeï¿½Ä²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½plane_eraseï¿½ï¿½ï¿½ÜµÄ²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½erase
+*2ï¿½ï¿½ï¿½ï¿½Ó¡min_lsnï¿½ï¿½max_lsnï¿½ï¿½read_countï¿½ï¿½program_countï¿½ï¿½Í³ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½Ä¼ï¿½outputfileï¿½Ð¡ï¿½
+*3ï¿½ï¿½ï¿½ï¿½Ó¡ï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½Ä¼ï¿½statisticfileï¿½ï¿½
 *******************************************************************************/
 void statistic_output(struct ssd_info *ssd)
 {
@@ -766,7 +784,7 @@ void statistic_output(struct ssd_info *ssd)
 	printf("enter statistic_output,  current time:%lld\n",ssd->current_time);
 #endif
 
-/************KXC:ÐÞ¸ÄÊä³öÊ¹Æä·ûºÏÂß¼­  2019.8.12*********/
+/************KXC:ï¿½Þ¸ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¼ï¿½  2019.8.12*********/
 	for(i=0;i<ssd->parameter->channel_number;i++)
 	{
 		for (ii=0;ii<ssd->parameter->chip_channel[i];ii++)
@@ -820,6 +838,9 @@ void statistic_output(struct ssd_info *ssd)
 	fprintf(ssd->outputfile,"write request average size: %13f\n",ssd->ave_write_size);
 	fprintf(ssd->outputfile,"read request average response time: %lld\n",ssd->read_avg/ssd->read_request_count);
 	fprintf(ssd->outputfile,"write request average response time: %lld\n",ssd->write_avg/ssd->write_request_count);
+	fprintf(ssd->outputfile,"read average wait time: %lld\n",ssd->read_wait_avg/ssd->read_request_count);
+	fprintf(ssd->outputfile,"write average wait time: %lld\n",ssd->write_wait_avg/ssd->write_request_count);
+	fprintf(ssd->outputfile,"total average wait time: %lld\n",ssd->wait_avg/(ssd->write_request_count+ssd->read_request_count));
 	fprintf(ssd->outputfile,"buffer read hits: %13d\n",ssd->dram->buffer->read_hit);
 	fprintf(ssd->outputfile,"buffer read miss: %13d\n",ssd->dram->buffer->read_miss_hit);
 	fprintf(ssd->outputfile,"buffer write hits: %13d\n",ssd->dram->buffer->write_hit);
@@ -860,6 +881,9 @@ void statistic_output(struct ssd_info *ssd)
 	fprintf(ssd->statisticfile,"write request average size: %13f\n",ssd->ave_write_size);
 	fprintf(ssd->statisticfile,"read request average response time: %lld\n",ssd->read_avg/ssd->read_request_count);
 	fprintf(ssd->statisticfile,"write request average response time: %lld\n",ssd->write_avg/ssd->write_request_count);
+	fprintf(ssd->statisticfile,"read average wait time: %lld\n",ssd->read_wait_avg/ssd->read_request_count);
+	fprintf(ssd->statisticfile,"write average wait time: %lld\n",ssd->write_wait_avg/ssd->write_request_count);
+	fprintf(ssd->statisticfile,"total average wait time: %lld\n",ssd->wait_avg/(ssd->write_request_count+ssd->read_request_count));
 	fprintf(ssd->statisticfile,"buffer read hits: %13d\n",ssd->dram->buffer->read_hit);
 	fprintf(ssd->statisticfile,"buffer read miss: %13d\n",ssd->dram->buffer->read_miss_hit);
 	fprintf(ssd->statisticfile,"buffer write hits: %13d\n",ssd->dram->buffer->write_hit);
@@ -872,7 +896,7 @@ void statistic_output(struct ssd_info *ssd)
 
 
 /***********************************************************************************
-*¸ù¾ÝÃ¿Ò»Ò³µÄ×´Ì¬¼ÆËã³öÃ¿Ò»ÐèÒª´¦ÀíµÄ×ÓÒ³µÄÊýÄ¿£¬Ò²¾ÍÊÇÒ»¸ö×ÓÇëÇóÐèÒª´¦ÀíµÄ×ÓÒ³µÄÒ³Êý
+*ï¿½ï¿½ï¿½ï¿½Ã¿Ò»Ò³ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿Ò»ï¿½ï¿½Ò?ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½Ò²ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³ï¿½ï¿½Ò³ï¿½ï¿½
 ************************************************************************************/
 unsigned int size(unsigned int stored)
 {
@@ -894,10 +918,10 @@ unsigned int size(unsigned int stored)
 
 
 /*********************************************************
-*transfer_size()º¯ÊýµÄ×÷ÓÃ¾ÍÊÇ¼ÆËã³ö×ÓÇëÇóµÄÐèÒª´¦ÀíµÄsize
-*º¯ÊýÖÐµ¥¶À´¦ÀíÁËfirst_lpn£¬last_lpnÕâÁ½¸öÌØ±ðÇé¿ö£¬ÒòÎªÕâ
-*Á½ÖÖÇé¿öÏÂºÜÓÐ¿ÉÄÜ²»ÊÇ´¦ÀíÒ»ÕûÒ³¶øÊÇ´¦ÀíÒ»Ò³µÄÒ»²¿·Ö£¬Òò
-*ÎªlsnÓÐ¿ÉÄÜ²»ÊÇÒ»Ò³µÄµÚÒ»¸ö×ÓÒ³¡£
+*transfer_size()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¾ï¿½ï¿½Ç¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½size
+*ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½first_lpnï¿½ï¿½last_lpnï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î?ï¿½ï¿½
+*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Âºï¿½ï¿½Ð¿ï¿½ï¿½Ü²ï¿½ï¿½Ç´ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Ò³ï¿½ï¿½ï¿½Ç´ï¿½ï¿½ï¿½Ò»Ò³ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ö£ï¿½ï¿½ï¿?
+*Îªlsnï¿½Ð¿ï¿½ï¿½Ü²ï¿½ï¿½ï¿½Ò»Ò³ï¿½Äµï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ò³ï¿½ï¿½
 *********************************************************/
 unsigned int transfer_size(struct ssd_info *ssd,int need_distribute,unsigned int lpn,struct request *req)
 {
@@ -928,11 +952,11 @@ unsigned int transfer_size(struct ssd_info *ssd,int need_distribute,unsigned int
 
 /**********************************************************************************************************  
 *int64_t find_nearest_event(struct ssd_info *ssd)       
-*Ñ°ÕÒËùÓÐ×ÓÇëÇóµÄ×îÔçµ½´ïµÄÏÂ¸ö×´Ì¬Ê±¼ä,Ê×ÏÈ¿´ÇëÇóµÄÏÂÒ»¸ö×´Ì¬Ê±¼ä£¬Èç¹ûÇëÇóµÄÏÂ¸ö×´Ì¬Ê±¼äÐ¡ÓÚµÈÓÚµ±Ç°Ê±¼ä£¬
-*ËµÃ÷ÇëÇó±»×èÈû£¬ÐèÒª²é¿´channel»òÕß¶ÔÓ¦dieµÄÏÂÒ»×´Ì¬Ê±¼ä¡£Int64ÊÇÓÐ·ûºÅ 64 Î»ÕûÊýÊý¾ÝÀàÐÍ£¬ÖµÀàÐÍ±íÊ¾Öµ½éÓÚ
-*-2^63 ( -9,223,372,036,854,775,808)µ½2^63-1(+9,223,372,036,854,775,807 )Ö®¼äµÄÕûÊý¡£´æ´¢¿Õ¼äÕ¼ 8 ×Ö½Ú¡£
-*channel,dieÊÇÊÂ¼þÏòÇ°ÍÆ½øµÄ¹Ø¼üÒòËØ£¬ÈýÖÖÇé¿ö¿ÉÒÔÊ¹ÊÂ¼þ¼ÌÐøÏòÇ°ÍÆ½ø£¬channel£¬die·Ö±ð»Øµ½idle×´Ì¬£¬dieÖÐµÄ
-*¶ÁÊý¾Ý×¼±¸ºÃÁË
+*Ñ°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½çµ½ï¿½ï¿½ï¿½ï¿½Â¸ï¿½×´Ì¬Ê±ï¿½ï¿½,ï¿½ï¿½ï¿½È¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½×´Ì?Ê±ï¿½ä£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¸ï¿½×´Ì¬Ê±ï¿½ï¿½Ð¡ï¿½Úµï¿½ï¿½Úµï¿½Ç°Ê±ï¿½ä£¬
+*Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½é¿´channelï¿½ï¿½ï¿½ß¶ï¿½Ó¦dieï¿½ï¿½ï¿½ï¿½Ò»×´Ì¬Ê±ï¿½ä¡£Int64ï¿½ï¿½ï¿½Ð·ï¿½ï¿½ï¿½ 64 Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í£ï¿½Öµï¿½ï¿½ï¿½Í±ï¿½Ê¾Öµï¿½ï¿½ï¿½ï¿½
+*-2^63 ( -9,223,372,036,854,775,808)ï¿½ï¿½2^63-1(+9,223,372,036,854,775,807 )Ö®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ´?ï¿½Õ¼ï¿½Õ¼ 8 ï¿½Ö½Ú¡ï¿½
+*channel,dieï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½Ç°ï¿½Æ½ï¿½ï¿½Ä¹Ø¼ï¿½ï¿½ï¿½ï¿½Ø£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½Æ½ï¿½ï¿½ï¿½channelï¿½ï¿½dieï¿½Ö±ï¿½Øµï¿½idle×´Ì¬ï¿½ï¿½dieï¿½Ðµï¿½
+*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 ***********************************************************************************************************/
 int64_t find_nearest_event(struct ssd_info *ssd) 
 {
@@ -957,18 +981,18 @@ int64_t find_nearest_event(struct ssd_info *ssd)
 	} 
 
 	/*****************************************************************************************************
-	 *timeÎªËùÓÐ A.ÏÂÒ»×´Ì¬ÎªCHANNEL_IDLEÇÒÏÂÒ»×´Ì¬Ô¤¼ÆÊ±¼ä´óÓÚssdµ±Ç°Ê±¼äµÄCHANNELµÄÏÂÒ»×´Ì¬Ô¤¼ÆÊ±¼ä
-	 *           B.ÏÂÒ»×´Ì¬ÎªCHIP_IDLEÇÒÏÂÒ»×´Ì¬Ô¤¼ÆÊ±¼ä´óÓÚssdµ±Ç°Ê±¼äµÄDIEµÄÏÂÒ»×´Ì¬Ô¤¼ÆÊ±¼ä
-	 *		     C.ÏÂÒ»×´Ì¬ÎªCHIP_DATA_TRANSFERÇÒÏÂÒ»×´Ì¬Ô¤¼ÆÊ±¼ä´óÓÚssdµ±Ç°Ê±¼äµÄDIEµÄÏÂÒ»×´Ì¬Ô¤¼ÆÊ±¼ä
-	 *CHIP_DATA_TRANSFER¶Á×¼±¸ºÃ×´Ì¬£¬Êý¾ÝÒÑ´Ó½éÖÊ´«µ½ÁËregister£¬ÏÂÒ»×´Ì¬ÊÇ´Óregister´«ÍùbufferÖÐµÄ×îÐ¡Öµ 
-	 *×¢Òâ¿ÉÄÜ¶¼Ã»ÓÐÂú×ãÒªÇóµÄtime£¬ÕâÊ±time·µ»Ø0x7fffffffffffffff ¡£
+	 *timeÎªï¿½ï¿½ï¿½ï¿½ A.ï¿½ï¿½Ò»×´Ì¬ÎªCHANNEL_IDLEï¿½ï¿½ï¿½ï¿½Ò»×´Ì¬Ô¤ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ssdï¿½ï¿½Ç°Ê±ï¿½ï¿½ï¿½CHANNELï¿½ï¿½ï¿½ï¿½Ò»×´Ì¬Ô¤ï¿½ï¿½Ê±ï¿½ï¿½
+	 *           B.ï¿½ï¿½Ò»×´Ì¬ÎªCHIP_IDLEï¿½ï¿½ï¿½ï¿½Ò»×´Ì¬Ô¤ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ssdï¿½ï¿½Ç°Ê±ï¿½ï¿½ï¿½DIEï¿½ï¿½ï¿½ï¿½Ò»×´Ì¬Ô¤ï¿½ï¿½Ê±ï¿½ï¿½
+	 *		     C.ï¿½ï¿½Ò»×´Ì¬ÎªCHIP_DATA_TRANSFERï¿½ï¿½ï¿½ï¿½Ò»×´Ì¬Ô¤ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ssdï¿½ï¿½Ç°Ê±ï¿½ï¿½ï¿½DIEï¿½ï¿½ï¿½ï¿½Ò»×´Ì¬Ô¤ï¿½ï¿½Ê±ï¿½ï¿½
+	 *CHIP_DATA_TRANSFERï¿½ï¿½×¼ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´Ó½ï¿½ï¿½Ê´ï¿½ï¿½ï¿½ï¿½ï¿½registerï¿½ï¿½ï¿½ï¿½Ò»×´Ì¬ï¿½Ç´ï¿½registerï¿½ï¿½ï¿½ï¿½bufferï¿½Ðµï¿½ï¿½ï¿½Ð¡Öµ 
+	 *×¢ï¿½ï¿½ï¿½ï¿½Ü¶ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò?ï¿½ï¿½ï¿½timeï¿½ï¿½ï¿½ï¿½Ê±timeï¿½ï¿½ï¿½ï¿½0x7fffffffffffffff ï¿½ï¿½
 	*****************************************************************************************************/
 	time=(time1>time2)?time2:time1;
 	return time;
 }
 
 /***********************************************
-*free_all_node()º¯ÊýµÄ×÷ÓÃ¾ÍÊÇÊÍ·ÅËùÓÐÉêÇëµÄ½Úµã
+*free_all_node()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¾ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä½Úµï¿?
 ************************************************/
 void free_all_node(struct ssd_info *ssd)
 {
@@ -1029,8 +1053,8 @@ void free_all_node(struct ssd_info *ssd)
 
 
 /*****************************************************************************
-*make_aged()º¯ÊýµÄ×÷ÓÃ¾ÍËÀÄ£ÄâÕæÊµµÄÓÃ¹ýÒ»¶ÎÊ±¼äµÄssd£¬
-*ÄÇÃ´Õâ¸össdµÄÏàÓ¦µÄ²ÎÊý¾ÍÒª¸Ä±ä£¬ËùÒÔÕâ¸öº¯ÊýÊµÖÊÉÏ¾ÍÊÇ¶ÔssdÖÐ¸÷¸ö²ÎÊýµÄ¸³Öµ¡£
+*make_aged()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¾ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½ï¿½Ã¹ï¿½Ò»ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ssdï¿½ï¿½
+*ï¿½ï¿½Ã´ï¿½ï¿½ï¿½ssdï¿½ï¿½ï¿½ï¿½Ó¦ï¿½Ä²ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½Ä±ä£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½ï¿½Ï¾ï¿½ï¿½Ç¶ï¿½ssdï¿½Ð¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½Öµï¿½ï¿½
 ******************************************************************************/
 struct ssd_info *make_aged(struct ssd_info *ssd)
 {
@@ -1039,7 +1063,7 @@ struct ssd_info *make_aged(struct ssd_info *ssd)
     
 	if (ssd->parameter->aged==1)
 	{
-		//threshold±íÊ¾Ò»¸öplaneÖÐÓÐ¶àÉÙÒ³ÐèÒªÌáÇ°ÖÃÎªÊ§Ð§
+		//thresholdï¿½ï¿½Ê¾Ò»ï¿½ï¿½planeï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½Ò³ï¿½ï¿½Òªï¿½ï¿½Ç°ï¿½ï¿½ÎªÊ§Ð§
 		threshould=(int)(ssd->parameter->block_plane*ssd->parameter->page_block*ssd->parameter->aged_ratio);  
 		for (i=0;i<ssd->parameter->channel_number;i++)
 			for (j=0;j<ssd->parameter->chip_channel[i];j++)
@@ -1055,9 +1079,9 @@ struct ssd_info *make_aged(struct ssd_info *ssd)
 							}
 							for (n=0;n<(ssd->parameter->page_block*ssd->parameter->aged_ratio+1);n++)
 							{  
-								ssd->channel_head[i].chip_head[j].die_head[k].plane_head[l].blk_head[m].page_head[n].valid_state=0;        //±íÊ¾Ä³Ò»Ò³Ê§Ð§£¬Í¬Ê±±ê¼ÇvalidºÍfree×´Ì¬¶¼Îª0
-								ssd->channel_head[i].chip_head[j].die_head[k].plane_head[l].blk_head[m].page_head[n].free_state=0;         //±íÊ¾Ä³Ò»Ò³Ê§Ð§£¬Í¬Ê±±ê¼ÇvalidºÍfree×´Ì¬¶¼Îª0
-								ssd->channel_head[i].chip_head[j].die_head[k].plane_head[l].blk_head[m].page_head[n].lpn=0;  //°Ñvalid_state free_state lpn¶¼ÖÃÎª0±íÊ¾Ò³Ê§Ð§£¬¼ì²âµÄÊ±ºòÈýÏî¶¼¼ì²â£¬µ¥¶Àlpn=0¿ÉÒÔÊÇÓÐÐ§Ò³
+								ssd->channel_head[i].chip_head[j].die_head[k].plane_head[l].blk_head[m].page_head[n].valid_state=0;        //ï¿½ï¿½Ê¾Ä³Ò»Ò³Ê§Ð§ï¿½ï¿½Í¬Ê±ï¿½ï¿½ï¿½validï¿½ï¿½free×´Ì¬ï¿½ï¿½Îª0
+								ssd->channel_head[i].chip_head[j].die_head[k].plane_head[l].blk_head[m].page_head[n].free_state=0;         //ï¿½ï¿½Ê¾Ä³Ò»Ò³Ê§Ð§ï¿½ï¿½Í¬Ê±ï¿½ï¿½ï¿½validï¿½ï¿½free×´Ì¬ï¿½ï¿½Îª0
+								ssd->channel_head[i].chip_head[j].die_head[k].plane_head[l].blk_head[m].page_head[n].lpn=0;  //ï¿½ï¿½valid_state free_state lpnï¿½ï¿½ï¿½ï¿½Îª0ï¿½ï¿½Ê¾Ò³Ê§Ð§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½î¶¼ï¿½ï¿½â£?ï¿½ï¿½ï¿½ï¿½lpn=0ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§Ò³
 								ssd->channel_head[i].chip_head[j].die_head[k].plane_head[l].blk_head[m].free_page_num--;
 								ssd->channel_head[i].chip_head[j].die_head[k].plane_head[l].blk_head[m].invalid_page_num++;
 								ssd->channel_head[i].chip_head[j].die_head[k].plane_head[l].blk_head[m].last_write_page++;
@@ -1080,8 +1104,8 @@ struct ssd_info *make_aged(struct ssd_info *ssd)
 
 
 /*********************************************************************************************
-*no_buffer_distribute()º¯ÊýÊÇ´¦Àíµ±ssdÃ»ÓÐdramµÄÊ±ºò£¬
-*ÕâÊÇ¶ÁÐ´ÇëÇó¾Í²»±ØÔÙÐèÒªÔÚbufferÀïÃæÑ°ÕÒ£¬Ö±½ÓÀûÓÃcreat_sub_request()º¯Êý´´½¨×ÓÇëÇó£¬ÔÙ´¦Àí¡£
+*no_buffer_distribute()ï¿½ï¿½ï¿½ï¿½ï¿½Ç´ï¿½ï¿½ï¿½ï¿½ï¿½ssdÃ»ï¿½ï¿½dramï¿½ï¿½Ê±ï¿½ï¿½
+*ï¿½ï¿½ï¿½Ç¶ï¿½Ð´ï¿½ï¿½ï¿½ï¿½Í²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò?ï¿½ï¿½bufferï¿½ï¿½ï¿½ï¿½Ñ°ï¿½Ò£ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½creat_sub_request()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù´ï¿½ï¿½ï¿½ï¿½ï¿½
 *********************************************************************************************/
 struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 {
