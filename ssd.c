@@ -1131,11 +1131,18 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 		
 		if(nearest_event_time<next_time)
 		{
-			
+			if(req->subs==NULL)
+				ssd->current_time=req->time;
 			//fseek(ssd->tracefile,filepoint,0); 
-			if(ssd->current_time<=nearest_event_time)
-				ssd->current_time=nearest_event_time;
-			return -1;
+			else
+			{
+				if(ssd->current_time<=nearest_event_time)
+				{
+					ssd->current_time=nearest_event_time;
+					return -1;
+				}	
+			}
+			
 		}
 		else
 		{
