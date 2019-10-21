@@ -177,6 +177,10 @@ int get_requests(struct ssd_info *ssd)
 		}
 	}
 	
+	if (ssd->request_queue_length>=ssd->parameter->queue_length)
+	{
+		return -1;
+	}
 	
 	filepoint = ftell(ssd->tracefile);	                  //ftell�����ļ���ǰָ�룬Ҳ�����ļ�λ��
 	fgets(buffer, 200, ssd->tracefile);                   //�Ӹ����ļ��ж�ȡ
@@ -1163,7 +1167,8 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 				}
 				else
 				{
-					ssd->current_time=next_time;
+					//ssd->current_time=next_time;
+					ssd->current_time=ssd->current_time>next_time?ssd->current_time:next_time;
 				}
 			}
 		}
