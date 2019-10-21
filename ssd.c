@@ -119,6 +119,7 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 			}		
 		} */
 		flag=get_requests(ssd);
+		//KXC:here just modify the function no_buffer_distribute so there is no buffer
 		if(ssd->parameter->dram_capacity==0)
 		{
 			no_buffer_distribute(ssd);
@@ -258,7 +259,7 @@ int get_requests(struct ssd_info *ssd)
 	sscanf(buffer,"%lld %d %d %d %d",&time_t,&device,&lsn,&size,&ope);
 	ssd->next_request_time=time_t;
 	fseek(ssd->tracefile,filepoint,0);
-
+	ssd->empty=0;                     //KXC:the request queue is not empty
 	return 1;
 }
 
@@ -1092,6 +1093,8 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 	unsigned int offset1=0, offset2=0;
 	unsigned int sub_size=0;
 	unsigned int sub_state=0;
+
+	//KXC:the request is empty,exit and get next request
 	if(ssd->request_queue==NULL)
 	{
     	ssd->empty=1;
@@ -1131,12 +1134,12 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 		
 		if(nearest_event_time<next_time)
 		{
-			if(req->subs==NULL)
+			if(req->subs==NULL)     //the request is in the queue but not distribute
 				ssd->current_time=req->time;
 			//fseek(ssd->tracefile,filepoint,0); 
 			else
 			{
-				if(ssd->current_time<=nearest_event_time)
+				if(ssd->current_time<=nearest_event_time)  //the request has been distributed but not finish
 				{
 					ssd->current_time=nearest_event_time;
 					return -1;
@@ -1146,7 +1149,7 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 		}
 		else
 		{
-			if (ssd->request_queue_length>=ssd->parameter->queue_length)
+			if (ssd->request_queue_length>=ssd->parameter->queue_length)// the request queue is full
 			{
 				//fseek(ssd->tracefile,filepoint,0);
 				ssd->current_time=nearest_event_time;
@@ -1154,7 +1157,7 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 			} 
 			else
 			{
-				if(req->subs!=NULL)
+				if(req->subs!=NULL)   //the request has ben distributed 
 				{
 					ssd->current_time=nearest_event_time;
 				}
