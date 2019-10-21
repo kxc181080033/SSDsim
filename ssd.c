@@ -106,11 +106,8 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 	while(flag!=100)      
 	{
         
-		flag=get_requests(ssd);
-
-		if(flag == 1)
+		/* if(flag == 1)
 		{   
-			//printf("once\n");
 			if (ssd->parameter->dram_capacity!=0)           //�Ƿ��л�����
 			{
 				buffer_management(ssd);  
@@ -120,8 +117,12 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 			{
 				no_buffer_distribute(ssd);
 			}		
+		} */
+		flag=get_requests(ssd);
+		if(ssd->parameter->dram_capacity==0)
+		{
+			no_buffer_distribute(ssd);
 		}
-
 		process(ssd);                                      //ִ�д�������
 		trace_output(ssd);
 		if(flag == 0 && ssd->request_queue == NULL)        //����ִ����ɣ�����?
@@ -154,7 +155,7 @@ int get_requests(struct ssd_info *ssd)
 	int flag = 1;
 	long filepoint; 
 	int64_t time_t = 0;
-	int64_t nearest_event_time;    
+	//int64_t nearest_event_time;    
 
 	#ifdef DEBUG
 	printf("enter get_requests,  current time:%lld\n",ssd->current_time);
@@ -162,11 +163,16 @@ int get_requests(struct ssd_info *ssd)
 
 	if(feof(ssd->tracefile))
 	{
-		ssd->current_time=find_nearest_event(ssd);
+		//ssd->current_time=find_nearest_event(ssd);
 		return 0;
 	}
-		 
 
+	//KXC:if current time less than next request's arriving time, it should not be gotten
+	if(ssd->next_request_time>ssd->current_time)
+	{
+		return -1;
+	}
+	
 	filepoint = ftell(ssd->tracefile);	                  //ftell�����ļ���ǰָ�룬Ҳ�����ļ�λ��
 	fgets(buffer, 200, ssd->tracefile);                   //�Ӹ����ļ��ж�ȡ
 	sscanf(buffer,"%lld %d %d %d %d",&time_t,&device,&lsn,&size,&ope);   //����������
@@ -188,47 +194,7 @@ int get_requests(struct ssd_info *ssd)
 	large_lsn=(int)((ssd->parameter->subpage_page*ssd->parameter->page_block*ssd->parameter->block_plane*ssd->parameter->plane_die*ssd->parameter->die_chip*ssd->parameter->chip_num)*(1-ssd->parameter->overprovide));
 	lsn = lsn%large_lsn;
 
-	nearest_event_time=find_nearest_event(ssd);
-	if (nearest_event_time==MAX_INT64)
-	{
-		ssd->current_time=time_t;           
-		                                                  
-		//if (ssd->request_queue_length>ssd->parameter->queue_length)    //���������еĳ��ȳ����������ļ��������õĳ���                     
-		//{
-			//printf("error in get request , the queue length is too long\n");
-		//}
-	}
-	else
-	{   
-		if(nearest_event_time<time_t)
-		{
-			/*******************************************************************************
-			*�ع��������û�а�time_t����ssd->current_time����trace�ļ��Ѷ���һ����¼�ع�
-			*filepoint��¼��ִ��fgets֮ǰ���ļ�ָ��λ�ã��ع����ļ�ͷ+filepoint��
-			*int fseek(FILE *stream, long offset, int fromwhere);���������ļ�ָ��stream��λ�á�
-			*���ִ�гɹ���stream��ָ����fromwhere��ƫ����ʼλ�ã��ļ�ͷ0����ǰλ��1���ļ�β2��Ϊ��׼��
-			*ƫ��offset��ָ��ƫ���������ֽڵ�λ�á����ִ��ʧ��?(����offset�����ļ�������С)���򲻸ı�streamָ���λ�á�?
-			*�ı��ļ�ֻ�ܲ����ļ�ͷ0�Ķ�λ��ʽ���������д��ļ���ʽ��"r":��ֻ����ʽ���ı��ļ�	
-			**********************************************************************************/
-			fseek(ssd->tracefile,filepoint,0); 
-			if(ssd->current_time<=nearest_event_time)
-				ssd->current_time=nearest_event_time;
-			return -1;
-		}
-		else
-		{
-			if (ssd->request_queue_length>=ssd->parameter->queue_length)
-			{
-				fseek(ssd->tracefile,filepoint,0);
-				ssd->current_time=nearest_event_time;
-				return -1;
-			} 
-			else
-			{
-				ssd->current_time=time_t;
-			}
-		}
-	}
+
 
 	if(time_t < 0)
 	{
@@ -1111,17 +1077,67 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 {
 	unsigned int lsn,lpn,last_lpn,first_lpn,complete_flag=0, state;
 	unsigned int flag=0,flag1=1,active_region_flag=0;           //to indicate the lsn is hitted or not
-	struct request *req=NULL;
+	struct request *req=NULL,*reqtemp;
 	struct sub_request *sub=NULL,*sub_r=NULL,*update=NULL;
 	struct local *loc=NULL;
 	struct channel_info *p_ch=NULL;
 
-	
+	int64_t nearest_event_time;
+	int64_t next_time=ssd->request_queue->time;
 	unsigned int mask=0; 
 	unsigned int offset1=0, offset2=0;
 	unsigned int sub_size=0;
 	unsigned int sub_state=0;
 
+	//to update the current time of ssd
+	nearest_event_time=find_nearest_event(ssd);
+	if (nearest_event_time==MAX_INT64)
+	{
+		ssd->current_time=ssd->request_queue->time;           
+
+	}
+	else
+	{   
+		//KXC:request is processing to find the next request's arriving time
+		reqtemp=ssd->request_queue->next_node;
+		while (reqtemp!=NULL)
+		{
+			if(reqtemp->time==ssd->current_time)
+			{
+				reqtemp=reqtemp->next_node;
+			}
+			else
+			{
+				next_time=req->time;
+				break;
+			}
+			next_time=req->time;
+		}
+		
+		if(nearest_event_time<next_time)
+		{
+			
+			//fseek(ssd->tracefile,filepoint,0); 
+			if(ssd->current_time<=nearest_event_time)
+				ssd->current_time=nearest_event_time;
+			return -1;
+		}
+		else
+		{
+			if (ssd->request_queue_length>=ssd->parameter->queue_length)
+			{
+				//fseek(ssd->tracefile,filepoint,0);
+				ssd->current_time=nearest_event_time;
+				return -1;
+			} 
+			else
+			{
+				ssd->current_time=next_time;
+			}
+		}
+	}
+	
+	
 	ssd->dram->current_time=ssd->current_time;
 	req=ssd->request_tail;       
 	lsn=req->lsn;
