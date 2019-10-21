@@ -168,10 +168,14 @@ int get_requests(struct ssd_info *ssd)
 	}
 
 	//KXC:if current time less than next request's arriving time, it should not be gotten
-	if(ssd->next_request_time>ssd->current_time)
+	if(ssd->empty==0)
 	{
-		return -1;
+		if(ssd->next_request_time>ssd->current_time)
+		{
+			return -1;
+		}
 	}
+	
 	
 	filepoint = ftell(ssd->tracefile);	                  //ftell�����ļ���ǰָ�룬Ҳ�����ļ�λ��
 	fgets(buffer, 200, ssd->tracefile);                   //�Ӹ����ļ��ж�ȡ
@@ -1083,18 +1087,28 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 	struct channel_info *p_ch=NULL;
 
 	int64_t nearest_event_time;
-	int64_t next_time=ssd->request_queue->time;
+	int64_t next_time;
 	unsigned int mask=0; 
 	unsigned int offset1=0, offset2=0;
 	unsigned int sub_size=0;
 	unsigned int sub_state=0;
+	if(ssd->request_queue==NULL)
+	{
+    	ssd->empty=1;
+    	return 0;
+	}
+	else
+	{
+		next_time=ssd->request_queue->time;
+	}
+		
+	req=ssd->request_tail; 
 
 	//to update the current time of ssd
 	nearest_event_time=find_nearest_event(ssd);
 	if (nearest_event_time==MAX_INT64)
 	{
 		ssd->current_time=ssd->request_queue->time;           
-
 	}
 	else
 	{   
@@ -1102,16 +1116,17 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 		reqtemp=ssd->request_queue->next_node;
 		while (reqtemp!=NULL)
 		{
-			if(reqtemp->time==ssd->current_time)
+			if(reqtemp->time==ssd->request_queue->time)
 			{
+				next_time=reqtemp->time;				
 				reqtemp=reqtemp->next_node;
 			}
 			else
 			{
-				next_time=req->time;
+				next_time=reqtemp->time;
 				break;
 			}
-			next_time=req->time;
+
 		}
 		
 		if(nearest_event_time<next_time)
@@ -1138,12 +1153,16 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 	}
 	
 	
+	
 	ssd->dram->current_time=ssd->current_time;
-	req=ssd->request_tail;       
+	//req=ssd->request_tail;       
 	lsn=req->lsn;
 	lpn=req->lsn/ssd->parameter->subpage_page;
 	last_lpn=(req->lsn+req->size-1)/ssd->parameter->subpage_page;
 	first_lpn=req->lsn/ssd->parameter->subpage_page;
+
+	if(req->subs!=NULL)
+		return 0;
 
 	if(req->operation==READ)        
 	{		
