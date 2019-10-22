@@ -359,6 +359,7 @@ struct request{
 	unsigned int lsn;                  //请求的起始地址，逻辑地址
 	unsigned int size;                 //请求的大小，既多少个扇区
 	unsigned int operation;            //请求的种类，1为读，0为写
+	int dis;                           //KXC:to indicate the request is distribured or not
 
 	unsigned int* need_distr_flag;
 	unsigned int complete_lsn_count;   //record the count of lsn served by buffer

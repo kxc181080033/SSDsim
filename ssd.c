@@ -632,7 +632,7 @@ void trace_output(struct ssd_info* ssd){
 				
 			}
 
-			if (flag == 1)
+			if (flag == 1&&req->dis==1)
 			{		
 				//KXC:to calcute the wait time
 				if (start_time>=req->time)
@@ -1218,7 +1218,7 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 			lpn++;
 		}
 	}
-
+	req->dis=1;
 	return ssd;
 }
 
