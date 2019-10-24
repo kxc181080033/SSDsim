@@ -270,7 +270,16 @@ int get_requests(struct ssd_info *ssd)
 	sscanf(buffer,"%lld %d %d %d %d",&time_t,&device,&lsn,&size,&ope);
 	ssd->next_request_time=time_t;
 	fseek(ssd->tracefile,filepoint,0);
-	ssd->empty=0;                     //KXC:the request queue is not empty
+	//ssd->empty=0;                     //KXC:the request queue is not empty
+	if(ssd->current_request_time==ssd->next_request_time)
+	{
+		ssd->empty=1;
+	}
+	else
+	{
+		ssd->empty=0;
+	}
+	
 	return 1;
 }
 
