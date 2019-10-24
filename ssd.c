@@ -118,7 +118,13 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 				no_buffer_distribute(ssd);
 			}		
 		} */
-		flag=get_requests(ssd);
+		while(ssd->request_queue_length<ssd->parameter->queue_length)
+		{
+			flag=get_requests(ssd);
+			if(ssd->next_request_time!=ssd->current_request_time)
+				break;
+		}
+		
 		//KXC:here just modify the function no_buffer_distribute so there is no buffer
 		if(ssd->parameter->dram_capacity==0)
 		{
@@ -221,6 +227,7 @@ int get_requests(struct ssd_info *ssd)
 	alloc_assert(request1,"request");
 	memset(request1,0, sizeof(struct request));
 
+	ssd->current_request_time=time_t;
 	request1->time = time_t;
 	request1->lsn = lsn;
 	request1->size = size;
@@ -1109,7 +1116,25 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 		next_time=ssd->request_queue->time;
 	}
 		
-	req=ssd->request_tail; 
+	//to find the next not distributed request
+	req=ssd->request_queue;
+	while(req!=NULL)
+	{
+		if (req->dis==1)
+		{
+			if(req->next_node!=NULL)
+			{
+				req=req->next_node;
+			}
+			else
+			{
+				break;
+			}
+			
+		}	
+		else
+			break;
+	} 
 
 	//to update the current time of ssd
 	nearest_event_time=find_nearest_event(ssd);
@@ -1175,50 +1200,64 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 	}
 	
 	
-	
-	ssd->dram->current_time=ssd->current_time;
-	//req=ssd->request_tail;       
-	lsn=req->lsn;
-	lpn=req->lsn/ssd->parameter->subpage_page;
-	last_lpn=(req->lsn+req->size-1)/ssd->parameter->subpage_page;
-	first_lpn=req->lsn/ssd->parameter->subpage_page;
 
-	if(req->subs!=NULL)
-		return 0;
-
-	if(req->operation==READ)        
-	{		
-		while(lpn<=last_lpn) 		
-		{
-			sub_state=(ssd->dram->map->map_entry[lpn].state&0x7fffffff);
-			sub_size=size(sub_state);
-			sub=creat_sub_request(ssd,lpn,sub_size,sub_state,req,req->operation);
-			lpn++;
-		}
-	}
-	else if(req->operation==WRITE)
+	while(req!=NULL)
 	{
-		while(lpn<=last_lpn)     	
-		{	
-			mask=~(0xffffffff<<(ssd->parameter->subpage_page));
-			state=mask;
-			if(lpn==first_lpn)
-			{
-				offset1=ssd->parameter->subpage_page-((lpn+1)*ssd->parameter->subpage_page-req->lsn);
-				state=state&(0xffffffff<<offset1);
-			}
-			if(lpn==last_lpn)
-			{
-				offset2=ssd->parameter->subpage_page-((lpn+1)*ssd->parameter->subpage_page-(req->lsn+req->size));
-				state=state&(~(0xffffffff<<offset2));
-			}
-			sub_size=size(state);
+		ssd->dram->current_time=ssd->current_time;
+		//req=ssd->request_tail;       
+		lsn=req->lsn;
+		lpn=req->lsn/ssd->parameter->subpage_page;
+		last_lpn=(req->lsn+req->size-1)/ssd->parameter->subpage_page;
+		first_lpn=req->lsn/ssd->parameter->subpage_page;
 
-			sub=creat_sub_request(ssd,lpn,sub_size,state,req,req->operation);
-			lpn++;
+		if(req->subs!=NULL)
+			return 0;
+
+		if(req->operation==READ)        
+		{		
+			while(lpn<=last_lpn) 		
+			{
+				sub_state=(ssd->dram->map->map_entry[lpn].state&0x7fffffff);
+				sub_size=size(sub_state);
+				sub=creat_sub_request(ssd,lpn,sub_size,sub_state,req,req->operation);
+				lpn++;
+			}
+		}
+		else if(req->operation==WRITE)
+		{
+			while(lpn<=last_lpn)     	
+			{	
+				mask=~(0xffffffff<<(ssd->parameter->subpage_page));
+				state=mask;
+				if(lpn==first_lpn)
+				{
+					offset1=ssd->parameter->subpage_page-((lpn+1)*ssd->parameter->subpage_page-req->lsn);
+					state=state&(0xffffffff<<offset1);
+				}
+				if(lpn==last_lpn)
+				{
+					offset2=ssd->parameter->subpage_page-((lpn+1)*ssd->parameter->subpage_page-(req->lsn+req->size));
+					state=state&(~(0xffffffff<<offset2));
+				}
+				sub_size=size(state);
+
+				sub=creat_sub_request(ssd,lpn,sub_size,state,req,req->operation);
+				lpn++;
+			}
+		}
+		req->dis=1;
+		if(req->next_node!=NULL)
+		{
+			if(req->next_node->time==req->time)
+			{
+				req=req->next_node;
+			}
+			else
+			{
+				break;
+			}
 		}
 	}
-	req->dis=1;
 	return ssd;
 }
 
