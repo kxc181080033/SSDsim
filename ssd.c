@@ -292,20 +292,20 @@ int get_requests(struct ssd_info *ssd)
 //KXC: the schedule function to schedule the request in the queue
 struct ssd_info *schedule(struct ssd_info *ssd)
 {
-	struct request *temp;
-	struct request *temp_tail;
-	struct request *temp1;
-	struct request *temp1_tail;
-	struct request *temp2;
-	struct request *temp2_tail;
-	struct request *write;
-	struct request *write_tail;
-	struct request *read;
-	struct request *read_tail;
-	struct request *overtime;
-	struct request *overtime_tail;
-	struct request *conflict;
-	struct request *conflict_tail;
+	struct request *temp=NULL;
+	struct request *temp_tail=NULL;
+	struct request *temp1=NULL;
+	struct request *temp1_tail=NULL;
+	struct request *temp2=NULL;
+	struct request *temp2_tail=NULL;
+	struct request *write=NULL;
+	struct request *write_tail=NULL;
+	struct request *read=NULL;
+	struct request *read_tail=NULL;
+	struct request *overtime=NULL;
+	struct request *overtime_tail=NULL;
+	struct request *conflict=NULL;
+	struct request *conflict_tail=NULL;
 
 	unsigned int first_lpn,last_lpn;
 	int i,j,flag;
@@ -510,7 +510,14 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 				temp2_tail=conflict_tail;
 				break;
 			}
-			temp=conflict;
+			if(conflict==NULL)
+			{
+				break;
+			}
+			else
+			{
+				temp=conflict;
+			}			
 		}
 	}
 
