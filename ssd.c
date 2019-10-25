@@ -323,7 +323,7 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 	temp=ssd->request_queue;
 	while(temp!=NULL)
 	{
-		if(temp->sch!=0)
+		if(temp->sch==0)
 		{
 			temp=temp->next_node;
 		}
@@ -384,14 +384,33 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 	temp1=ssd->request_queue;
 	while(temp1!=NULL)
 	{
-		if(temp1->next_node->sch==1)
+		if(temp1->sch==1)
 		{
-			temp1=temp1->next_node;
+			if(temp1->next_node!=NULL)
+			{
+				//temp1=temp1->next_node;
+				if(temp1->next_node->sch==1)
+				{
+					temp1=temp1->next_node;
+				}
+				else
+				{
+					temp1_tail=temp1;
+					temp1_tail->next_node=NULL;
+					ssd->request_tail=temp1_tail;
+					break;
+				}
+			}
+			else
+			{
+				break;    //all the requests have been scheduled, this situation should be processed in the above
+			}
 		}
 		else
 		{
-			temp1_tail=temp1;
+			temp1_tail=NULL;
 		}
+
 	}
 	
 	//the read and write requests have been seperated
@@ -446,7 +465,7 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 					{
 						channel=i%ssd->parameter->channel_number;
 						chip=(i/ssd->parameter->channel_number)%ssd->parameter->chip_channel[0];
-						if(vector[channel]&chip==0)                //KXC:no conflict
+						if((int)(vector[channel]&chip)==0)                //KXC:no conflict
 						{
 							continue;
 						}
@@ -472,11 +491,13 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 						{
 							temp2=temp;
 							temp2_tail=temp;
+							temp2_tail->next_node=NULL;
 						}
 						else
 						{
 							temp2->next_node=temp;
 							temp2_tail=temp;
+							temp2_tail->next_node=NULL;
 						}
 						
 					}
@@ -486,11 +507,13 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 						{
 							conflict=temp;
 							conflict_tail=temp;
+							conflict_tail->next_node=NULL;
 						}
 						else
 						{
 							conflict->next_node=temp;
 							conflict_tail=temp;
+							conflict_tail->next_node=NULL;
 						}
 
 					}
@@ -521,8 +544,18 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 		}
 	}
 
-	temp1_tail->next_node=temp2;
-	ssd->request_tail=temp2_tail;
+	if(temp1_tail!=NULL)
+	{
+		ssd->request_tail->next_node=temp2;
+		ssd->request_tail=temp2_tail;
+		ssd->request_tail->next_node=NULL;
+	}
+	else
+	{
+		ssd->request_queue=temp2;
+		ssd->request_tail=temp2_tail;
+		ssd->request_tail->next_node=NULL;
+	}	
 }
 
 
