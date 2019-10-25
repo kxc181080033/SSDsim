@@ -44,6 +44,11 @@ int  main()
 	make_aged(ssd);
 	pre_process_page(ssd);
 
+	//KXC:allocate memory for vector
+	vector=(int*)malloc(sizeof(int)*ssd->parameter->channel_number);
+	alloc_assert(vector,"vector");
+	memset(vector,0,sizeof(int)*ssd->parameter->channel_number);
+
 /************KXC:�޸����ʹ������߼� 2019.8.13**************/
 	for (i=0;i<ssd->parameter->channel_number;i++)//����Ļ�����ʼ��о�?�Ŀհ�ҳ��Ϣ
 	{
@@ -121,10 +126,10 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 		while(ssd->request_queue_length<ssd->parameter->queue_length)
 		{
 			flag=get_requests(ssd);
-			if(ssd->next_request_time!=ssd->current_request_time)
+			if(ssd->next_request_time>ssd->current_request_time)
 				break;
 		}
-		
+		schedule(ssd);
 		//KXC:here just modify the function no_buffer_distribute so there is no buffer
 		if(ssd->parameter->dram_capacity==0)
 		{
@@ -282,6 +287,239 @@ int get_requests(struct ssd_info *ssd)
 	
 	return 1;
 }
+
+
+//KXC: the schedule function to schedule the request in the queue
+struct ssd_info *schedule(struct ssd_info *ssd)
+{
+	struct request *temp;
+	struct request *temp_tail;
+	struct request *temp1;
+	struct request *temp1_tail;
+	struct request *temp2;
+	struct request *temp2_tail;
+	struct request *write;
+	struct request *write_tail;
+	struct request *read;
+	struct request *read_tail;
+	struct request *overtime;
+	struct request *overtime_tail;
+	struct request *conflict;
+	struct request *conflict_tail;
+
+	unsigned int first_lpn,last_lpn;
+	int i,j,flag;
+	int channel,chip;
+	int conflict_flag=1;
+
+	//int *channel;
+	//int *chip;
+
+	if(ssd->request_queue==NULL)    //no need to schedule
+		return 0;
+
+	//seperate the read and write requests first, divided into 3parts
+	//1.scheduled requests;2.overtime requests;3.can be scheduled read and write request
+	temp=ssd->request_queue;
+	while(temp!=NULL)
+	{
+		if(temp->sch!=0)
+		{
+			temp=temp->next_node;
+		}
+		else
+		{		
+			if(ssd->current_time-temp->time<ssd->parameter->deadline)
+			{
+				if(temp->operation==WRITE)
+				{
+					if(write==NULL)
+					{
+						write=temp;
+						write_tail=temp;
+					}
+					else
+					{
+						write->next_node=temp;
+						write_tail=temp;
+					}	
+				}
+				else
+				{
+					if(read==NULL)
+					{
+						read=temp;
+						read_tail=temp;
+					}
+					else
+					{
+						read->next_node=temp;
+						read_tail=temp;
+					}
+				}
+			}
+			else
+			{
+				if(overtime==NULL)
+				{
+					overtime=temp;
+					overtime_tail=temp;
+				}
+				else
+				{
+					overtime->next_node=temp;
+					overtime_tail=temp;
+				}	
+			}
+			temp=temp->next_node;
+		}	
+	}
+
+	if(read==NULL&&write==NULL)
+	{
+		return 0;
+	}
+
+	//to find the tail of the scheduled requests
+	temp1=ssd->request_queue;
+	while(temp1!=NULL)
+	{
+		if(temp1->next_node->sch==1)
+		{
+			temp1=temp1->next_node;
+		}
+		else
+		{
+			temp1_tail=temp1;
+		}
+	}
+	
+	//the read and write requests have been seperated
+	
+	//read_tail->next_node=write;
+	//overtime_tail->next_node=read;
+	//temp=overtime;
+
+	//connect the request that should schedule
+	if(read!=NULL)
+	{
+		temp2=read;
+		temp2_tail=read_tail;
+		if(write!=NULL)
+		{
+			temp2_tail->next_node=write;
+			//temp2_tail=write_tail;
+		}
+	}
+	else
+	{
+		if(write!=NULL)
+		{
+			temp2=write;
+			temp2_tail=write_tail;
+		}
+	}
+
+	if(temp2==NULL)
+	{
+		return 0;
+	}
+
+	
+	//here the allocaton of PIQ is CWDP, allocation_scheme=1,static_allocation=1
+	//
+	if(ssd->parameter->allocation_scheme==1&&ssd->parameter->static_allocation==1)    //here the allocaton of PIQ is CWDP, allocation_scheme=1,static_allocation=1
+	{
+		temp=temp2;
+		while(1)
+		{
+			temp2=NULL;               //to recorded the no conflict request
+			temp2_tail=NULL;
+			while(temp!=NULL)
+			{
+				if(temp->sch==0&&temp->dis==0)
+				{
+					last_lpn=(temp->lsn+temp->size-1)/ssd->parameter->subpage_page;
+					first_lpn=temp->lsn/ssd->parameter->subpage_page;
+					flag=0;
+					for(i=first_lpn;i<=last_lpn; i++)
+					{
+						channel=i%ssd->parameter->channel_number;
+						chip=(i/ssd->parameter->channel_number)%ssd->parameter->chip_channel[0];
+						if(vector[channel]&chip==0)                //KXC:no conflict
+						{
+							continue;
+						}
+						else
+						{
+							flag=1;
+							break;
+						}	
+					}
+					if(flag==0)       //no conflict
+					{
+						//to update the vector
+						conflict_flag=0;
+						for(i=first_lpn;i<=last_lpn; i++)
+						{
+							channel=i%ssd->parameter->channel_number;
+							chip=(i/ssd->parameter->channel_number)%ssd->parameter->chip_channel[0];
+							vector[channel]=vector[channel]|chip;
+						}
+
+						//record temp2
+						if(temp2==NULL)
+						{
+							temp2=temp;
+							temp2_tail=temp;
+						}
+						else
+						{
+							temp2->next_node=temp;
+							temp2_tail=temp;
+						}
+						
+					}
+					else
+					{
+						if(conflict==NULL)
+						{
+							conflict=temp;
+							conflict_tail=temp;
+						}
+						else
+						{
+							conflict->next_node=temp;
+							conflict_tail=temp;
+						}
+
+					}
+					temp->sch=1;            //the request has been scheduled
+					temp=temp->next_node;
+					
+				}
+				else
+				{
+					printf("the scheduled request is in the schedule process!\n");;
+				}
+			}
+			//all conflict
+			if(conflict_flag!=0)
+			{
+				temp2_tail->next_node=conflict;
+				temp2_tail=conflict_tail;
+				break;
+			}
+			temp=conflict;
+		}
+	}
+
+	temp1_tail->next_node=temp2;
+	ssd->request_tail=temp2_tail;
+}
+
+
+
 
 /**********************************************************************************************************************************************
 *����buffer�Ǹ�дbuffer������Ϊд�������ģ���Ϊ��flash��ʱ��tRΪ20us��дflash��ʱ��tprogΪ200us������Ϊд������ܽ�ʡʱ��?
@@ -537,6 +775,8 @@ void trace_output(struct ssd_info* ssd){
 	int64_t start_time, end_time,wait_time;
 	struct request *req, *pre_node;
 	struct sub_request *sub, *tmp;
+	int i,channel,chip;
+	unsigned int first_lpn,last_lpn;
 
 #ifdef DEBUG
 	printf("enter trace_output,  current time:%lld\n",ssd->current_time);
@@ -684,6 +924,15 @@ void trace_output(struct ssd_info* ssd){
 					ssd->write_avg=ssd->write_avg+(end_time-req->time);
 					ssd->write_wait_avg=ssd->write_wait_avg+wait_time;
 				}
+				
+				//KXC:to update the value of vector
+				for(i=first_lpn;i<=last_lpn; i++)
+				{
+					channel=i%ssd->parameter->channel_number;
+					chip=(i/ssd->parameter->channel_number)%ssd->parameter->chip_channel[0];
+					vector[channel]=vector[channel]^chip;
+				}
+
 
 				while(req->subs!=NULL)
 				{

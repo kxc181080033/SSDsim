@@ -98,7 +98,9 @@ Hao Luo         2011/01/01        2.0           Change               luohao13568
 #define PAGE(lsn) (lsn&0x0000)>>16 
 #define SUBPAGE(lsn) (lsn&0x0000)>>16  
 
-#define PG_SUB 0xffffffff			
+#define PG_SUB 0xffffffff	
+
+int *vector;                       //the array to record the status of the channels and chips
 
 /*****************************************
 *函数结果状态代码
@@ -172,7 +174,10 @@ struct ssd_info{
 	int64_t wait_avg;                    //KXC:to record the average wait time of all the request
 	int64_t write_wait_avg;              //KXC:to record the average wait time of write request
 	int64_t read_wait_avg;               //KXC:to record the average wait time of read request
-	int empty;
+	int empty;                           //KXC:to record the request if empty or not 0-not 1-empty
+	int sch_read;                        //KXC:to record the number of priorit read request
+	int sch_write;                       //KXC:to record the number of priorit write request
+	int raw;                             //KXC:to record the number of RAW coflict
 
 	unsigned int min_lsn;
 	unsigned int max_lsn;
@@ -360,6 +365,8 @@ struct request{
 	unsigned int size;                 //请求的大小，既多少个扇区
 	unsigned int operation;            //请求的种类，1为读，0为写
 	int dis;                           //KXC:to indicate the request is distribured or not
+	int sch;                           //KXC:to indicate the request is scheduled or not
+	int order;                         //KXC:to indicate the request whether in its original order 0-yes 1-not
 
 	unsigned int* need_distr_flag;
 	unsigned int complete_lsn_count;   //record the count of lsn served by buffer
@@ -468,6 +475,7 @@ struct parameter_value{
 	int aged;                       //1表示需要将这个SSD变成aged，0表示需要将这个SSD保持non-aged
 	float aged_ratio; 
 	int queue_length;               //请求队列的长度限制
+	int deadline;                   //the maxmium deadline of the shcedule request
 
 	struct ac_time_characteristics time_characteristics;
 };
