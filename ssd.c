@@ -311,6 +311,7 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 	int i,j,flag;
 	int channel,chip;
 	int conflict_flag=1;
+	int schetwo;
 
 	//int *channel;
 	//int *chip;
@@ -419,8 +420,8 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 	//overtime_tail->next_node=read;
 	//temp=overtime;
 
-	//connect the request that should schedule
-	if(read!=NULL)
+	
+	/* if(read!=NULL)
 	{
 		temp2=read;
 		temp2_tail=read_tail;
@@ -437,19 +438,31 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 			temp2=write;
 			temp2_tail=write_tail;
 		}
-	}
+	} */
 
-	if(temp2==NULL)
+/* 	if(temp2==NULL)
 	{
 		return 0;
 	}
-
+ */
 	
 	//here the allocaton of PIQ is CWDP, allocation_scheme=1,static_allocation=1
 	//
 	if(ssd->parameter->allocation_scheme==1&&ssd->parameter->static_allocation==1)    //here the allocaton of PIQ is CWDP, allocation_scheme=1,static_allocation=1
 	{
-		temp=temp2;
+		if(read!=NULL)
+		{
+			temp=read;
+			if(write!=NULL)
+			{
+				schetwo=1;
+			}
+		}
+		else
+		{
+			temp=write;
+		}
+		
 		while(1)
 		{
 			temp2=NULL;               //to recorded the no conflict request
@@ -531,11 +544,27 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 			{
 				temp2_tail->next_node=conflict;
 				temp2_tail=conflict_tail;
-				break;
+				if(schetwo==1)
+				{
+					temp=write;
+					schetwo=0;
+				}
+				else
+				{
+					break;
+				}
 			}
 			if(conflict==NULL)
 			{
-				break;
+				if(schetwo==1)
+				{
+					temp=write;
+					schetwo=0;
+				}
+				else
+				{
+					break;
+				}
 			}
 			else
 			{
