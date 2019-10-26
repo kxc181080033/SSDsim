@@ -311,7 +311,8 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 	int i,j,flag;
 	int channel,chip;
 	int conflict_flag=1;
-	int schetwo;
+	int schetwo;       //1-read schedule and write schedule;0-only one type request schedule
+	int no_sche;       //KXC:to indicate the request can not shcedule 
 
 	//int *channel;
 	//int *chip;
@@ -415,9 +416,19 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 		}	
 	}
 	
-	write_tail->next_node=NULL;
-	read_tail->next_node=NULL;
-	overtime_tail->next_node=NULL;
+	if(write!=NULL)
+	{
+		write_tail->next_node=NULL;
+	}
+	if(read!=NULL)
+	{
+		read_tail->next_node=NULL;
+	}
+	if(overtime!=NULL)
+	{
+		overtime_tail->next_node=NULL;
+	}
+	
 
 	if(read==NULL&&write==NULL)
 	{
@@ -479,6 +490,7 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 		{
 			while(temp!=NULL)
 			{
+				no_sche=0;
 				if(temp->sch==0)
 				{
 					last_lpn=(temp->lsn+temp->size-1)/ssd->parameter->subpage_page;
@@ -546,7 +558,9 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 				}
 				else
 				{
-					printf("the scheduled request is in the schedule process!\n");
+					//printf("the scheduled request is in the schedule process!\n");
+					no_sche=1;
+					break;
 				}
 			}
 			//all conflict
@@ -589,6 +603,10 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 			else
 			{
 				temp=conflict;
+			}
+			if(no_sche==1)
+			{
+				break;
 			}			
 		}
 	}
