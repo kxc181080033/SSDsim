@@ -319,68 +319,6 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 	if(ssd->request_queue==NULL)    //no need to schedule
 		return 0;
 
-	//seperate the read and write requests first, divided into 3parts
-	//1.scheduled requests;2.overtime requests;3.can be scheduled read and write request
-	temp=ssd->request_queue;
-	while(temp!=NULL)
-	{
-		if(temp->sch==1)
-		{
-			temp=temp->next_node;
-		}
-		else
-		{		
-			if(ssd->current_time-temp->time<ssd->parameter->deadline)
-			{
-				if(temp->operation==WRITE)
-				{
-					if(write==NULL)
-					{
-						write=temp;
-						write_tail=temp;
-					}
-					else
-					{
-						write->next_node=temp;
-						write_tail=temp;
-					}	
-				}
-				else
-				{
-					if(read==NULL)
-					{
-						read=temp;
-						read_tail=temp;
-					}
-					else
-					{
-						read->next_node=temp;
-						read_tail=temp;
-					}
-				}
-			}
-			else
-			{
-				if(overtime==NULL)
-				{
-					overtime=temp;
-					overtime_tail=temp;
-				}
-				else
-				{
-					overtime->next_node=temp;
-					overtime_tail=temp;
-				}	
-			}
-			temp=temp->next_node;
-		}	
-	}
-
-	if(read==NULL&&write==NULL)
-	{
-		return 0;
-	}
-
 	//to find the tail of the scheduled requests
 	temp1=ssd->request_queue;
 	while(temp1!=NULL)
@@ -414,7 +352,78 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 		}
 
 	}
+	//seperate the read and write requests first, divided into 3parts
+	//1.scheduled requests;2.overtime requests;3.can be scheduled read and write request
+	temp=ssd->request_queue;
+	while(temp!=NULL)
+	{
+		if(temp->sch==1)
+		{
+			temp=temp->next_node;
+		}
+		else
+		{		
+			if(ssd->current_time-temp->time<ssd->parameter->deadline)
+			{
+				if(temp->operation==WRITE)
+				{
+					if(write==NULL)
+					{
+						write=temp;
+						write_tail=temp;
+						//write_tail->next_node=NULL;
+					}
+					else
+					{
+						write->next_node=temp;
+						write_tail=temp;
+						//write_tail->next_node=NULL;
+					}	
+				}
+				else
+				{
+					if(read==NULL)
+					{
+						read=temp;
+						read_tail=temp;
+						//read_tail->next_node=NULL;
+					}
+					else
+					{
+						read->next_node=temp;
+						read_tail=temp;
+						//read_tail->next_node=NULL;
+					}
+				}
+			}
+			else
+			{
+				if(overtime==NULL)
+				{
+					overtime=temp;
+					overtime_tail=temp;
+					//overtime_tail->next_node=NULL;
+				}
+				else
+				{
+					overtime->next_node=temp;
+					overtime_tail=temp;
+					//overtime_tail->next_node=NULL;
+				}	
+			}
+			temp=temp->next_node;
+		}	
+	}
 	
+	write_tail->next_node=NULL;
+	read_tail->next_node=NULL;
+	overtime_tail->next_node=NULL;
+
+	if(read==NULL&&write==NULL)
+	{
+		return 0;
+	}
+
 	//the read and write requests have been seperated
 	
 	//read_tail->next_node=write;
@@ -470,7 +479,7 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 		{
 			while(temp!=NULL)
 			{
-				if(temp->sch==0&&temp->dis==0)
+				if(temp->sch==0)
 				{
 					last_lpn=(temp->lsn+temp->size-1)/ssd->parameter->subpage_page;
 					first_lpn=temp->lsn/ssd->parameter->subpage_page;
@@ -537,7 +546,7 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 				}
 				else
 				{
-					printf("the scheduled request is in the schedule process!\n");;
+					printf("the scheduled request is in the schedule process!\n");
 				}
 			}
 			//all conflict
