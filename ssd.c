@@ -324,7 +324,7 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 	temp=ssd->request_queue;
 	while(temp!=NULL)
 	{
-		if(temp->sch==0)
+		if(temp->sch==1)
 		{
 			temp=temp->next_node;
 		}
@@ -410,6 +410,7 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 		else
 		{
 			temp1_tail=NULL;
+			break;
 		}
 
 	}
@@ -462,11 +463,11 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 		{
 			temp=write;
 		}
+		temp2=NULL;               //to recorded the no conflict request
+		temp2_tail=NULL;
 		
 		while(1)
 		{
-			temp2=NULL;               //to recorded the no conflict request
-			temp2_tail=NULL;
 			while(temp!=NULL)
 			{
 				if(temp->sch==0&&temp->dis==0)
@@ -504,13 +505,13 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 						{
 							temp2=temp;
 							temp2_tail=temp;
-							temp2_tail->next_node=NULL;
+							//temp2_tail->next_node=NULL;
 						}
 						else
 						{
 							temp2->next_node=temp;
 							temp2_tail=temp;
-							temp2_tail->next_node=NULL;
+							//temp2_tail->next_node=NULL;
 						}
 						
 					}
@@ -520,13 +521,13 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 						{
 							conflict=temp;
 							conflict_tail=temp;
-							conflict_tail->next_node=NULL;
+							//conflict_tail->next_node=NULL;
 						}
 						else
 						{
 							conflict->next_node=temp;
 							conflict_tail=temp;
-							conflict_tail->next_node=NULL;
+							//conflict_tail->next_node=NULL;
 						}
 
 					}
@@ -542,8 +543,17 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 			//all conflict
 			if(conflict_flag!=0)
 			{
-				temp2_tail->next_node=conflict;
-				temp2_tail=conflict_tail;
+				if(temp2==NULL)
+				{
+					temp2=conflict;
+					temp2_tail=conflict_tail;
+				}
+				else
+				{
+					temp2_tail->next_node=conflict;
+					temp2_tail=conflict_tail;
+				}
+
 				if(schetwo==1)
 				{
 					temp=write;
@@ -554,6 +564,7 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 					break;
 				}
 			}
+
 			if(conflict==NULL)
 			{
 				if(schetwo==1)
