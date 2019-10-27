@@ -376,7 +376,7 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 					}
 					else
 					{
-						write->next_node=temp;
+						write_tail->next_node=temp;
 						write_tail=temp;
 						//write_tail->next_node=NULL;
 					}	
@@ -391,7 +391,7 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 					}
 					else
 					{
-						read->next_node=temp;
+						read_tail->next_node=temp;
 						read_tail=temp;
 						//read_tail->next_node=NULL;
 					}
@@ -407,7 +407,7 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 				}
 				else
 				{
-					overtime->next_node=temp;
+					overtime_tail->next_node=temp;
 					overtime_tail=temp;
 					//overtime_tail->next_node=NULL;
 				}	
@@ -530,7 +530,7 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 						}
 						else
 						{
-							temp2->next_node=temp;
+							temp2_tail->next_node=temp;
 							temp2_tail=temp;
 							//temp2_tail->next_node=NULL;
 						}
@@ -546,7 +546,7 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 						}
 						else
 						{
-							conflict->next_node=temp;
+							conflict_tail->next_node=temp;
 							conflict_tail=temp;
 							//conflict_tail->next_node=NULL;
 						}
