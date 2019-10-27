@@ -488,6 +488,7 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 		
 		while(1)
 		{
+			conflict_flag=0;
 			while(temp!=NULL)
 			{
 				no_sche=0;
@@ -513,7 +514,7 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 					if(flag==0)       //no conflict
 					{
 						//to update the vector
-						conflict_flag=0;
+						//conflict_flag=0;
 						for(i=first_lpn;i<=last_lpn; i++)
 						{
 							channel=i%ssd->parameter->channel_number;
@@ -538,6 +539,7 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 					}
 					else
 					{
+						conflict_flag=1;
 						if(conflict==NULL)
 						{
 							conflict=temp;
@@ -1493,12 +1495,15 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 			}
 			else
 			{
+				req=ssd->request_tail;
 				break;
 			}
 			
 		}	
 		else
+		{
 			break;
+		}
 	} 
 
 	//to update the current time of ssd
