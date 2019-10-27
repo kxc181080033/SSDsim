@@ -129,7 +129,12 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 			if(ssd->next_request_time>ssd->current_request_time)
 				break;
 		}
-		schedule(ssd);
+
+		if(ssd->parameter->allocation_scheme==1&&ssd->parameter->static_allocation==1)
+		{
+			schedule(ssd);
+		}
+		
 		//KXC:here just modify the function no_buffer_distribute so there is no buffer
 		if(ssd->parameter->dram_capacity==0)
 		{
@@ -470,8 +475,8 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 	
 	//here the allocaton of PIQ is CWDP, allocation_scheme=1,static_allocation=1
 	//
-	if(ssd->parameter->allocation_scheme==1&&ssd->parameter->static_allocation==1)    //here the allocaton of PIQ is CWDP, allocation_scheme=1,static_allocation=1
-	{
+	//if(ssd->parameter->allocation_scheme==1&&ssd->parameter->static_allocation==1)    //here the allocaton of PIQ is CWDP, allocation_scheme=1,static_allocation=1
+	//{
 		if(read!=NULL)
 		{
 			temp=read;
@@ -591,7 +596,7 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 			}
 					
 		}
-	}
+	//}
 
 	if(temp1_tail!=NULL)
 	{
