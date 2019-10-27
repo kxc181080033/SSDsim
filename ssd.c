@@ -320,30 +320,30 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 	if(ssd->request_queue==NULL)    //no need to schedule
 		return 0;
 
-	//to find the tail of the scheduled requests
+	//to find the tail of the distributed requests
 	temp1=ssd->request_queue;
 	while(temp1!=NULL)
 	{
-		if(temp1->sch==1)
+		if(temp1->dis==1)
 		{
 			if(temp1->next_node!=NULL)
 			{
 				//temp1=temp1->next_node;
-				if(temp1->next_node->sch==1)
+				if(temp1->next_node->dis==1)
 				{
 					temp1=temp1->next_node;
 				}
 				else
 				{
 					temp1_tail=temp1;
-					temp1_tail->next_node=NULL;
+					//temp1_tail->next_node=NULL;
 					ssd->request_tail=temp1_tail;
 					break;
 				}
 			}
 			else
 			{
-				break;    //all the requests have been scheduled, this situation should be processed in the above
+				return 0;    //all the requests have been distributed, no need to schedule
 			}
 		}
 		else
@@ -355,10 +355,10 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 	}
 	//seperate the read and write requests first, divided into 3parts
 	//1.scheduled requests;2.overtime requests;3.can be scheduled read and write request
-	temp=ssd->request_queue;
+	temp=ssd->request_tail;
 	while(temp!=NULL)
 	{
-		if(temp->sch==1)
+		if(temp->dis==1)
 		{
 			temp=temp->next_node;
 		}
@@ -488,12 +488,13 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 		
 		while(1)
 		{
-			conflict_flag=0;
+			//conflict_flag=0;
 			while(temp!=NULL)
 			{
 				no_sche=0;
-				if(temp->sch==0)
+				if(temp->dis==0)
 				{
+					//temp->sch=0;
 					last_lpn=(temp->lsn+temp->size-1)/ssd->parameter->subpage_page;
 					first_lpn=temp->lsn/ssd->parameter->subpage_page;
 					flag=0;
@@ -539,7 +540,7 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 					}
 					else
 					{
-						conflict_flag=1;
+						//conflict_flag=1;
 						if(conflict==NULL)
 						{
 							conflict=temp;
@@ -560,56 +561,31 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 				}
 				else
 				{
-					//printf("the scheduled request is in the schedule process!\n");
-					no_sche=1;
+					printf("the distributed request is in the schedule process!\n");
+					//no_sche=1;
 					break;
 				}
 			}
-			//all conflict
-			if(conflict_flag!=0)
-			{
-				if(temp2==NULL)
-				{
-					temp2=conflict;
-					temp2_tail=conflict_tail;
-				}
-				else
-				{
-					temp2_tail->next_node=conflict;
-					temp2_tail=conflict_tail;
-				}
-
-				if(schetwo==1)
-				{
-					temp=write;
-					schetwo=0;
-				}
-				else
-				{
-					break;
-				}
-			}
-
-			if(conflict==NULL)
-			{
-				if(schetwo==1)
-				{
-					temp=write;
-					schetwo=0;
-				}
-				else
-				{
-					break;
-				}
-			}
-			else
+			memset(vector,0,sizeof(vector));
+			
+			if(conflict!=NULL)
 			{
 				temp=conflict;
 			}
-			if(no_sche==1)
+			else
 			{
-				break;
-			}			
+				if(schetwo==1)
+				{
+					temp=write;
+					schetwo=0;
+				}
+				else
+				{
+					break;
+				}
+				
+			}
+					
 		}
 	}
 
@@ -1035,12 +1011,12 @@ void trace_output(struct ssd_info* ssd){
 				}
 				
 				//KXC:to update the value of vector
-				for(i=first_lpn;i<=last_lpn; i++)
+/* 				for(i=first_lpn;i<=last_lpn; i++)
 				{
 					channel=i%ssd->parameter->channel_number;
 					chip=(i/ssd->parameter->channel_number)%ssd->parameter->chip_channel[0];
 					vector[channel]=vector[channel]^chip;
-				}
+				} */
 
 
 				while(req->subs!=NULL)
@@ -1491,17 +1467,26 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 		{
 			if(req->next_node!=NULL)
 			{
-				req=req->next_node;
+				if(req->next_node->dis==1)
+				{
+					req=req->next_node;
+				}
+				else
+				{
+					break;
+				}
+				
 			}
 			else
 			{
-				req=ssd->request_tail;
+				//req=ssd->request_tail;
 				break;
 			}
 			
 		}	
 		else
 		{
+			//req=ssd->request_tail;
 			break;
 		}
 	} 
@@ -1515,6 +1500,7 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 	else
 	{   
 		//KXC:request is processing to find the next request's arriving time
+		
 		reqtemp=ssd->request_queue->next_node;
 		while (reqtemp!=NULL)
 		{
@@ -1573,6 +1559,11 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 
 	while(req!=NULL)
 	{
+		if(req->time>ssd->current_time)
+		{
+			break;
+		}
+
 		ssd->dram->current_time=ssd->current_time;
 		//req=ssd->request_tail;       
 		lsn=req->lsn;
@@ -1618,14 +1609,7 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 		req->dis=1;
 		if(req->next_node!=NULL)
 		{
-			if(req->next_node->time==req->time)
-			{
-				req=req->next_node;
-			}
-			else
-			{
-				break;
-			}
+			req=req->next_node;
 		}
 	}
 	return ssd;
