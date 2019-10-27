@@ -349,6 +349,7 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 		else
 		{
 			temp1_tail=NULL;
+			ssd->request_tail=ssd->request_queue;
 			break;
 		}
 
@@ -566,11 +567,14 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 					break;
 				}
 			}
-			memset(vector,0,sizeof(vector));
+			
+			memset(vector,0,sizeof(int)*ssd->parameter->channel_number);
 			
 			if(conflict!=NULL)
 			{
+				conflict_tail->next_node=NULL;
 				temp=conflict;
+				conflict=NULL;
 			}
 			else
 			{
