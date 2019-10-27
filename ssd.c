@@ -126,7 +126,7 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 		while(ssd->request_queue_length<ssd->parameter->queue_length)
 		{
 			flag=get_requests(ssd);
-			if(ssd->next_request_time>ssd->current_request_time)
+			if(ssd->next_request_time>ssd->current_time)
 				break;
 		}
 
@@ -1482,6 +1482,7 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 				}
 				else
 				{
+					req=req->next_node;
 					break;
 				}
 				
@@ -1581,7 +1582,7 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 		first_lpn=req->lsn/ssd->parameter->subpage_page;
 
 		if(req->subs!=NULL)
-			return 0;
+			continue;
 
 		if(req->operation==READ)        
 		{		
@@ -1616,10 +1617,7 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 			}
 		}
 		req->dis=1;
-		if(req->next_node!=NULL)
-		{
-			req=req->next_node;
-		}
+		req=req->next_node;
 	}
 	return ssd;
 }
