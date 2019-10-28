@@ -1513,23 +1513,6 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 	}
 	else
 	{   
-		//KXC:request is processing to find the next request's arriving time
-		
-/* 		reqtemp=ssd->request_queue->next_node;
-		while (reqtemp!=NULL)
-		{
-			if(reqtemp->time==ssd->request_queue->time)
-			{
-				next_time=reqtemp->time;				
-				reqtemp=reqtemp->next_node;
-			}
-			else
-			{
-				next_time=reqtemp->time;
-				break;
-			}
-
-		} */
 		next_time=req->time;
 		
 		if(nearest_event_time<next_time)
@@ -1542,31 +1525,23 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 				if(ssd->current_time<=nearest_event_time)  //the request has been distributed but not finish
 				{
 					ssd->current_time=nearest_event_time;
-					return -1;
+					//return -1;
 				}	
 			}
 			
 		}
 		else
 		{
-			if (ssd->request_queue_length>=ssd->parameter->queue_length)// the request queue is full
+
+			if(req->subs!=NULL)   //the request has ben distributed 
 			{
-				//fseek(ssd->tracefile,filepoint,0);
 				ssd->current_time=nearest_event_time;
-				return -1;
-			} 
+			}
 			else
 			{
-				if(req->subs!=NULL)   //the request has ben distributed 
-				{
-					ssd->current_time=nearest_event_time;
-				}
-				else
-				{
-					//ssd->current_time=next_time;
-					ssd->current_time=ssd->current_time>next_time?ssd->current_time:next_time;
-				}
+				ssd->current_time=next_time;
 			}
+			
 		}
 	}
 	
