@@ -1515,7 +1515,7 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 	{   
 		//KXC:request is processing to find the next request's arriving time
 		
-		reqtemp=ssd->request_queue->next_node;
+/* 		reqtemp=ssd->request_queue->next_node;
 		while (reqtemp!=NULL)
 		{
 			if(reqtemp->time==ssd->request_queue->time)
@@ -1529,7 +1529,8 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 				break;
 			}
 
-		}
+		} */
+		next_time=reqtemp->time;
 		
 		if(nearest_event_time<next_time)
 		{
