@@ -1530,7 +1530,7 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 			}
 
 		} */
-		next_time=reqtemp->time;
+		next_time=req->time;
 		
 		if(nearest_event_time<next_time)
 		{
