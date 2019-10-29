@@ -374,54 +374,37 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 		}
 		else
 		{		
-			if(ssd->current_time-temp->time<ssd->parameter->deadline)
+			if(temp->operation==WRITE)
 			{
-				if(temp->operation==WRITE)
+				if(write==NULL)
 				{
-					if(write==NULL)
-					{
-						write=temp;
-						write_tail=temp;
-						//write_tail->next_node=NULL;
-					}
-					else
-					{
-						write_tail->next_node=temp;
-						write_tail=temp;
-						//write_tail->next_node=NULL;
-					}	
+					write=temp;
+					write_tail=temp;
+					//write_tail->next_node=NULL;
 				}
 				else
 				{
-					if(read==NULL)
-					{
-						read=temp;
-						read_tail=temp;
-						//read_tail->next_node=NULL;
-					}
-					else
-					{
-						read_tail->next_node=temp;
-						read_tail=temp;
-						//read_tail->next_node=NULL;
-					}
-				}
+					write_tail->next_node=temp;
+					write_tail=temp;
+					//write_tail->next_node=NULL;
+				}	
 			}
 			else
 			{
-				if(overtime==NULL)
+				if(read==NULL)
 				{
-					overtime=temp;
-					overtime_tail=temp;
-					//overtime_tail->next_node=NULL;
+					read=temp;
+					read_tail=temp;
+					//read_tail->next_node=NULL;
 				}
 				else
 				{
-					overtime_tail->next_node=temp;
-					overtime_tail=temp;
-					//overtime_tail->next_node=NULL;
-				}	
+					read_tail->next_node=temp;
+					read_tail=temp;
+					//read_tail->next_node=NULL;
+				}
 			}
+			
 			temp=temp->next_node;
 		}	
 	}
@@ -434,10 +417,7 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 	{
 		read_tail->next_node=NULL;
 	}
-	if(overtime!=NULL)
-	{
-		overtime_tail->next_node=NULL;
-	}
+
 	
 
 	if(read==NULL&&write==NULL)
