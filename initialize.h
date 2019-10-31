@@ -170,7 +170,11 @@ struct ssd_info{
 	unsigned int write_request_count;    //记录写操作的次数
 	unsigned int read_request_count;     //记录读操作的次数
 	int64_t write_avg;                   //记录用于计算写请求平均响应时间的时间
+	int64_t write_avg_wait;              //KXC:to record the response time of write requests including the wait time
 	int64_t read_avg;                    //记录用于计算读请求平均响应时间的时间
+	int64_t read_avg_wait;              //KXC:to record the response time of read requests including the wait time
+	int64_t total_avg;                   //KXC:to record the total average response time
+	int64_t total_avg_wait;              //KXC:to record the total average response time including the wait time
 	int64_t wait_avg;                    //KXC:to record the average wait time of all the request
 	int64_t write_wait_avg;              //KXC:to record the average wait time of write request
 	int64_t read_wait_avg;               //KXC:to record the average wait time of read request
