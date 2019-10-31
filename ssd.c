@@ -134,11 +134,18 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 				break;
 		}
 
-		if(ssd->parameter->allocation_scheme==1&&ssd->parameter->static_allocation==1)
+		if(ssd->parameter->scheduling_algorithm==1)
 		{
-			schedule(ssd);
+			if(ssd->parameter->allocation_scheme==1&&ssd->parameter->static_allocation==1)
+			{
+				schedule_PIQ(ssd);
+			}
+			
+			if(ssd->parameter->allocation_scheme==0&&ssd->parameter->dynamic_allocation==0)
+			{
+				schedule_ours(ssd);
+			}
 		}
-		
 		//KXC:here just modify the function no_buffer_distribute so there is no buffer
 		if(ssd->parameter->dram_capacity==0)
 		{
@@ -299,7 +306,7 @@ int get_requests(struct ssd_info *ssd)
 
 
 //KXC: the schedule function to schedule the request in the queue
-struct ssd_info *schedule(struct ssd_info *ssd)
+struct ssd_info *schedule_PIQ(struct ssd_info *ssd)
 {
 	struct request *temp=NULL;
 	struct request *temp_tail=NULL;
@@ -451,135 +458,135 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 		}
 	} */
 
-/* 	if(temp2==NULL)
-	{
-		return 0;
-	}
- */
+	/* 	if(temp2==NULL)
+		{
+			return 0;
+		}
+ 	*/
 	
 	//here the allocaton of PIQ is CWDP, allocation_scheme=1,static_allocation=1
 	//
 	//if(ssd->parameter->allocation_scheme==1&&ssd->parameter->static_allocation==1)    //here the allocaton of PIQ is CWDP, allocation_scheme=1,static_allocation=1
 	//{
-		if(read!=NULL)
+	if(read!=NULL)
+	{
+		temp=read;
+		if(write!=NULL)
 		{
-			temp=read;
-			if(write!=NULL)
-			{
-				schetwo=1;
-			}
+			schetwo=1;
 		}
-		else
+	}
+	else
+	{
+		temp=write;
+	}
+	temp2=NULL;               //to recorded the no conflict request
+	temp2_tail=NULL;
+	
+	while(1)
+	{
+		//conflict_flag=0;
+		while(temp!=NULL)
 		{
-			temp=write;
-		}
-		temp2=NULL;               //to recorded the no conflict request
-		temp2_tail=NULL;
-		
-		while(1)
-		{
-			//conflict_flag=0;
-			while(temp!=NULL)
+			no_sche=0;
+			if(temp->dis==0)
 			{
-				no_sche=0;
-				if(temp->dis==0)
+				//temp->sch=0;
+				last_lpn=(temp->lsn+temp->size-1)/ssd->parameter->subpage_page;
+				first_lpn=temp->lsn/ssd->parameter->subpage_page;
+				flag=0;
+				for(i=first_lpn;i<=last_lpn; i++)
 				{
-					//temp->sch=0;
-					last_lpn=(temp->lsn+temp->size-1)/ssd->parameter->subpage_page;
-					first_lpn=temp->lsn/ssd->parameter->subpage_page;
-					flag=0;
+					channel=i%ssd->parameter->channel_number;
+					chip=(i/ssd->parameter->channel_number)%ssd->parameter->chip_channel[0];
+					if((int)(vector[channel]&chip)==0)                //KXC:no conflict
+					{
+						continue;
+					}
+					else
+					{
+						flag=1;
+						break;
+					}	
+				}
+				if(flag==0)       //no conflict
+				{
+					//to update the vector
+					//conflict_flag=0;
 					for(i=first_lpn;i<=last_lpn; i++)
 					{
 						channel=i%ssd->parameter->channel_number;
 						chip=(i/ssd->parameter->channel_number)%ssd->parameter->chip_channel[0];
-						if((int)(vector[channel]&chip)==0)                //KXC:no conflict
-						{
-							continue;
-						}
-						else
-						{
-							flag=1;
-							break;
-						}	
+						vector[channel]=vector[channel]|chip;
 					}
-					if(flag==0)       //no conflict
-					{
-						//to update the vector
-						//conflict_flag=0;
-						for(i=first_lpn;i<=last_lpn; i++)
-						{
-							channel=i%ssd->parameter->channel_number;
-							chip=(i/ssd->parameter->channel_number)%ssd->parameter->chip_channel[0];
-							vector[channel]=vector[channel]|chip;
-						}
 
-						//record temp2
-						if(temp2==NULL)
-						{
-							temp2=temp;
-							temp2_tail=temp;
-							//temp2_tail->next_node=NULL;
-						}
-						else
-						{
-							temp2_tail->next_node=temp;
-							temp2_tail=temp;
-							//temp2_tail->next_node=NULL;
-						}
-						
+					//record temp2
+					if(temp2==NULL)
+					{
+						temp2=temp;
+						temp2_tail=temp;
+						//temp2_tail->next_node=NULL;
 					}
 					else
 					{
-						//conflict_flag=1;
-						if(conflict==NULL)
-						{
-							conflict=temp;
-							conflict_tail=temp;
-							//conflict_tail->next_node=NULL;
-						}
-						else
-						{
-							conflict_tail->next_node=temp;
-							conflict_tail=temp;
-							//conflict_tail->next_node=NULL;
-						}
-
+						temp2_tail->next_node=temp;
+						temp2_tail=temp;
+						//temp2_tail->next_node=NULL;
 					}
-					temp->sch=1;            //the request has been scheduled
-					temp=temp->next_node;
 					
 				}
 				else
 				{
-					printf("the distributed request is in the schedule process!\n");
-					//no_sche=1;
-					break;
+					//conflict_flag=1;
+					if(conflict==NULL)
+					{
+						conflict=temp;
+						conflict_tail=temp;
+						//conflict_tail->next_node=NULL;
+					}
+					else
+					{
+						conflict_tail->next_node=temp;
+						conflict_tail=temp;
+						//conflict_tail->next_node=NULL;
+					}
+
 				}
-			}
-			
-			memset(vector,0,sizeof(int)*ssd->parameter->channel_number);
-			
-			if(conflict!=NULL)
-			{
-				conflict_tail->next_node=NULL;
-				temp=conflict;
-				conflict=NULL;
+				temp->sch=1;            //the request has been scheduled
+				temp=temp->next_node;
+				
 			}
 			else
 			{
-				if(schetwo==1)
-				{
-					temp=write;
-					schetwo=0;
-				}
-				else
-				{
-					break;
-				}
-				
+				printf("the distributed request is in the schedule process!\n");
+				//no_sche=1;
+				break;
 			}
-					
 		}
+		
+		memset(vector,0,sizeof(int)*ssd->parameter->channel_number);
+		
+		if(conflict!=NULL)
+		{
+			conflict_tail->next_node=NULL;
+			temp=conflict;
+			conflict=NULL;
+		}
+		else
+		{
+			if(schetwo==1)
+			{
+				temp=write;
+				schetwo=0;
+			}
+			else
+			{
+				break;
+			}
+			
+		}
+				
+	}
 	//}
 
 	if(temp1_tail!=NULL)
@@ -596,6 +603,295 @@ struct ssd_info *schedule(struct ssd_info *ssd)
 	}	
 }
 
+//KXC: the schedule function to schedule the request in the queue
+struct ssd_info *schedule_ours(struct ssd_info *ssd)
+{
+	struct request *temp=NULL;
+	struct request *temp_tail=NULL;
+	struct request *temp1=NULL;
+	struct request *temp1_tail=NULL;
+	struct request *temp2=NULL;
+	struct request *temp2_tail=NULL;
+	struct request *write=NULL;
+	struct request *write_tail=NULL;
+	struct request *read=NULL;
+	struct request *read_tail=NULL;
+	struct request *overtime=NULL;
+	struct request *overtime_tail=NULL;
+	struct request *conflict=NULL;
+	struct request *conflict_tail=NULL;
+
+	struct local * loc=NULL;
+
+	unsigned int first_lpn,last_lpn;
+	int i,j,flag;
+	int channel,chip;
+	int conflict_flag=1;
+	int schetwo;       //1-read schedule and write schedule;0-only one type request schedule
+	int no_sche;       //KXC:to indicate the request can not shcedule 
+
+	//int *channel;
+	//int *chip;
+
+	if(ssd->request_queue==NULL)    //no need to schedule
+		return 0;
+
+	//to find the tail of the distributed requests
+	temp1=ssd->request_queue;
+	while(temp1!=NULL)
+	{
+		if(temp1->dis==1)
+		{
+			if(temp1->next_node!=NULL)
+			{
+				//temp1=temp1->next_node;
+				if(temp1->next_node->dis==1)
+				{
+					temp1=temp1->next_node;
+				}
+				else
+				{
+					temp1_tail=temp1;
+					//temp1_tail->next_node=NULL;
+					ssd->request_tail=temp1_tail;
+					break;
+				}
+			}
+			else
+			{
+				return 0;    //all the requests have been distributed, no need to schedule
+			}
+		}
+		else
+		{
+			temp1_tail=NULL;
+			ssd->request_tail=ssd->request_queue;
+			break;
+		}
+
+	}
+	//seperate the read and write requests first, divided into 3parts
+	//1.scheduled requests;2.overtime requests;3.can be scheduled read and write request
+	temp=ssd->request_tail;
+	while(temp!=NULL)
+	{
+		if(temp->dis==1)
+		{
+			temp=temp->next_node;
+		}
+		else
+		{		
+			if(temp->operation==WRITE)
+			{
+				if(write==NULL)
+				{
+					write=temp;
+					write_tail=temp;
+					//write_tail->next_node=NULL;
+				}
+				else
+				{
+					write_tail->next_node=temp;
+					write_tail=temp;
+					//write_tail->next_node=NULL;
+				}	
+			}
+			else
+			{
+				if(read==NULL)
+				{
+					read=temp;
+					read_tail=temp;
+					//read_tail->next_node=NULL;
+				}
+				else
+				{
+					read_tail->next_node=temp;
+					read_tail=temp;
+					//read_tail->next_node=NULL;
+				}
+			}
+			
+			temp=temp->next_node;
+		}	
+	}
+	
+	if(write!=NULL)
+	{
+		write_tail->next_node=NULL;
+	}
+	if(read!=NULL)
+	{
+		read_tail->next_node=NULL;
+	}
+
+	
+
+	if(read==NULL&&write==NULL)
+	{
+		return 0;
+	}
+
+	//the read and write requests have been seperated
+	
+	//read_tail->next_node=write;
+	//overtime_tail->next_node=read;
+	//temp=overtime;
+
+	
+	/* if(read!=NULL)
+	{
+		temp2=read;
+		temp2_tail=read_tail;
+		if(write!=NULL)
+		{
+			temp2_tail->next_node=write;
+			//temp2_tail=write_tail;
+		}
+	}
+	else
+	{
+		if(write!=NULL)
+		{
+			temp2=write;
+			temp2_tail=write_tail;
+		}
+	} */
+
+	/* 	if(temp2==NULL)
+		{
+			return 0;
+		}
+ 	*/
+	
+	//here the allocaton of PIQ is CWDP, allocation_scheme=1,static_allocation=1
+	//
+	if(read!=NULL)
+	{
+		temp=read;
+	}
+	temp=NULL;
+	temp2=NULL;               //to recorded the no conflict request
+	temp2_tail=NULL;
+	
+	while(1)
+	{
+		//conflict_flag=0;
+		while(temp!=NULL)
+		{
+			no_sche=0;
+			if(temp->dis==0)
+			{
+				//temp->sch=0;
+				last_lpn=(temp->lsn+temp->size-1)/ssd->parameter->subpage_page;
+				first_lpn=temp->lsn/ssd->parameter->subpage_page;
+				flag=0;
+				for(i=first_lpn;i<=last_lpn; i++)
+				{
+					loc = find_location(ssd,ssd->dram->map->map_entry[i].pn);
+					channel=loc->channel;
+					chip=loc->chip;
+					if((int)(vector[channel]&chip)==0)                //KXC:no conflict
+					{
+						continue;
+					}
+					else
+					{
+						flag=1;
+						break;
+					}	
+				}
+				if(flag==0)       //no conflict
+				{
+					//to update the vector
+					//conflict_flag=0;
+					for(i=first_lpn;i<=last_lpn; i++)
+					{
+						loc = find_location(ssd,ssd->dram->map->map_entry[i].pn);
+						channel=loc->channel;
+						chip=loc->chip;
+						vector[channel]=vector[channel]|chip;
+					}
+
+					//record temp2
+					if(temp2==NULL)
+					{
+						temp2=temp;
+						temp2_tail=temp;
+						//temp2_tail->next_node=NULL;
+					}
+					else
+					{
+						temp2_tail->next_node=temp;
+						temp2_tail=temp;
+						//temp2_tail->next_node=NULL;
+					}
+					
+				}
+				else
+				{
+					//conflict_flag=1;
+					if(conflict==NULL)
+					{
+						conflict=temp;
+						conflict_tail=temp;
+						//conflict_tail->next_node=NULL;
+					}
+					else
+					{
+						conflict_tail->next_node=temp;
+						conflict_tail=temp;
+						//conflict_tail->next_node=NULL;
+					}
+
+				}
+				temp->sch=1;            //the request has been scheduled
+				temp=temp->next_node;
+				
+			}
+			else
+			{
+				printf("the distributed request is in the schedule process!\n");
+				//no_sche=1;
+				break;
+			}
+		}
+		
+		memset(vector,0,sizeof(int)*ssd->parameter->channel_number);
+		
+		if(conflict!=NULL)
+		{
+			conflict_tail->next_node=NULL;
+			temp=conflict;
+			conflict=NULL;
+		}
+		else
+		{
+			break;
+		}
+				
+	}
+
+	if(write!=NULL)
+	{
+		temp2_tail->next_node=write;
+		temp2_tail=write_tail;
+		write_tail->next_node=NULL;
+	}
+
+	if(temp1_tail!=NULL)
+	{
+		ssd->request_tail->next_node=temp2;
+		ssd->request_tail=temp2_tail;
+		ssd->request_tail->next_node=NULL;
+	}
+	else
+	{
+		ssd->request_queue=temp2;
+		ssd->request_tail=temp2_tail;
+		ssd->request_tail->next_node=NULL;
+	}	
+}
 
 
 

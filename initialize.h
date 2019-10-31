@@ -450,7 +450,7 @@ struct parameter_value{
 	double dram_voltage;            //cpu sdram work voltage  V
 
 	int buffer_management;          //indicates that there are buffer management or not
-	int scheduling_algorithm;       //记录使用哪种调度算法，1:FCFS
+	int scheduling_algorithm;       //记录使用哪种调度算法，1:FCFS   KXC:to indacate whether schedule 0-no 1-yes
 	float quick_radio;
 	int related_mapping;
 
