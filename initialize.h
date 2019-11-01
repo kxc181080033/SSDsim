@@ -172,7 +172,7 @@ struct ssd_info{
 	int64_t write_avg;                   //记录用于计算写请求平均响应时间的时间
 	int64_t write_avg_wait;              //KXC:to record the response time of write requests including the wait time
 	int64_t read_avg;                    //记录用于计算读请求平均响应时间的时间
-	int64_t read_avg_wait;              //KXC:to record the response time of read requests including the wait time
+	int64_t read_avg_wait;               //KXC:to record the response time of read requests including the wait time
 	int64_t total_avg;                   //KXC:to record the total average response time
 	int64_t total_avg_wait;              //KXC:to record the total average response time including the wait time
 	int64_t wait_avg;                    //KXC:to record the average wait time of all the request
@@ -181,7 +181,8 @@ struct ssd_info{
 	int empty;                           //KXC:to record the request if empty or not 0-not 1-empty
 	int sch_read;                        //KXC:to record the number of priorit read request
 	int sch_write;                       //KXC:to record the number of priorit write request
-	int raw;                             //KXC:to record the number of RAW coflict
+	int raw;                             //KXC:to record the number of RAW conflict
+	int waw;                             //KXC:to record the numbre of WAW conflict
 
 	unsigned int min_lsn;
 	unsigned int max_lsn;

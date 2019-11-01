@@ -907,6 +907,162 @@ struct ssd_info *schedule_ours(struct ssd_info *ssd)
 	}	
 }
 
+struct ssd_info *dependency(struct ssd_info *ssd)
+{
+	struct request *temp=NULL;
+	struct request *temp_tail=NULL;
+	struct request *temp1=NULL;
+	struct request *temp1_tail=NULL;
+	//int64_t time1 = 0;
+
+
+	temp=ssd->request_queue;
+	//temp_tail=ssd->request_tail;
+	//to find the tail of the distributed requests
+	while(temp!=NULL)
+	{
+		if(temp->dis==1)
+		{
+			if(temp->next_node!=NULL)
+			{
+				if(temp->next_node->dis==1)
+				{
+					temp=temp->next_node;
+				}
+				else
+				{
+					temp_tail=temp->next_node;
+					break;
+				}
+			}
+			else
+			{
+				return 0;   
+			}
+		}
+		else
+		{
+			temp1_tail=temp;
+			break;
+		}
+
+	}
+
+	if(temp_tail==NULL)
+	{
+		return 0;
+	}
+	
+	temp1=temp_tail;
+	//KXC:to fine the waw and raw requsts
+	while(temp1!=NULL)
+	{
+		temp1_tail=temp1->next_node;
+		while(temp1_tail!=NULL)
+		{
+			if(temp1_tail->operation==READ)
+			{
+				temp1_tail=temp1_tail->next_node;
+			}
+			else
+			{
+				if(temp1->lsn>temp1_tail->lsn)
+				{
+					if(temp1->lsn-temp1_tail->lsn<=temp1_tail->size&&temp1->time>temp1_tail->time)
+					{
+						if(temp1->operation==WRITE)
+						{
+							ssd->waw=ssd->waw+1;
+						}
+						else
+						{
+							ssd->raw=ssd->raw+1;
+						}
+						temp1_tail=temp1_tail->next_node;
+					}
+					else
+					{
+						temp1_tail=temp1_tail->next_node;
+					}
+				}
+				else
+				{
+					if(temp1_tail->lsn-temp1->lsn<=temp1->size&&temp1->time>temp1_tail->time)
+					{
+						if(temp1->operation==WRITE)
+						{
+							ssd->waw=ssd->waw+1;
+						}
+						else
+						{
+							ssd->raw=ssd->raw+1;
+						}
+						temp1_tail=temp1_tail->next_node;
+					}
+					else
+					{
+						temp1_tail=temp1_tail->next_node;
+					}
+				}
+			}
+			
+
+		}
+	}
+}	
+
+//KXC:to find the waw requests
+/* 	while(temp1!=NULL)
+	{
+		if(temp1->operation==READ)
+		{
+			temp1=temp1->next_node;
+		}
+		else
+		{
+			temp1_tail=temp1->next_node;
+			while(temp1_tail!=NULL)
+			{
+				if(temp1_tail->operation==READ)
+				{
+					temp1_tail=temp1_tail->next_node;
+				}
+				else
+				{
+					if(temp1->lsn>temp1_tail->lsn)
+					{
+						if(temp1->lsn-temp1_tail->lsn<=temp1_tail->size&&temp1->time>temp1_tail->time)
+						{
+							ssd->waw=ssd->waw+1;
+							temp1_tail=temp1_tail->next_node;
+						}
+						else
+						{
+							temp1_tail=temp1_tail->next_node;
+						}
+					}
+					else
+					{
+						if(temp1_tail->lsn-temp1->lsn<=temp1->size&&temp1->time>temp1_tail->time)
+						{
+							ssd->waw=ssd->waw+1;
+							temp1_tail=temp1_tail->next_node;
+						}
+						else
+						{
+							temp1_tail=temp1_tail->next_node;
+						}
+					}
+					
+				}
+				
+
+			}
+			temp1=temp1->next_node;
+		}
+		
+	}
+} */
 
 
 /**********************************************************************************************************************************************
@@ -1317,15 +1473,6 @@ void trace_output(struct ssd_info* ssd){
 					ssd->write_avg_wait=ssd->write_avg_wait+(end_time-req->time);
 				}
 				
-				//KXC:to update the value of vector
-/* 				for(i=first_lpn;i<=last_lpn; i++)
-				{
-					channel=i%ssd->parameter->channel_number;
-					chip=(i/ssd->parameter->channel_number)%ssd->parameter->chip_channel[0];
-					vector[channel]=vector[channel]^chip;
-				} */
-
-
 				while(req->subs!=NULL)
 				{
 					tmp = req->subs;
@@ -1471,6 +1618,8 @@ void statistic_output(struct ssd_info *ssd)
 	fprintf(ssd->outputfile,"interleave multiple plane erase count: %13d\n",ssd->interleave_mplane_erase_count);
 	fprintf(ssd->outputfile,"\n");
 	fprintf(ssd->outputfile,"erase: %13d\n",erase);
+	fprintf(ssd->outputfile,"raw count: %13d\n",ssd->raw);
+	fprintf(ssd->outputfile,"waw count: %13d\n",ssd->waw);
 	fprintf(ssd->outputfile,"read request count: %13d\n",ssd->read_request_count);
 	fprintf(ssd->outputfile,"write request count: %13d\n",ssd->write_request_count);
 	fprintf(ssd->outputfile,"read request average size: %13f\n",ssd->ave_read_size);
