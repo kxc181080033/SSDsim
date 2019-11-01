@@ -371,7 +371,7 @@ struct request{
 	unsigned int operation;            //请求的种类，1为读，0为写
 	int dis;                           //KXC:to indicate the request is distribured or not
 	int sch;                           //KXC:to indicate the request is scheduled or not
-	int order;                         //KXC:to indicate the request whether in its original order 0-yes 1-not
+	int cnt;                           //KXC:to indicate the request whether count int the dependency function 0-no 1-yes
 
 	unsigned int* need_distr_flag;
 	unsigned int complete_lsn_count;   //record the count of lsn served by buffer

@@ -920,7 +920,7 @@ struct ssd_info *dependency(struct ssd_info *ssd)
 
 	temp=ssd->request_queue;
 	//temp_tail=ssd->request_tail;
-	//to find the tail of the distributed requests
+	//to find the first of the non-distributed requests--temp_tail
 	while(temp!=NULL)
 	{
 		if(temp->dis==1)
@@ -968,47 +968,49 @@ struct ssd_info *dependency(struct ssd_info *ssd)
 			}
 			else
 			{
-				if(temp1->lsn>temp1_tail->lsn)
+				if(temp1->cnt==0)
 				{
-					if(temp1->lsn-temp1_tail->lsn<=temp1_tail->size&&temp1->time>temp1_tail->time)
+					if(temp1->lsn>temp1_tail->lsn)
 					{
-						if(temp1->operation==WRITE)
+						if(temp1->lsn-temp1_tail->lsn<=temp1_tail->size&&temp1->time>temp1_tail->time)
 						{
-							ssd->waw=ssd->waw+1;
+							if(temp1->operation==WRITE)
+							{
+								ssd->waw=ssd->waw+1;
+							}
+							else
+							{
+								ssd->raw=ssd->raw+1;
+							}
+							temp1_tail=temp1_tail->next_node;
 						}
 						else
 						{
-							ssd->raw=ssd->raw+1;
+							temp1_tail=temp1_tail->next_node;
 						}
-						temp1_tail=temp1_tail->next_node;
 					}
 					else
 					{
-						temp1_tail=temp1_tail->next_node;
-					}
-				}
-				else
-				{
-					if(temp1_tail->lsn-temp1->lsn<=temp1->size&&temp1->time>temp1_tail->time)
-					{
-						if(temp1->operation==WRITE)
+						if(temp1_tail->lsn-temp1->lsn<=temp1->size&&temp1->time>temp1_tail->time)
 						{
-							ssd->waw=ssd->waw+1;
+							if(temp1->operation==WRITE)
+							{
+								ssd->waw=ssd->waw+1;
+							}
+							else
+							{
+								ssd->raw=ssd->raw+1;
+							}
+							temp1_tail=temp1_tail->next_node;
 						}
 						else
 						{
-							ssd->raw=ssd->raw+1;
+							temp1_tail=temp1_tail->next_node;
 						}
-						temp1_tail=temp1_tail->next_node;
 					}
-					else
-					{
-						temp1_tail=temp1_tail->next_node;
-					}
+					temp1->cnt=1;
 				}
 			}
-			
-
 		}
 		temp1=temp1->next_node;
 	}
