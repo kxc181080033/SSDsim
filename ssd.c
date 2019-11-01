@@ -146,6 +146,8 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 				schedule_ours(ssd);
 			}
 		}
+		
+		dependency(ssd);
 		//KXC:here just modify the function no_buffer_distribute so there is no buffer
 		if(ssd->parameter->dram_capacity==0)
 		{
@@ -942,7 +944,7 @@ struct ssd_info *dependency(struct ssd_info *ssd)
 		}
 		else
 		{
-			temp1_tail=temp;
+			temp_tail=temp;
 			break;
 		}
 
@@ -1008,6 +1010,7 @@ struct ssd_info *dependency(struct ssd_info *ssd)
 			
 
 		}
+		temp1=temp1->next_node;
 	}
 }	
 
@@ -1673,7 +1676,9 @@ void statistic_output(struct ssd_info *ssd)
 	fprintf(ssd->statisticfile,"multiple plane erase count: %13d\n",ssd->mplane_erase_conut);
 	fprintf(ssd->statisticfile,"interleave multiple plane erase count: %13d\n",ssd->interleave_mplane_erase_count);
 	fprintf(ssd->statisticfile,"\n");
-	fprintf(ssd->statisticfile,"erase: %13d\n",erase);		
+	fprintf(ssd->statisticfile,"erase: %13d\n",erase);
+	fprintf(ssd->statisticfile,"raw count: %13d\n",ssd->raw);
+	fprintf(ssd->statisticfile,"waw count: %13d\n",ssd->waw);		
 	fprintf(ssd->statisticfile,"read request count: %13d\n",ssd->read_request_count);
 	fprintf(ssd->statisticfile,"write request count: %13d\n",ssd->write_request_count);
 	fprintf(ssd->statisticfile,"read request average size: %13f\n",ssd->ave_read_size);
