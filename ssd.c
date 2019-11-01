@@ -959,16 +959,20 @@ struct ssd_info *dependency(struct ssd_info *ssd)
 	//KXC:to fine the waw and raw requsts
 	while(temp1!=NULL)
 	{
-		temp1_tail=temp1->next_node;
-		while(temp1_tail!=NULL)
+		if(temp1->cnt==1)
 		{
-			if(temp1_tail->operation==READ)
+			temp1=temp1->next_node;
+		}
+		else
+		{	
+			temp1_tail=temp1->next_node;
+			while(temp1_tail!=NULL)
 			{
-				temp1_tail=temp1_tail->next_node;
-			}
-			else
-			{
-				if(temp1->cnt==0)
+				if(temp1_tail->operation==READ)
+				{
+					temp1_tail=temp1_tail->next_node;
+				}
+				else
 				{
 					if(temp1->lsn>temp1_tail->lsn)
 					{
@@ -982,6 +986,7 @@ struct ssd_info *dependency(struct ssd_info *ssd)
 							{
 								ssd->raw=ssd->raw+1;
 							}
+							temp1->cnt=1;
 							temp1_tail=temp1_tail->next_node;
 						}
 						else
@@ -1001,6 +1006,7 @@ struct ssd_info *dependency(struct ssd_info *ssd)
 							{
 								ssd->raw=ssd->raw+1;
 							}
+							temp1->cnt=1;
 							temp1_tail=temp1_tail->next_node;
 						}
 						else
@@ -1008,11 +1014,11 @@ struct ssd_info *dependency(struct ssd_info *ssd)
 							temp1_tail=temp1_tail->next_node;
 						}
 					}
-					temp1->cnt=1;
+					//temp1->cnt=1;
 				}
 			}
+			temp1=temp1->next_node;
 		}
-		temp1=temp1->next_node;
 	}
 }	
 
