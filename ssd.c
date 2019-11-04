@@ -50,7 +50,7 @@ int  main()
 	memset(vector,0,sizeof(int)*ssd->parameter->channel_number);
 
 /************KXC:�޸����ʹ������߼� 2019.8.13**************/
-	for (i=0;i<ssd->parameter->channel_number;i++)//����Ļ�����ʼ��о�?�Ŀհ�ҳ��Ϣ
+/* 	for (i=0;i<ssd->parameter->channel_number;i++)//����Ļ�����ʼ��о�?�Ŀհ�ҳ��Ϣ
 	{
       for (ii=0;ii<ssd->parameter->chip_channel[i];ii++)
        {
@@ -62,7 +62,7 @@ int  main()
 			 }
             }
   	    }
-	}
+	} */
 	fprintf(ssd->outputfile,"\t\t\t\t\t\t\t\t\tOUTPUT\n");
 	fprintf(ssd->outputfile,"****************** TRACE INFO ******************\n");
 
@@ -96,7 +96,7 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 	printf("begin simulating.......................\n");
 	printf("\n");
 	printf("\n");
-	printf("   ^o^    OK, please wait a moment, and enjoy music and coffee   ^o^    \n");
+	//printf("   ^o^    OK, please wait a moment, and enjoy music and coffee   ^o^    \n");
 
 	ssd->tracefile = fopen(ssd->tracefilename,"r");
 	if(ssd->tracefile == NULL)
