@@ -481,6 +481,7 @@ struct ssd_info *schedule_PIQ(struct ssd_info *ssd)
 	else
 	{
 		temp=write;
+		schetwo=0;
 	}
 	temp2=NULL;               //to recorded the no conflict request
 	temp2_tail=NULL;
