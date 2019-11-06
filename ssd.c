@@ -141,18 +141,7 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 		}
 		else
 		{
-			while(ssd->request_queue_length<ssd->parameter->queue_length)
-			{
-				flag=get_requests(ssd);
-				if(flag==0)
-				{
-					break;
-				}
-				if(ssd->next_request_time!=ssd->current_request_time)
-				{
-					break;
-				}
-			}
+			flag=get_requests(ssd);
 		}
 		
 		if(ssd->parameter->scheduling_algorithm==1)
@@ -315,9 +304,16 @@ int get_requests(struct ssd_info *ssd)
 	ssd->next_request_time=time_t;
 	fseek(ssd->tracefile,filepoint,0);
 	//ssd->empty=0;                     //KXC:the request queue is not empty
-	if(ssd->current_request_time==ssd->next_request_time)
+	if(ssd->parameter->scheduling_algorithm==1)
 	{
-		ssd->empty=1;
+		if(ssd->current_request_time==ssd->next_request_time)
+		{
+			ssd->empty=1;
+		}
+		else
+		{
+			ssd->empty=0;
+		}
 	}
 	else
 	{
@@ -2118,25 +2114,7 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 			next_time=ssd->request_queue->time;
 		}
 			
-		//to find the next not distributed request
-		req=ssd->request_queue;
-		while(req!=NULL)
-		{
-			if (req->dis==1)
-			{
-				if(req->next_node!=NULL)
-				{
-					req=req->next_node;
-				}
-				else
-				{
-					break;
-				}
-				
-			}	
-			else
-				break;
-		} 
+		req=ssd->request_tail; 
 
 		//to update the current time of ssd
 		nearest_event_time=find_nearest_event(ssd);
@@ -2201,65 +2179,52 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 			}
 		}
 		
-		while(req!=NULL)
-		{
-			ssd->dram->current_time=ssd->current_time;
-			//req=ssd->request_tail;       
-			lsn=req->lsn;
-			lpn=req->lsn/ssd->parameter->subpage_page;
-			last_lpn=(req->lsn+req->size-1)/ssd->parameter->subpage_page;
-			first_lpn=req->lsn/ssd->parameter->subpage_page;
+		
+		
+		ssd->dram->current_time=ssd->current_time;
+		//req=ssd->request_tail;       
+		lsn=req->lsn;
+		lpn=req->lsn/ssd->parameter->subpage_page;
+		last_lpn=(req->lsn+req->size-1)/ssd->parameter->subpage_page;
+		first_lpn=req->lsn/ssd->parameter->subpage_page;
 
-			if(req->subs!=NULL)
-				return 0;
+		if(req->subs!=NULL)
+			return 0;
 
-			if(req->operation==READ)        
-			{		
-				while(lpn<=last_lpn) 		
-				{
-					sub_state=(ssd->dram->map->map_entry[lpn].state&0x7fffffff);
-					sub_size=size(sub_state);
-					sub=creat_sub_request(ssd,lpn,sub_size,sub_state,req,req->operation);
-					lpn++;
-				}
-			}
-			else if(req->operation==WRITE)
+		if(req->operation==READ)        
+		{		
+			while(lpn<=last_lpn) 		
 			{
-				while(lpn<=last_lpn)     	
-				{	
-					mask=~(0xffffffff<<(ssd->parameter->subpage_page));
-					state=mask;
-					if(lpn==first_lpn)
-					{
-						offset1=ssd->parameter->subpage_page-((lpn+1)*ssd->parameter->subpage_page-req->lsn);
-						state=state&(0xffffffff<<offset1);
-					}
-					if(lpn==last_lpn)
-					{
-						offset2=ssd->parameter->subpage_page-((lpn+1)*ssd->parameter->subpage_page-(req->lsn+req->size));
-						state=state&(~(0xffffffff<<offset2));
-					}
-					sub_size=size(state);
-
-					sub=creat_sub_request(ssd,lpn,sub_size,state,req,req->operation);
-					lpn++;
-				}
-			}
-			req->dis=1;
-			if(req->next_node!=NULL)
-			{
-				if(req->next_node->time==req->time)
-				{
-					req=req->next_node;
-				}
-				else
-				{
-					break;
-				}
+				sub_state=(ssd->dram->map->map_entry[lpn].state&0x7fffffff);
+				sub_size=size(sub_state);
+				sub=creat_sub_request(ssd,lpn,sub_size,sub_state,req,req->operation);
+				lpn++;
 			}
 		}
+		else if(req->operation==WRITE)
+		{
+			while(lpn<=last_lpn)     	
+			{	
+				mask=~(0xffffffff<<(ssd->parameter->subpage_page));
+				state=mask;
+				if(lpn==first_lpn)
+				{
+					offset1=ssd->parameter->subpage_page-((lpn+1)*ssd->parameter->subpage_page-req->lsn);
+					state=state&(0xffffffff<<offset1);
+				}
+				if(lpn==last_lpn)
+				{
+					offset2=ssd->parameter->subpage_page-((lpn+1)*ssd->parameter->subpage_page-(req->lsn+req->size));
+					state=state&(~(0xffffffff<<offset2));
+				}
+				sub_size=size(state);
+
+				sub=creat_sub_request(ssd,lpn,sub_size,state,req,req->operation);
+				lpn++;
+			}
+		}
+		req->dis=1;
 	}
-	
 	return ssd;
 }
 
