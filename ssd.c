@@ -130,10 +130,13 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 				flag=get_requests(ssd);
 
 				if(flag==0)
+				{
 					break;
-
+				}
 				if(ssd->next_request_time>ssd->current_time)
+				{
 					break;
+				}
 			}
 		}
 		else
@@ -141,6 +144,10 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 			while(ssd->request_queue_length<ssd->parameter->queue_length)
 			{
 				flag=get_requests(ssd);
+				if(flag==0)
+				{
+					break;
+				}
 				if(ssd->next_request_time!=ssd->current_request_time)
 				{
 					break;
