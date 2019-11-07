@@ -1956,6 +1956,7 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 	unsigned int offset1=0, offset2=0;
 	unsigned int sub_size=0;
 	unsigned int sub_state=0;
+	int i;
 
 	if(ssd->parameter->scheduling_algorithm==1)
 	{	//KXC:the request is empty,exit and get next request
@@ -2049,6 +2050,24 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 			if(req->time>ssd->current_time)
 			{
 				break;
+			}
+
+			for(i=0;i<ssd->parameter->channel_number;i++)
+			{          
+				if((ssd->channel_head[i].subs_r_head!=NULL)||(ssd->channel_head[i].subs_w_head!=NULL)||(ssd->subs_w_head!=NULL))
+				{
+					flag=1;         //to indicate the channel is busy
+				}
+				else
+				{
+					flag=0;
+					break;
+				}
+			}
+
+			if(flag==1)
+			{
+				break;    //all the channel are busy and should not allocate
 			}
 
 			ssd->dram->current_time=ssd->current_time;
