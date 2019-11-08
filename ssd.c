@@ -1965,6 +1965,7 @@ struct ssd_info *no_buffer_distribute_sch(struct ssd_info *ssd)
 	unsigned int sub_size=0;
 	unsigned int sub_state=0;
 	int i;
+	int all=0;  //KXC:to indicate that all the requests in the queue are distributed
 
 	//KXC:the request is empty,exit and get next request
 	if(ssd->request_queue==NULL)
@@ -1998,7 +1999,7 @@ struct ssd_info *no_buffer_distribute_sch(struct ssd_info *ssd)
 			}
 			else
 			{
-				//req=ssd->request_tail;
+				all=1;
 				break;
 			}
 			
@@ -2012,7 +2013,7 @@ struct ssd_info *no_buffer_distribute_sch(struct ssd_info *ssd)
 
 	//to update the current time of ssd
 	nearest_event_time=find_nearest_event(ssd);
-	if (nearest_event_time==MAX_INT64)
+	if (nearest_event_time==MAX_INT64)   //the first request
 	{
 		ssd->current_time=ssd->request_queue->time;           
 	}
@@ -2035,7 +2036,10 @@ struct ssd_info *no_buffer_distribute_sch(struct ssd_info *ssd)
 			}
 
 		}
-    	next_time=next_time<=ssd->next_request_time?next_time:ssd->next_request_time;
+    	if(all==1)
+		{
+			next_time=ssd->next_request_time;
+		}
 
 		//to update the current_time
 		if(nearest_event_time<next_time)
@@ -2043,27 +2047,23 @@ struct ssd_info *no_buffer_distribute_sch(struct ssd_info *ssd)
 			if(ssd->current_time<=nearest_event_time)  //the request has been distributed but not finish
 			{
 				ssd->current_time=nearest_event_time;
-			}		
+			}
+			else
+			{
+				printf("error in time update");
+			}
+					
 		}
 		else
 		{
 
-			if(req->subs!=NULL)
+			if(all==0)
 			{
-				ssd->current_time=nearest_event_time<=ssd->next_request_time?nearest_event_time:ssd->next_request_time;
+				ssd->current_time=next_time;
 			}       
 			else
-			{
-				if(ssd->blocked==1)
-				{
-					ssd->current_time=nearest_event_time<=ssd->next_request_time?nearest_event_time:ssd->next_request_time;
-				}
-				else
-				{
-					ssd->current_time=nearest_event_time<=next_time?nearest_event_time:next_time;
-				}
-				
-				
+			{		
+				ssd->current_time=nearest_event_time;
 			}
 				
 		}
@@ -2080,7 +2080,7 @@ struct ssd_info *no_buffer_distribute_sch(struct ssd_info *ssd)
 		ssd->blocked=0;
 		for(i=0;i<ssd->parameter->channel_number;i++)
 		{          
-			if((ssd->channel_head[i].subs_r_head!=NULL)&&(ssd->channel_head[i].subs_w_head!=NULL)&&(ssd->subs_w_head!=NULL))
+			if((ssd->channel_head[i].subs_r_head!=NULL)||(ssd->channel_head[i].subs_w_head!=NULL))
 			{
 				flag=1;         //to indicate the channel is busy
 			}
