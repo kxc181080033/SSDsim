@@ -184,6 +184,7 @@ struct ssd_info{
 	int raw;                             //KXC:to record the number of RAW conflict
 	int waw;                             //KXC:to record the numbre of WAW conflict
 	int blocked;                         //KXC:to indicate all the channels are blocked of not-no 1-yes
+	int dont;                            //int the funtiong no_buffer_distribure, I don not know how to deal so add the variable
 
 	unsigned int min_lsn;
 	unsigned int max_lsn;

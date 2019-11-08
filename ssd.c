@@ -2059,11 +2059,50 @@ struct ssd_info *no_buffer_distribute_sch(struct ssd_info *ssd)
 
 			if(all==0)
 			{
-				ssd->current_time=next_time;
+				if(reqtemp!=NULL)
+				{
+					if(reqtemp->subs==NULL&&reqtemp->next_node==NULL)
+					{
+						ssd->current_time=nearest_event_time<ssd->next_request_time?nearest_event_time:ssd->next_request_time;
+					}
+					else
+					{
+						ssd->current_time=next_time;
+					}
+				}
+				else
+				{
+					if(req->subs==NULL)
+					{
+						if(ssd->dont<=2)
+						{
+							ssd->current_time=next_time;
+							ssd->dont++;
+						}
+						else
+						{
+							ssd->current_time=nearest_event_time<ssd->next_request_time?nearest_event_time:ssd->next_request_time;
+							ssd->dont=0;
+						}	
+					}
+					
+					else
+					{
+						ssd->current_time=nearest_event_time;
+					}
+				}
+					
 			}       
 			else
 			{		
-				ssd->current_time=nearest_event_time;
+				if(ssd->current_time<next_time)
+				{
+					ssd->current_time=nearest_event_time<next_time?nearest_event_time:next_time;
+				}
+				else
+				{
+					ssd->current_time=nearest_event_time;
+				}
 			}
 				
 		}
