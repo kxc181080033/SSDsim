@@ -183,6 +183,7 @@ struct ssd_info{
 	int sch_write;                       //KXC:to record the number of priorit write request
 	int raw;                             //KXC:to record the number of RAW conflict
 	int waw;                             //KXC:to record the numbre of WAW conflict
+	int blocked;                         //KXC:to indicate all the channels are blocked of not-no 1-yes
 
 	unsigned int min_lsn;
 	unsigned int max_lsn;

@@ -2018,35 +2018,54 @@ struct ssd_info *no_buffer_distribute_sch(struct ssd_info *ssd)
 	}
 	else
 	{   
-		next_time=req->time;
-		
-		if(nearest_event_time<next_time)
+		//next_time=req->time;
+		reqtemp=ssd->request_queue->next_node;
+
+		while (reqtemp!=NULL)
 		{
-			if(req->subs==NULL)     //the request is in the queue but not distribute
-				ssd->current_time=req->time;
-			//fseek(ssd->tracefile,filepoint,0); 
+			if(reqtemp->time<=ssd->current_time)
+			{
+				next_time=reqtemp->time;				
+				reqtemp=reqtemp->next_node;
+			}
 			else
 			{
-				if(ssd->current_time<=nearest_event_time)  //the request has been distributed but not finish
-				{
-					ssd->current_time=nearest_event_time;
-					//return -1;
-				}	
+				next_time=reqtemp->time;
+				break;
 			}
-			
+
+		}
+    	next_time=next_time<=ssd->next_request_time?next_time:ssd->next_request_time;
+
+		//to update the current_time
+		if(nearest_event_time<next_time)
+		{
+			if(ssd->current_time<=nearest_event_time)  //the request has been distributed but not finish
+			{
+				ssd->current_time=nearest_event_time;
+			}		
 		}
 		else
 		{
 
-			if(req->subs!=NULL)   //the request has ben distributed 
+			if(req->subs!=NULL)
 			{
-				ssd->current_time=nearest_event_time;
-			}
+				ssd->current_time=nearest_event_time<=ssd->next_request_time?nearest_event_time:ssd->next_request_time;
+			}       
 			else
 			{
-				ssd->current_time=next_time;
+				if(ssd->blocked==1)
+				{
+					ssd->current_time=nearest_event_time<=ssd->next_request_time?nearest_event_time:ssd->next_request_time;
+				}
+				else
+				{
+					ssd->current_time=nearest_event_time<=next_time?nearest_event_time:next_time;
+				}
+				
+				
 			}
-			
+				
 		}
 	}
 	
@@ -2058,7 +2077,7 @@ struct ssd_info *no_buffer_distribute_sch(struct ssd_info *ssd)
 		{
 			break;
 		}
-
+		ssd->blocked=0;
 		for(i=0;i<ssd->parameter->channel_number;i++)
 		{          
 			if((ssd->channel_head[i].subs_r_head!=NULL)&&(ssd->channel_head[i].subs_w_head!=NULL)&&(ssd->subs_w_head!=NULL))
@@ -2074,6 +2093,7 @@ struct ssd_info *no_buffer_distribute_sch(struct ssd_info *ssd)
 
 		if(flag==1)
 		{
+			ssd->blocked=1;
 			break;    //all the channel are busy and should not allocate
 		}
 
