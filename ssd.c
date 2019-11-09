@@ -161,7 +161,7 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 		//KXC:here just modify the function no_buffer_distribute so there is no buffer
 		if(ssd->parameter->dram_capacity==0)
 		{
-			no_buffer_distribute_nosch(ssd);
+			no_buffer_distribute_sch(ssd);
 		}
 		process(ssd);                                      //ִ�д�������
 		trace_output(ssd);
@@ -2118,7 +2118,7 @@ struct ssd_info *no_buffer_distribute_sch(struct ssd_info *ssd)
 			
 		}
 		
-		if(count>=16)
+		if(count>=ssd->parameter->constraint)
 		{
 			ssd->blocked=1;
 			req->refuse=1;

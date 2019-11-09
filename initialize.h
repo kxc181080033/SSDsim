@@ -484,6 +484,7 @@ struct parameter_value{
 	float aged_ratio; 
 	int queue_length;               //请求队列的长度限制
 	int deadline;                   //the maxmium deadline of the shcedule request
+	int constraint;                 //KXC:to constraint the number of requests in processing
 
 	struct ac_time_characteristics time_characteristics;
 };
