@@ -1953,7 +1953,7 @@ struct ssd_info *no_buffer_distribute_sch(struct ssd_info *ssd)
 {
 	unsigned int lsn,lpn,last_lpn,first_lpn,complete_flag=0, state;
 	unsigned int flag=0,flag1=1,active_region_flag=0;           //to indicate the lsn is hitted or not
-	struct request *req=NULL,*reqtemp;
+	struct request *req=NULL,*reqtemp=NULL,*reqcount=NULL;
 	struct sub_request *sub=NULL,*sub_r=NULL,*update=NULL;
 	struct local *loc=NULL;
 	struct channel_info *p_ch=NULL;
@@ -1966,6 +1966,7 @@ struct ssd_info *no_buffer_distribute_sch(struct ssd_info *ssd)
 	unsigned int sub_state=0;
 	int i;
 	int all=0;  //KXC:to indicate that all the requests in the queue are distributed
+	int count;  //KXC:to record the distributed requests in the request queue
 
 	//KXC:the request is empty,exit and get next request
 	if(ssd->request_queue==NULL)
@@ -2042,7 +2043,15 @@ struct ssd_info *no_buffer_distribute_sch(struct ssd_info *ssd)
 			{
 				if(req->refuse==1)
 				{
-					ssd->current_time=ssd->next_request_time;
+					if(ssd->current_time<ssd->next_request_time)
+					{
+						ssd->current_time=ssd->next_request_time;
+					}
+					else
+					{
+						ssd->current_time=nearest_event_time;
+					}
+					
 				}
 				else
 				{
@@ -2087,7 +2096,7 @@ struct ssd_info *no_buffer_distribute_sch(struct ssd_info *ssd)
 		{
 			break;
 		}
-		ssd->blocked=0;
+/* 		ssd->blocked=0;
 		for(i=0;i<ssd->parameter->channel_number;i++)
 		{          
 			if((ssd->channel_head[i].subs_r_head!=NULL)||(ssd->channel_head[i].subs_w_head!=NULL))
@@ -2099,9 +2108,23 @@ struct ssd_info *no_buffer_distribute_sch(struct ssd_info *ssd)
 				flag=0;
 				break;
 			}
+		} */
+		reqcount=ssd->request_queue;
+		while (reqcount!=NULL)
+		{
+			if(reqcount->dis==1)
+			{
+				count++;
+				reqcount=reqcount->next_node;
+			}
+			else
+			{
+				reqcount=reqcount->next_node;
+			}
+			
 		}
-
-		if(flag==1)
+		
+		if(count<=16)
 		{
 			ssd->blocked=1;
 			req->refuse=1;
