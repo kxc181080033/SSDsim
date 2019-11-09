@@ -2103,6 +2103,13 @@ struct ssd_info *no_buffer_distribute_sch(struct ssd_info *ssd)
 				break;
 			}
 		} */
+		
+		if(req->subs!=NULL)
+		{
+			req=req->next_node;
+			continue;
+		}
+			
 		reqcount=ssd->request_queue;
 		while (reqcount!=NULL)
 		{
@@ -2132,12 +2139,7 @@ struct ssd_info *no_buffer_distribute_sch(struct ssd_info *ssd)
 		last_lpn=(req->lsn+req->size-1)/ssd->parameter->subpage_page;
 		first_lpn=req->lsn/ssd->parameter->subpage_page;
 
-		if(req->subs!=NULL)
-		{
-			req=req->next_node;
-			continue;
-		}
-			
+
 
 		if(req->operation==READ)        
 		{		
