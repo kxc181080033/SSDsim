@@ -2011,103 +2011,74 @@ struct ssd_info *no_buffer_distribute_sch(struct ssd_info *ssd)
 		}
 	} 
 
-	//to update the current time of ssd
 	nearest_event_time=find_nearest_event(ssd);
 	if (nearest_event_time==MAX_INT64)   //the first request
 	{
 		ssd->current_time=ssd->request_queue->time;           
 	}
 	else
-	{   
-		//next_time=req->time;
-		reqtemp=ssd->request_queue->next_node;
-
-		while (reqtemp!=NULL)
+	{ 
+		if(nearest_event_time<ssd->next_request_time)
 		{
-			if(reqtemp->time<=ssd->current_time)
+			if(req->subs==NULL)
 			{
-				next_time=reqtemp->time;				
-				reqtemp=reqtemp->next_node;
-			}
-			else
-			{
-				next_time=reqtemp->time;
-				break;
-			}
-
-		}
-    	if(all==1)
-		{
-			next_time=ssd->next_request_time;
-		}
-
-		//to update the current_time
-		if(nearest_event_time<next_time)
-		{
-			if(ssd->current_time<=nearest_event_time)  //the request has been distributed but not finish
-			{
-				ssd->current_time=nearest_event_time;
-			}
-			else
-			{
-				printf("error in time update");
-			}
-					
-		}
-		else
-		{
-
-			if(all==0)
-			{
-				if(reqtemp!=NULL)
-				{
-					if(reqtemp->subs==NULL&&reqtemp->next_node==NULL)
-					{
-						ssd->current_time=nearest_event_time<ssd->next_request_time?nearest_event_time:ssd->next_request_time;
-					}
-					else
-					{
-						ssd->current_time=next_time;
-					}
-				}
-				else
-				{
-					if(req->subs==NULL)
-					{
-						if(ssd->dont<=2)
-						{
-							ssd->current_time=next_time;
-							ssd->dont++;
-						}
-						else
-						{
-							ssd->current_time=nearest_event_time<ssd->next_request_time?nearest_event_time:ssd->next_request_time;
-							ssd->dont=0;
-						}	
-					}
-					
-					else
-					{
-						ssd->current_time=nearest_event_time;
-					}
-				}
-					
-			}       
-			else
-			{		
-				if(ssd->current_time<next_time)
-				{
-					ssd->current_time=nearest_event_time<next_time?nearest_event_time:next_time;
-				}
-				else
+				if(req->refuse==1)
 				{
 					ssd->current_time=nearest_event_time;
 				}
+				else
+				{
+					ssd->current_time=req->time;
+				}
 			}
-				
+			else
+			{
+				ssd->current_time=nearest_event_time;
+			}
 		}
+		else
+		{
+			if(req->subs==NULL)
+			{
+				if(req->refuse==1)
+				{
+					ssd->current_time=ssd->next_request_time;
+				}
+				else
+				{
+					ssd->current_time=req->time;
+				}
+			}
+			else
+			{
+				if(ssd->request_queue_length==ssd->parameter->queue_length)
+				{
+					ssd->current_time=nearest_event_time;
+				}
+				else
+				{
+					ssd->current_time=ssd->next_request_time;
+				}
+			
+			}
+			while(ssd->request_queue_length<ssd->parameter->queue_length)
+			{
+				flag=get_requests(ssd);
+
+				if(flag==0)
+				{
+					break;
+				}
+				if(ssd->next_request_time>ssd->current_time)
+				{
+					break;
+				}
+			}
+		}
+		
 	}
-	
+
+
 	
 
 	while(req!=NULL)
@@ -2133,6 +2104,7 @@ struct ssd_info *no_buffer_distribute_sch(struct ssd_info *ssd)
 		if(flag==1)
 		{
 			ssd->blocked=1;
+			req->refuse=1;
 			break;    //all the channel are busy and should not allocate
 		}
 

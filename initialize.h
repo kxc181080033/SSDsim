@@ -374,6 +374,7 @@ struct request{
 	int dis;                           //KXC:to indicate the request is distribured or not
 	int sch;                           //KXC:to indicate the request is scheduled or not
 	int cnt;                           //KXC:to indicate the request whether count int the dependency function 0-no 1-yes
+	int refuse;                        //KXC:to indicate the request whether blocked in the no_buffer_distributed function 0-not 1-yes
 
 	unsigned int* need_distr_flag;
 	unsigned int complete_lsn_count;   //record the count of lsn served by buffer
