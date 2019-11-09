@@ -2060,7 +2060,14 @@ struct ssd_info *no_buffer_distribute_sch(struct ssd_info *ssd)
 				}
 				else
 				{
-					ssd->current_time=ssd->next_request_time;
+					if(ssd->current_time>=ssd->next_request_time)
+					{
+						ssd->current_time=nearest_event_time;
+					}
+					else
+					{
+						ssd->current_time=ssd->next_request_time;
+					}
 				}
 			
 			}
