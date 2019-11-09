@@ -71,7 +71,7 @@ int  main()
 /*	free_all_node(ssd);*/
 
 	printf("\n");
-	printf("the simulation is completed!\n");
+	printf("the simulation is completed!\n\n\n");
 	
 	return 1;
 /* 	_CrtDumpMemoryLeaks(); */
@@ -161,20 +161,14 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 		//KXC:here just modify the function no_buffer_distribute so there is no buffer
 		if(ssd->parameter->dram_capacity==0)
 		{
-			if(ssd->parameter->scheduling_algorithm==1)
-			{	
-				no_buffer_distribute_sch(ssd);
-			}
-			else
-			{
-				no_buffer_distribute_nosch(ssd);
-			}
-			
+			no_buffer_distribute_nosch(ssd);
 		}
 		process(ssd);                                      //ִ�д�������
 		trace_output(ssd);
 		if(flag == 0 && ssd->request_queue == NULL)        //����ִ����ɣ�����?
+		{
 			flag = 100;
+		}	
 	}
 
 	fclose(ssd->tracefile);
@@ -2124,7 +2118,7 @@ struct ssd_info *no_buffer_distribute_sch(struct ssd_info *ssd)
 			
 		}
 		
-		if(count<=16)
+		if(count>=16)
 		{
 			ssd->blocked=1;
 			req->refuse=1;
@@ -2179,6 +2173,11 @@ struct ssd_info *no_buffer_distribute_sch(struct ssd_info *ssd)
 		}
 		req->dis=1;
 		req=req->next_node;
+		if (ssd->parameter->scheduling_algorithm==1)
+		{
+			break;
+		}
+		
 	}
 	return ssd;
 }
