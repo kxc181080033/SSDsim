@@ -1960,7 +1960,7 @@ struct ssd_info *no_buffer_distribute_sch(struct ssd_info *ssd)
 	unsigned int sub_state=0;
 	int i;
 	int all=0;  //KXC:to indicate that all the requests in the queue are distributed
-	int count;  //KXC:to record the distributed requests in the request queue
+	int count=0;  //KXC:to record the distributed requests in the request queue
 
 	//KXC:the request is empty,exit and get next request
 	if(ssd->request_queue==NULL)
