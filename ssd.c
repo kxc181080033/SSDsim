@@ -113,6 +113,22 @@ struct ssd_info *simulate(struct ssd_info *ssd)
         
 		if(ssd->parameter->scheduling_algorithm==1)
 		{	
+			if(ssd->parameter->allocation_scheme==1&&ssd->parameter->static_allocation==1)
+			{	
+				for(i=0;i<ssd->parameter->channel_number;i++)
+				{          
+					if((ssd->channel_head[i].current_state==CHANNEL_IDLE)||((ssd->channel_head[i].next_state==CHANNEL_IDLE)&&(ssd->channel_head[i].next_state_predict_time<=ssd->current_time)))
+					{
+						pflag=1;                       //所有通道均无请求处理。上边一行，对于全动态分配策略的写请求，不挂在通道上，需要再分配
+					}
+					else
+					{
+						pflag=0;
+						break;
+					}
+				}
+			}
+			if((pflag==1&&ssd->parameter->allocation_scheme==1&&ssd->parameter->static_allocation==1)||(ssd->parameter->allocation_scheme==0&&ssd->parameter->dynamic_allocation==0))
 			while(ssd->request_queue_length<ssd->parameter->queue_length)
 			{
 				flag=get_requests(ssd);
@@ -131,7 +147,7 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 		{
 			for(i=0;i<ssd->parameter->channel_number;i++)
 			{          
-				if((ssd->channel_head[i].subs_r_head==NULL)&&(ssd->channel_head[i].subs_w_head==NULL)&&(ssd->subs_w_head==NULL))
+				if((ssd->channel_head[i].current_state==CHANNEL_IDLE)||((ssd->channel_head[i].next_state==CHANNEL_IDLE)&&(ssd->channel_head[i].next_state_predict_time<=ssd->current_time)))
 				{
 					pflag=1;                       //所有通道均无请求处理。上边一行，对于全动态分配策略的写请求，不挂在通道上，需要再分配
 				}
@@ -141,7 +157,7 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 					break;
 				}
 			}
-			if(pflag==1)
+			if(pflag==1||ssd->empty==1)
 			{
 				flag=get_requests(ssd);
 			}
