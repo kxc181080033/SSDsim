@@ -22,10 +22,10 @@ Hao Luo         2011/01/01        2.0           Change               luohao13568
 
 /********************************************************************************************************************************
 1��main������initiatio()����������ʼ��ssd,��2��make_aged()����ʹSSD��Ϊaged��aged��ssd�൱��ʹ�ù�һ��ʱ���ssd��������ʧЧҳ��
-non_aged��ssd���µ�ssd����ʧЧҳ��ʧЧҳ�ı��������ڳ�ʼ�����������ã�3��pre_process_page()������ǰɨһ�������?�Ѷ�����
+non_aged��ssd���µ�ssd����ʧЧҳ��ʧЧҳ�ı��������ڳ�ʼ�����������ã�3��pre_process_page()������ǰɨһ�������?�Ѷ�����
 ��lpn<--->ppnӳ���ϵ���Ƚ����ã�д�����lpn<--->ppnӳ���ϵ��д��ʱ���ٽ�����Ԥ����trace��ֹ�������Ƕ��������ݣ�4��simulate()��
-���Ĵ���������trace�ļ��Ӷ�������������ɶ��������������ɣ�?5��statistic_output()������ssd�ṹ�е���Ϣ���������ļ����������?
-ͳ�����ݺ�ƽ�����ݣ�����ļ���С��trace_output�ļ���ܴ����ϸ��6��free_all_node()�����ͷ�����main����������Ľڵ�?
+���Ĵ���������trace�ļ��Ӷ�������������ɶ��������������ɣ�?5��statistic_output()������ssd�ṹ�е���Ϣ���������ļ����������?
+ͳ�����ݺ�ƽ�����ݣ�����ļ���С��trace_output�ļ���ܴ����ϸ��6��free_all_node()�����ͷ�����main����������Ľڵ�?
 *********************************************************************************************************************************/
 int  main()
 {
@@ -50,7 +50,7 @@ int  main()
 	memset(vector,0,sizeof(int)*ssd->parameter->channel_number);
 
 /************KXC:�޸����ʹ������߼� 2019.8.13**************/
-/* 	for (i=0;i<ssd->parameter->channel_number;i++)//����Ļ�����ʼ��о�?�Ŀհ�ҳ��Ϣ
+/* 	for (i=0;i<ssd->parameter->channel_number;i++)//����Ļ�����ʼ��о�?�Ŀհ�ҳ��Ϣ
 	{
       for (ii=0;ii<ssd->parameter->chip_channel[i];ii++)
        {
@@ -83,7 +83,7 @@ int  main()
 *1,��trace�ļ��л�ȡһ�����󣬹ҵ�ssd->request
 *2������ssd�Ƿ���dram�ֱ��������������󣬰���Щ��������Ϊ��д�����󣬹ҵ�ssd->channel����ssd��
 *3�������¼����Ⱥ���������Щ��д������
-*4�����ÿ������������󶼴�������������?��outputfile�ļ���
+*4�����ÿ������������󶼴�������������?��outputfile�ļ���
 **************************************************************************************************/
 struct ssd_info *simulate(struct ssd_info *ssd)
 {
@@ -91,7 +91,7 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 	double output_step=0;
 	unsigned int a=0,b=0;
 	//errno_t err;
-
+	int i=0,pflag=0;
 	printf("\n");
 	printf("begin simulating.......................\n");
 	printf("\n");
@@ -111,18 +111,6 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 	while(flag!=100)      
 	{
         
-		/* if(flag == 1)
-		{   
-			if (ssd->parameter->dram_capacity!=0)           //�Ƿ��л�����
-			{
-				buffer_management(ssd);  
-				distribute(ssd); 
-			} 
-			else
-			{
-				no_buffer_distribute(ssd);
-			}		
-		} */
 		if(ssd->parameter->scheduling_algorithm==1)
 		{	
 			while(ssd->request_queue_length<ssd->parameter->queue_length)
@@ -141,7 +129,22 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 		}
 		else
 		{
-			flag=get_requests(ssd);
+			for(i=0;i<ssd->parameter->channel_number;i++)
+			{          
+				if((ssd->channel_head[i].subs_r_head==NULL)&&(ssd->channel_head[i].subs_w_head==NULL)&&(ssd->subs_w_head==NULL))
+				{
+					pflag=1;                       //所有通道均无请求处理。上边一行，对于全动态分配策略的写请求，不挂在通道上，需要再分配
+				}
+				else
+				{
+					pflag=0;
+					break;
+				}
+			}
+			if(pflag==1)
+			{
+				flag=get_requests(ssd);
+			}
 		}
 		
 		if(ssd->parameter->scheduling_algorithm==1)
@@ -161,11 +164,19 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 		//KXC:here just modify the function no_buffer_distribute so there is no buffer
 		if(ssd->parameter->dram_capacity==0)
 		{
-			no_buffer_distribute(ssd);
+			if(ssd->parameter->scheduling_algorithm==1)
+			{
+				no_buffer_distribute_sch(ssd);
+			}
+			else
+			{
+				no_buffer_distribute_nosch(ssd);
+			}
+			
 		}
 		process(ssd);                                      //ִ�д�������
 		trace_output(ssd);
-		if(flag == 0 && ssd->request_queue == NULL)        //����ִ����ɣ�����?
+		if(flag == 0 && ssd->request_queue == NULL)        //����ִ����ɣ�����?
 			flag = 100;
 	}
 
@@ -181,10 +192,10 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 *	return	0: reach the end of the trace
 *			-1: no request has been added
 *			1: add one request to list
-*SSDģ����������������ʽ:ʱ������(��ȷ��̫��) �¼�����(���������?) trace����()��
-*���ַ�ʽ�ƽ��¼���channel/chip״̬�ı䡢trace�ļ�����ﵽ��?
+*SSDģ����������������ʽ:ʱ������(��ȷ��̫��) �¼�����(���������?) trace����()��
+*���ַ�ʽ�ƽ��¼���channel/chip״̬�ı䡢trace�ļ�����ﵽ��?
 *channel/chip״̬�ı��trace�ļ����󵽴���ɢ����ʱ�����ϵĵ㣬ÿ�δӵ�ǰ״̬����
-*��һ��״̬��Ҫ���������һ��״�?��ÿ����һ����ִ��һ��process
+*��һ��״̬��Ҫ���������һ��״�?��ÿ����һ����ִ��һ��process
 ********************************************************************************/
 int get_requests(struct ssd_info *ssd)  
 {  
@@ -288,7 +299,7 @@ int get_requests(struct ssd_info *ssd)
 		ssd->request_queue_length++;
 	}
 
-	if (request1->operation==1)             //����ƽ��������? 1Ϊ�� 0Ϊд
+	if (request1->operation==1)             //����ƽ��������? 1Ϊ�� 0Ϊд
 	{
 		ssd->ave_read_size=(ssd->ave_read_size*ssd->read_request_count+request1->size)/(ssd->read_request_count+1);
 	} 
@@ -299,7 +310,7 @@ int get_requests(struct ssd_info *ssd)
 
 	
 	filepoint = ftell(ssd->tracefile);	
-	fgets(buffer, 200, ssd->tracefile);    //Ѱ����һ������ĵ���ʱ��?
+	fgets(buffer, 200, ssd->tracefile);    //Ѱ����һ������ĵ���ʱ��?
 	sscanf(buffer,"%lld %d %d %d %d",&time_t,&device,&lsn,&size,&ope);
 	ssd->next_request_time=time_t;
 	fseek(ssd->tracefile,filepoint,0);
@@ -1095,10 +1106,10 @@ struct ssd_info *dependency(struct ssd_info *ssd)
 
 
 /**********************************************************************************************************************************************
-*����buffer�Ǹ�дbuffer������Ϊд�������ģ���Ϊ��flash��ʱ��tRΪ20us��дflash��ʱ��tprogΪ200us������Ϊд������ܽ�ʡʱ��?
+*����buffer�Ǹ�дbuffer������Ϊд�������ģ���Ϊ��flash��ʱ��tRΪ20us��дflash��ʱ��tprogΪ200us������Ϊд������ܽ�ʡʱ��?
 *  �����������������buffer����buffer������ռ��channel��I/O���ߣ�û������buffer����flash����ռ��channel��I/O���ߣ����ǲ���buffer��
-*  д����������request�ֳ�sub_request����������Ƕ��?���䣬sub_request�ҵ�ssd->sub_request�ϣ���Ϊ��֪��Ҫ�ȹҵ��ĸ�channel��sub_request��
-*          ����Ǿ��?������sub_request�ҵ�channel��sub_request����,ͬʱ���ܶ�̬���仹�Ǿ�̬����sub_request��Ҫ�ҵ�request��sub_request����
+*  д����������request�ֳ�sub_request����������Ƕ��?���䣬sub_request�ҵ�ssd->sub_request�ϣ���Ϊ��֪��Ҫ�ȹҵ��ĸ�channel��sub_request��
+*          ����Ǿ��?������sub_request�ҵ�channel��sub_request����,ͬʱ���ܶ�̬���仹�Ǿ�̬����sub_request��Ҫ�ҵ�request��sub_request����
 *		   ��Ϊÿ������һ��request����Ҫ��traceoutput�ļ�������������request����Ϣ��������һ��sub_request,�ͽ����channel��sub_request��
 *		   ��ssd��sub_request����ժ����������traceoutput�ļ����һ���������request��sub_request����
 *		   sub_request����buffer����buffer����д�����ˣ����ҽ���sub_page�ᵽbuffer��ͷ(LRU)����û��������buffer�������Ƚ�buffer��β��sub_request
@@ -1135,7 +1146,7 @@ struct ssd_info *buffer_management(struct ssd_info *ssd)
 		{
 			/************************************************************************************************
 			 *need_distb_flag��ʾ�Ƿ���Ҫִ��distribution������1��ʾ��Ҫִ�У�buffer��û�У�0��ʾ����Ҫִ��
-             *��1��ʾ��Ҫ�ַ���0��ʾ����Ҫ�ַ�����Ӧ���ʼ�?����Ϊ1
+             *��1��ʾ��Ҫ�ַ���0��ʾ����Ҫ�ַ�����Ӧ���ʼ�?����Ϊ1
 			*************************************************************************************************/
 			need_distb_flag=full_page;   
 			key.group=lpn;
@@ -1157,12 +1168,12 @@ struct ssd_info *buffer_management(struct ssd_info *ssd)
 				}
 
 				if(flag==1)				
-				{	//�����buffer�ڵ㲻��buffer�Ķ��ף���Ҫ������ڵ��ᵽ���ף�ʵ����LRU�㷨�������һ���?����С�?		       		
+				{	//�����buffer�ڵ㲻��buffer�Ķ��ף���Ҫ������ڵ��ᵽ���ף�ʵ����LRU�㷨�������һ���?����С�?		       		
 					if(ssd->dram->buffer->buffer_head!=buffer_node)     
 					{		
 						if(ssd->dram->buffer->buffer_tail==buffer_node)								
 						{			
-							buffer_node->LRU_link_pre->LRU_link_next=NULL;		//β�ڵ�Ͽ�?			
+							buffer_node->LRU_link_pre->LRU_link_next=NULL;		//β�ڵ�Ͽ�?			
 							ssd->dram->buffer->buffer_tail=buffer_node->LRU_link_pre;							
 						}				
 						else								
@@ -1205,7 +1216,7 @@ struct ssd_info *buffer_management(struct ssd_info *ssd)
 
 			if(lpn==first_lpn)
 			{
-				offset1=ssd->parameter->subpage_page-((lpn+1)*ssd->parameter->subpage_page-new_request->lsn);//������ĵ�һ��LPN����Ҫ��������ĵ�һ��lsn�Ƿ���LPN�ĵ�һ��lsn���������?
+				offset1=ssd->parameter->subpage_page-((lpn+1)*ssd->parameter->subpage_page-new_request->lsn);//������ĵ�һ��LPN����Ҫ��������ĵ�һ��lsn�Ƿ���LPN�ĵ�һ��lsn���������?
 				state=state&(0xffffffff<<offset1);
 			}
 			if(lpn==last_lpn)
@@ -1228,7 +1239,7 @@ struct ssd_info *buffer_management(struct ssd_info *ssd)
 	}
 
 	/*************************************************************
-	*��������Ѿ����?����buffer���񣬸�������Ա�ֱ����Ӧ��������?
+	*��������Ѿ����?����buffer���񣬸�������Ա�ֱ����Ӧ��������?
 	*�������dram�ķ���ʱ��Ϊ1000ns
 	**************************************************************/
 	if((complete_flag == 1)&&(new_request->subs==NULL))               
@@ -1257,8 +1268,8 @@ unsigned int lpn2ppn(struct ssd_info *ssd,unsigned int lsn)
 
 /**********************************************************************************
 *�����������������������ֻ����������д�����Ѿ���buffer_management()�����д�����
-*����������к�buffer���еļ��?��ÿ������ֽ�������󣬽���������й���channel�ϣ�
-*��ͬ��channel���Լ������������?
+*����������к�buffer���еļ��?��ÿ������ֽ�������󣬽���������й���channel�ϣ�
+*��ͬ��channel���Լ������������?
 **********************************************************************************/
 
 struct ssd_info *distribute(struct ssd_info *ssd) 
@@ -1288,7 +1299,7 @@ struct ssd_info *distribute(struct ssd_info *ssd)
 	{
 		if(req->distri_flag == 0)
 		{
-			//�������һЩ���������?����
+			//�������һЩ���������?����
 			if(req->complete_lsn_count != ssd->request_tail->size)
 			{		
 				first_lsn = req->lsn;				
@@ -1302,8 +1313,8 @@ struct ssd_info *distribute(struct ssd_info *ssd)
 				{	
 					/*************************************************************************************
 					*һ��32λ���������ݵ�ÿһλ����һ����ҳ��32/ssd->parameter->subpage_page�ͱ�ʾ�ж���ҳ��
-					*�����ÿһҳ��״�?���������? req->need_distr_flag�У�Ҳ����complt�У�ͨ���Ƚ�complt��
-					*ÿһ����full_page���Ϳ���֪������һҳ�Ƿ�����ɡ����û����������?��creat_sub_request
+					*�����ÿһҳ��״�?���������? req->need_distr_flag�У�Ҳ����complt�У�ͨ���Ƚ�complt��
+					*ÿһ����full_page���Ϳ���֪������һҳ�Ƿ�����ɡ����û����������?��creat_sub_request
 					��������������
 					*************************************************************************************/
 					for(j=0; j<32/ssd->parameter->subpage_page; j++)
@@ -1340,7 +1351,7 @@ struct ssd_info *distribute(struct ssd_info *ssd)
 
 
 /**********************************************************************
-*trace_output()��������ÿһ�����������������?��process()�����������?
+*trace_output()��������ÿһ�����������������?��process()�����������?
 *��ӡ�����ص����н����outputfile�ļ��У�����Ľ����Ҫ�����е�ʱ��
 **********************************************************************/
 void trace_output(struct ssd_info* ssd){
@@ -1730,7 +1741,7 @@ void statistic_output(struct ssd_info *ssd)
 
 
 /***********************************************************************************
-*����ÿһҳ��״̬�����ÿһ���?��������ҳ����Ŀ��Ҳ����һ����������Ҫ��������ҳ��ҳ��
+*����ÿһҳ��״̬�����ÿһ���?��������ҳ����Ŀ��Ҳ����һ����������Ҫ��������ҳ��ҳ��
 ************************************************************************************/
 unsigned int size(unsigned int stored)
 {
@@ -1753,8 +1764,8 @@ unsigned int size(unsigned int stored)
 
 /*********************************************************
 *transfer_size()���������þ��Ǽ�������������Ҫ������size
-*�����е���������first_lpn��last_lpn�������ر���������?��
-*��������º��п��ܲ��Ǵ���һ��ҳ���Ǵ���һҳ��һ���֣���?
+*�����е���������first_lpn��last_lpn�������ر���������?��
+*��������º��п��ܲ��Ǵ���һ��ҳ���Ǵ���һҳ��һ���֣���?
 *Ϊlsn�п��ܲ���һҳ�ĵ�һ����ҳ��
 *********************************************************/
 unsigned int transfer_size(struct ssd_info *ssd,int need_distribute,unsigned int lpn,struct request *req)
@@ -1786,9 +1797,9 @@ unsigned int transfer_size(struct ssd_info *ssd,int need_distribute,unsigned int
 
 /**********************************************************************************************************  
 *int64_t find_nearest_event(struct ssd_info *ssd)       
-*Ѱ����������������絽����¸�״̬ʱ��,���ȿ��������һ��״�?ʱ�䣬���������¸�״̬ʱ��С�ڵ��ڵ�ǰʱ�䣬
+*Ѱ����������������絽����¸�״̬ʱ��,���ȿ��������һ��״�?ʱ�䣬���������¸�״̬ʱ��С�ڵ��ڵ�ǰʱ�䣬
 *˵��������������Ҫ�鿴channel���߶�Ӧdie����һ״̬ʱ�䡣Int64���з��� 64 λ�����������ͣ�ֵ���ͱ�ʾֵ����
-*-2^63 ( -9,223,372,036,854,775,808)��2^63-1(+9,223,372,036,854,775,807 )֮�����������?�ռ�ռ 8 �ֽڡ�
+*-2^63 ( -9,223,372,036,854,775,808)��2^63-1(+9,223,372,036,854,775,807 )֮�����������?�ռ�ռ 8 �ֽڡ�
 *channel,die���¼���ǰ�ƽ��Ĺؼ����أ������������ʹ�¼�������ǰ�ƽ���channel��die�ֱ�ص�idle״̬��die�е�
 *������׼������
 ***********************************************************************************************************/
@@ -1819,14 +1830,14 @@ int64_t find_nearest_event(struct ssd_info *ssd)
 	 *           B.��һ״̬ΪCHIP_IDLE����һ״̬Ԥ��ʱ�����ssd��ǰʱ���DIE����һ״̬Ԥ��ʱ��
 	 *		     C.��һ״̬ΪCHIP_DATA_TRANSFER����һ״̬Ԥ��ʱ�����ssd��ǰʱ���DIE����һ״̬Ԥ��ʱ��
 	 *CHIP_DATA_TRANSFER��׼����״̬�������Ѵӽ��ʴ�����register����һ״̬�Ǵ�register����buffer�е���Сֵ 
-	 *ע����ܶ�û�������?���time����ʱtime����0x7fffffffffffffff ��
+	 *ע����ܶ�û�������?���time����ʱtime����0x7fffffffffffffff ��
 	*****************************************************************************************************/
 	time=(time1>time2)?time2:time1;
 	return time;
 }
 
 /***********************************************
-*free_all_node()���������þ����ͷ���������Ľڵ�?
+*free_all_node()���������þ����ͷ���������Ľڵ�?
 ************************************************/
 void free_all_node(struct ssd_info *ssd)
 {
@@ -1915,7 +1926,7 @@ struct ssd_info *make_aged(struct ssd_info *ssd)
 							{  
 								ssd->channel_head[i].chip_head[j].die_head[k].plane_head[l].blk_head[m].page_head[n].valid_state=0;        //��ʾĳһҳʧЧ��ͬʱ���valid��free״̬��Ϊ0
 								ssd->channel_head[i].chip_head[j].die_head[k].plane_head[l].blk_head[m].page_head[n].free_state=0;         //��ʾĳһҳʧЧ��ͬʱ���valid��free״̬��Ϊ0
-								ssd->channel_head[i].chip_head[j].die_head[k].plane_head[l].blk_head[m].page_head[n].lpn=0;  //��valid_state free_state lpn����Ϊ0��ʾҳʧЧ������ʱ��������?����lpn=0��������Чҳ
+								ssd->channel_head[i].chip_head[j].die_head[k].plane_head[l].blk_head[m].page_head[n].lpn=0;  //��valid_state free_state lpn����Ϊ0��ʾҳʧЧ������ʱ��������?����lpn=0��������Чҳ
 								ssd->channel_head[i].chip_head[j].die_head[k].plane_head[l].blk_head[m].free_page_num--;
 								ssd->channel_head[i].chip_head[j].die_head[k].plane_head[l].blk_head[m].invalid_page_num++;
 								ssd->channel_head[i].chip_head[j].die_head[k].plane_head[l].blk_head[m].last_write_page++;
@@ -1939,9 +1950,9 @@ struct ssd_info *make_aged(struct ssd_info *ssd)
 
 /*********************************************************************************************
 *no_buffer_distribute()�����Ǵ�����ssdû��dram��ʱ��
-*���Ƕ�д����Ͳ��������?��buffer����Ѱ�ң�ֱ������creat_sub_request()���������������ٴ�����
+*���Ƕ�д����Ͳ��������?��buffer����Ѱ�ң�ֱ������creat_sub_request()���������������ٴ�����
 *********************************************************************************************/
-struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
+struct ssd_info *no_buffer_distribute_sch(struct ssd_info *ssd)
 {
 	unsigned int lsn,lpn,last_lpn,first_lpn,complete_flag=0, state;
 	unsigned int flag=0,flag1=1,active_region_flag=0;           //to indicate the lsn is hitted or not
@@ -1957,230 +1968,99 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 	unsigned int sub_size=0;
 	unsigned int sub_state=0;
 
-	if(ssd->parameter->scheduling_algorithm==1)
-	{	//KXC:the request is empty,exit and get next request
-		if(ssd->request_queue==NULL)
+	//KXC:the request is empty,exit and get next request
+	if(ssd->request_queue==NULL)
+	{
+		ssd->empty=1;
+		return 0;
+	}
+	else
+	{
+		next_time=ssd->request_queue->time;
+	}
+		
+	//to find the next not distributed request
+	req=ssd->request_queue;
+	while(req!=NULL)
+	{
+		if (req->dis==1)
 		{
-			ssd->empty=1;
-			return 0;
-		}
-		else
-		{
-			next_time=ssd->request_queue->time;
-		}
-			
-		//to find the next not distributed request
-		req=ssd->request_queue;
-		while(req!=NULL)
-		{
-			if (req->dis==1)
+			if(req->next_node!=NULL)
 			{
-				if(req->next_node!=NULL)
+				if(req->next_node->dis==1)
 				{
-					if(req->next_node->dis==1)
-					{
-						req=req->next_node;
-					}
-					else
-					{
-						req=req->next_node;
-						break;
-					}
-					
+					req=req->next_node;
 				}
 				else
 				{
-					//req=ssd->request_tail;
+					req=req->next_node;
 					break;
 				}
 				
-			}	
+			}
 			else
 			{
 				//req=ssd->request_tail;
 				break;
 			}
-		} 
-
-		//to update the current time of ssd
-		nearest_event_time=find_nearest_event(ssd);
-		if (nearest_event_time==MAX_INT64)
-		{
-			ssd->current_time=ssd->request_queue->time;           
-		}
-		else
-		{   
-			next_time=req->time;
 			
-			if(nearest_event_time<next_time)
-			{
-				if(req->subs==NULL)     //the request is in the queue but not distribute
-					ssd->current_time=req->time;
-				//fseek(ssd->tracefile,filepoint,0); 
-				else
-				{
-					if(ssd->current_time<=nearest_event_time)  //the request has been distributed but not finish
-					{
-						ssd->current_time=nearest_event_time;
-						//return -1;
-					}	
-				}
-				
-			}
-			else
-			{
-
-				if(req->subs!=NULL)   //the request has ben distributed 
-				{
-					ssd->current_time=nearest_event_time;
-				}
-				else
-				{
-					ssd->current_time=next_time;
-				}
-				
-			}
-		}
-		
-		
-
-		while(req!=NULL)
+		}	
+		else
 		{
-			if(req->time>ssd->current_time)
-			{
-				break;
-			}
-
-			ssd->dram->current_time=ssd->current_time;
-			//req=ssd->request_tail;       
-			lsn=req->lsn;
-			lpn=req->lsn/ssd->parameter->subpage_page;
-			last_lpn=(req->lsn+req->size-1)/ssd->parameter->subpage_page;
-			first_lpn=req->lsn/ssd->parameter->subpage_page;
-
-			if(req->subs!=NULL)
-			{
-				req=req->next_node;
-				continue;
-			}
-				
-
-			if(req->operation==READ)        
-			{		
-				while(lpn<=last_lpn) 		
-				{
-					sub_state=(ssd->dram->map->map_entry[lpn].state&0x7fffffff);
-					sub_size=size(sub_state);
-					sub=creat_sub_request(ssd,lpn,sub_size,sub_state,req,req->operation);
-					lpn++;
-				}
-			}
-			else if(req->operation==WRITE)
-			{
-				while(lpn<=last_lpn)     	
-				{	
-					mask=~(0xffffffff<<(ssd->parameter->subpage_page));
-					state=mask;
-					if(lpn==first_lpn)
-					{
-						offset1=ssd->parameter->subpage_page-((lpn+1)*ssd->parameter->subpage_page-req->lsn);
-						state=state&(0xffffffff<<offset1);
-					}
-					if(lpn==last_lpn)
-					{
-						offset2=ssd->parameter->subpage_page-((lpn+1)*ssd->parameter->subpage_page-(req->lsn+req->size));
-						state=state&(~(0xffffffff<<offset2));
-					}
-					sub_size=size(state);
-
-					sub=creat_sub_request(ssd,lpn,sub_size,state,req,req->operation);
-					lpn++;
-				}
-			}
-			req->dis=1;
-			req=req->next_node;
+			//req=ssd->request_tail;
+			break;
 		}
+	} 
+
+	//to update the current time of ssd
+	nearest_event_time=find_nearest_event(ssd);
+	if (nearest_event_time==MAX_INT64)
+	{
+		ssd->current_time=ssd->request_queue->time;           
 	}
 	else
-	{
-		//KXC:the request is empty,exit and get next request
-		if(ssd->request_queue==NULL)
+	{   
+		next_time=req->time;
+		
+		if(nearest_event_time<next_time)
 		{
-			ssd->empty=1;
-			return 0;
-		}
-		else
-		{
-			next_time=ssd->request_queue->time;
-		}
-			
-		req=ssd->request_tail; 
-
-		//to update the current time of ssd
-		nearest_event_time=find_nearest_event(ssd);
-		if (nearest_event_time==MAX_INT64)
-		{
-			ssd->current_time=ssd->request_queue->time;           
-		}
-		else
-		{   
-			//KXC:request is processing to find the next request's arriving time
-			reqtemp=ssd->request_queue->next_node;
-			while (reqtemp!=NULL)
+			if(req->subs==NULL)     //the request is in the queue but not distribute
+				ssd->current_time=req->time;
+			//fseek(ssd->tracefile,filepoint,0); 
+			else
 			{
-				if(reqtemp->time==ssd->request_queue->time)
+				if(ssd->current_time<=nearest_event_time)  //the request has been distributed but not finish
 				{
-					next_time=reqtemp->time;				
-					reqtemp=reqtemp->next_node;
-				}
-				else
-				{
-					next_time=reqtemp->time;
-					break;
-				}
-
+					ssd->current_time=nearest_event_time;
+					//return -1;
+				}	
 			}
 			
-			if(nearest_event_time<next_time)
+		}
+		else
+		{
+
+			if(req->subs!=NULL)   //the request has ben distributed 
 			{
-				if(req->subs==NULL)     //the request is in the queue but not distribute
-					ssd->current_time=req->time;
-				//fseek(ssd->tracefile,filepoint,0); 
-				else
-				{
-					if(ssd->current_time<=nearest_event_time)  //the request has been distributed but not finish
-					{
-						ssd->current_time=nearest_event_time;
-						return -1;
-					}	
-				}
-				
+				ssd->current_time=nearest_event_time;
 			}
 			else
 			{
-				if (ssd->request_queue_length>=ssd->parameter->queue_length)// the request queue is full
-				{
-					//fseek(ssd->tracefile,filepoint,0);
-					ssd->current_time=nearest_event_time;
-					return -1;
-				} 
-				else
-				{
-					if(req->subs!=NULL)   //the request has ben distributed 
-					{
-						ssd->current_time=nearest_event_time;
-					}
-					else
-					{
-						//ssd->current_time=next_time;
-						ssd->current_time=ssd->current_time>next_time?ssd->current_time:next_time;
-					}
-				}
+				ssd->current_time=next_time;
 			}
+			
 		}
-		
-		
-		
+	}
+	
+	
+
+	while(req!=NULL)
+	{
+		if(req->time>ssd->current_time)
+		{
+			break;
+		}
+
 		ssd->dram->current_time=ssd->current_time;
 		//req=ssd->request_tail;       
 		lsn=req->lsn;
@@ -2189,7 +2069,11 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 		first_lpn=req->lsn/ssd->parameter->subpage_page;
 
 		if(req->subs!=NULL)
-			return 0;
+		{
+			req=req->next_node;
+			continue;
+		}
+			
 
 		if(req->operation==READ)        
 		{		
@@ -2224,8 +2108,146 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 			}
 		}
 		req->dis=1;
+		req=req->next_node;
 	}
-	return ssd;
+	return(ssd);	
 }
 
+struct ssd_info *no_buffer_distribute_sch(struct ssd_info *ssd)
+{
+	unsigned int lsn,lpn,last_lpn,first_lpn,complete_flag=0, state;
+	unsigned int flag=0,flag1=1,active_region_flag=0;           //to indicate the lsn is hitted or not
+	struct request *req=NULL,*reqtemp;
+	struct sub_request *sub=NULL,*sub_r=NULL,*update=NULL;
+	struct local *loc=NULL;
+	struct channel_info *p_ch=NULL;
 
+	int64_t nearest_event_time;
+	int64_t next_time;
+	unsigned int mask=0; 
+	unsigned int offset1=0, offset2=0;
+	unsigned int sub_size=0;
+	unsigned int sub_state=0;
+	//KXC:the request is empty,exit and get next request
+	if(ssd->request_queue==NULL)
+	{
+		ssd->empty=1;
+		return 0;
+	}
+	else
+	{
+		next_time=ssd->request_queue->time;
+	}
+		
+	req=ssd->request_tail; 
+
+	//to update the current time of ssd
+	nearest_event_time=find_nearest_event(ssd);
+	if (nearest_event_time==MAX_INT64)
+	{
+		ssd->current_time=ssd->request_queue->time;           
+	}
+	else
+	{   
+		//KXC:request is processing to find the next request's arriving time
+		reqtemp=ssd->request_queue->next_node;
+		while (reqtemp!=NULL)
+		{
+			if(reqtemp->time==ssd->request_queue->time)
+			{
+				next_time=reqtemp->time;				
+				reqtemp=reqtemp->next_node;
+			}
+			else
+			{
+				next_time=reqtemp->time;
+				break;
+			}
+
+		}
+		
+		if(nearest_event_time<next_time)
+		{
+			if(req->subs==NULL)     //the request is in the queue but not distribute
+				ssd->current_time=req->time;
+			//fseek(ssd->tracefile,filepoint,0); 
+			else
+			{
+				if(ssd->current_time<=nearest_event_time)  //the request has been distributed but not finish
+				{
+					ssd->current_time=nearest_event_time;
+					return -1;
+				}	
+			}
+			
+		}
+		else
+		{
+			if (ssd->request_queue_length>=ssd->parameter->queue_length)// the request queue is full
+			{
+				//fseek(ssd->tracefile,filepoint,0);
+				ssd->current_time=nearest_event_time;
+				return -1;
+			} 
+			else
+			{
+				if(req->subs!=NULL)   //the request has ben distributed 
+				{
+					ssd->current_time=nearest_event_time;
+				}
+				else
+				{
+					//ssd->current_time=next_time;
+					ssd->current_time=ssd->current_time>next_time?ssd->current_time:next_time;
+				}
+			}
+		}
+	}
+	
+	
+	
+	ssd->dram->current_time=ssd->current_time;
+	//req=ssd->request_tail;       
+	lsn=req->lsn;
+	lpn=req->lsn/ssd->parameter->subpage_page;
+	last_lpn=(req->lsn+req->size-1)/ssd->parameter->subpage_page;
+	first_lpn=req->lsn/ssd->parameter->subpage_page;
+
+	if(req->subs!=NULL)
+		return 0;
+
+	if(req->operation==READ)        
+	{		
+		while(lpn<=last_lpn) 		
+		{
+			sub_state=(ssd->dram->map->map_entry[lpn].state&0x7fffffff);
+			sub_size=size(sub_state);
+			sub=creat_sub_request(ssd,lpn,sub_size,sub_state,req,req->operation);
+			lpn++;
+		}
+	}
+	else if(req->operation==WRITE)
+	{
+		while(lpn<=last_lpn)     	
+		{	
+			mask=~(0xffffffff<<(ssd->parameter->subpage_page));
+			state=mask;
+			if(lpn==first_lpn)
+			{
+				offset1=ssd->parameter->subpage_page-((lpn+1)*ssd->parameter->subpage_page-req->lsn);
+				state=state&(0xffffffff<<offset1);
+			}
+			if(lpn==last_lpn)
+			{
+				offset2=ssd->parameter->subpage_page-((lpn+1)*ssd->parameter->subpage_page-(req->lsn+req->size));
+				state=state&(~(0xffffffff<<offset2));
+			}
+			sub_size=size(state);
+
+			sub=creat_sub_request(ssd,lpn,sub_size,state,req,req->operation);
+			lpn++;
+		}
+	}
+	req->dis=1;	
+	return ssd;
+}
