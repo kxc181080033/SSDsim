@@ -2113,7 +2113,7 @@ struct ssd_info *no_buffer_distribute_sch(struct ssd_info *ssd)
 	return(ssd);	
 }
 
-struct ssd_info *no_buffer_distribute_sch(struct ssd_info *ssd)
+struct ssd_info *no_buffer_distribute_nosch(struct ssd_info *ssd)
 {
 	unsigned int lsn,lpn,last_lpn,first_lpn,complete_flag=0, state;
 	unsigned int flag=0,flag1=1,active_region_flag=0;           //to indicate the lsn is hitted or not
