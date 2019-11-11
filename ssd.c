@@ -128,18 +128,21 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 					}
 				}
 			}
-			if((pflag==1&&ssd->parameter->allocation_scheme==1&&ssd->parameter->static_allocation==1)||(ssd->parameter->allocation_scheme==0&&ssd->parameter->dynamic_allocation==0))
-			while(ssd->request_queue_length<ssd->parameter->queue_length)
+			
+			if((pflag==1&&ssd->parameter->allocation_scheme==1&&ssd->parameter->static_allocation==1)||(ssd->parameter->allocation_scheme==0&&ssd->parameter->dynamic_allocation==0)||ssd->empty==1)
 			{
-				flag=get_requests(ssd);
+				while(ssd->request_queue_length<ssd->parameter->queue_length)
+				{
+					flag=get_requests(ssd);
 
-				if(flag==0)
-				{
-					break;
-				}
-				if(ssd->next_request_time>ssd->current_time)
-				{
-					break;
+					if(flag==0)
+					{
+						break;
+					}
+					if(ssd->next_request_time>ssd->current_time)
+					{
+						break;
+					}
 				}
 			}
 		}
