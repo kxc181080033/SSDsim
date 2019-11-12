@@ -40,6 +40,7 @@ void free_all_node(struct ssd_info *);
 struct ssd_info *make_aged(struct ssd_info *);
 struct ssd_info *no_buffer_distribute_sch(struct ssd_info *);
 struct ssd_info *no_buffer_distribute_nosch(struct ssd_info *);
+struct ssd_info *no_buffer_distribute_s(struct ssd_info *);
 struct ssd_info *schedule_PIQ(struct ssd_info *);   //KXC:the schedule function of PIQ
 struct ssd_info *schedule_ours(struct ssd_info *);   //KXC:the schedule function of ours
 struct ssd_info *dependency(struct ssd_info *);   //KXC:the schedule function of ours
