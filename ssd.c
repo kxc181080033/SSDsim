@@ -2004,8 +2004,8 @@ struct ssd_info *no_buffer_distribute_sch(struct ssd_info *ssd)
 		if(nearest_event_time<next_time)
 		{
 			if(req->subs==NULL)     //the request is in the queue but not distribute
-				ssd->current_time=req->time;
-			//fseek(ssd->tracefile,filepoint,0); 
+				//ssd->current_time=req->time;  //KXC：the first version
+				ssd->current_time=req->time>nearest_event_time?req->time:nearest_event_time;
 			else
 			{
 				if(ssd->current_time<=nearest_event_time)  //the request has been distributed but not finish
@@ -2025,7 +2025,8 @@ struct ssd_info *no_buffer_distribute_sch(struct ssd_info *ssd)
 			}
 			else
 			{
-				ssd->current_time=next_time;
+				//ssd->current_time=next_time; //KXC:the first version
+				ssd->current_time=next_time>nearest_event_time?next_time:nearest_event_time;
 			}
 			
 		}
@@ -2036,24 +2037,6 @@ struct ssd_info *no_buffer_distribute_sch(struct ssd_info *ssd)
 	while(req!=NULL)
 	{
 		if(req->time>ssd->current_time)
-		{
-			break;
-		}
-
-		for(i=0;i<ssd->parameter->channel_number;i++)
-		{          
-			if((ssd->channel_head[i].current_state==CHANNEL_IDLE)||((ssd->channel_head[i].next_state==CHANNEL_IDLE)&&(ssd->channel_head[i].next_state_predict_time<=ssd->current_time)))
-			{
-				pflag=1;                       //所有通道均无请求处理。上边一行，对于全动态分配策略的写请求，不挂在通道上，需要再分配
-			}
-			else
-			{
-				pflag=0;
-				break;
-			}
-		}
-
-		if(ssd->parameter->allocation_scheme==1&&pflag==0)
 		{
 			break;
 		}
