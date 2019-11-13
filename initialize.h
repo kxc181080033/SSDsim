@@ -183,6 +183,10 @@ struct ssd_info{
 	int sch_write;                       //KXC:to record the number of priorit write request
 	int raw;                             //KXC:to record the number of RAW conflict
 	int waw;                             //KXC:to record the numbre of WAW conflict
+	int process_count;                   //KXC:to record the processing times
+	int process_count1;
+	double chip_utilization;			 //KXC:to record the chip utilization
+	double channel_utilization;          //KXC:to record the channel utilization
 
 	unsigned int min_lsn;
 	unsigned int max_lsn;

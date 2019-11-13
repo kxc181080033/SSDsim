@@ -20,6 +20,7 @@ Hao Luo         2011/01/01        2.0           Change               luohao13568
 #include <time.h>
 #include <string.h>
 #include <sys/types.h>
+#include <math.h>
 #include "initialize.h"
 #include "flash.h"
 #include "pagemap.h"

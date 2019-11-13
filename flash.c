@@ -1541,15 +1541,59 @@ struct ssd_info *process(struct ssd_info *ssd)
 	*初始认为需要调整，置为1，当任何一个channel处理了传送命令或者数据时，这个值置为0，表示不需要调整；
 	**********************************************************************************************************/
 	int old_ppn=-1,flag_die=-1; 
-	unsigned int i,chan,random_num;     
+	unsigned int i,j,chan,random_num;     
 	unsigned int flag=0,new_write=0,chg_cur_time_flag=1,flag2=0,flag_gc=0;       
 	int64_t time, channel_time=MAX_INT64;
 	struct sub_request *sub;          
-
+	int count;
 #ifdef DEBUG
 	printf("enter process,  current time:%lld\n",ssd->current_time);
 #endif
 
+	//KXC:to cacluate the channel utilization
+	count=0;  
+	for(i=0;i<ssd->parameter->channel_number;i++)
+	{        
+		if((ssd->channel_head[i].subs_r_head==NULL)&&(ssd->channel_head[i].subs_w_head==NULL)&&(ssd->subs_w_head==NULL))
+		{
+			continue;
+		}
+		else
+		{
+			count++;
+
+		}	
+	}
+	
+	if (count!=0)
+	{
+		ssd->process_count++;
+		ssd->channel_utilization=ssd->channel_utilization+count;
+	}
+
+	//KXC:to cacluate the chip utilization
+	count=0;  
+	for(i=0;i<ssd->parameter->channel_number;i++)
+	{   
+		for(j=0;j<ssd->parameter->chip_channel[i];j++)
+		{
+			if((ssd->channel_head[i].chip_head[j].current_state==CHIP_IDLE)||((ssd->channel_head[i].chip_head[j].next_state==CHIP_IDLE)&&(ssd->channel_head[i].chip_head[j].next_state_predict_time<=ssd->current_time)))
+			{
+				continue;
+			}
+			else
+			{
+				count++;
+			}
+			
+		}	
+	}
+	
+	if (count!=0)
+	{
+		ssd->process_count1++;
+		ssd->chip_utilization=ssd->chip_utilization+count;
+	}
 	/*********************************************************
 	*判断是否有读写子请求，如果有那么flag令为0，没有flag就为1
 	*当flag为1时，若ssd中有gc操作这时就可以执行gc操作

@@ -22,10 +22,10 @@ Hao Luo         2011/01/01        2.0           Change               luohao13568
 
 /********************************************************************************************************************************
 1��main������initiatio()����������ʼ��ssd,��2��make_aged()����ʹSSD��Ϊaged��aged��ssd�൱��ʹ�ù�һ��ʱ���ssd��������ʧЧҳ��
-non_aged��ssd���µ�ssd����ʧЧҳ��ʧЧҳ�ı��������ڳ�ʼ�����������ã�3��pre_process_page()������ǰɨһ�������?�Ѷ�����
+non_aged��ssd���µ�ssd����ʧЧҳ��ʧЧҳ�ı��������ڳ�ʼ�����������ã�3��pre_process_page()������ǰɨһ�������??�Ѷ�����
 ��lpn<--->ppnӳ���ϵ���Ƚ����ã�д�����lpn<--->ppnӳ���ϵ��д��ʱ���ٽ�����Ԥ����trace��ֹ�������Ƕ��������ݣ�4��simulate()��
-���Ĵ���������trace�ļ��Ӷ�������������ɶ��������������ɣ�?5��statistic_output()������ssd�ṹ�е���Ϣ���������ļ����������?
-ͳ�����ݺ�ƽ�����ݣ�����ļ���С��trace_output�ļ���ܴ����ϸ��6��free_all_node()�����ͷ�����main����������Ľڵ�?
+���Ĵ���������trace�ļ��Ӷ�������������ɶ��������������ɣ�??5��statistic_output()������ssd�ṹ�е���Ϣ���������ļ����������??
+ͳ�����ݺ�ƽ�����ݣ�����ļ���С��trace_output�ļ���ܴ����ϸ��6��free_all_node()�����ͷ�����main����������Ľڵ�??
 *********************************************************************************************************************************/
 int  main()
 {
@@ -153,7 +153,7 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 		}
 		process(ssd);                                      //ִ�д�������
 		trace_output(ssd);
-		if(flag == 0 && ssd->request_queue == NULL)        //����ִ����ɣ�����?
+		if(flag == 0 && ssd->request_queue == NULL)        //����ִ����ɣ�����??
 			flag = 100;
 	}
 
@@ -169,8 +169,8 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 *	return	0: reach the end of the trace
 *			-1: no request has been added
 *			1: add one request to list
-*SSDģ����������������ʽ:ʱ������(��ȷ��̫��) �¼�����(���������?) trace����()��
-*���ַ�ʽ�ƽ��¼���channel/chip״̬�ı䡢trace�ļ�����ﵽ��?
+*SSDģ����������������ʽ:ʱ������(��ȷ��̫��) �¼�����(���������??) trace����()��
+*���ַ�ʽ�ƽ��¼���channel/chip״̬�ı䡢trace�ļ�����ﵽ��??
 *channel/chip״̬�ı��trace�ļ����󵽴���ɢ����ʱ�����ϵĵ㣬ÿ�δӵ�ǰ״̬����
 *��һ��״̬��Ҫ���������һ��״�?��ÿ����һ����ִ��һ��process
 ********************************************************************************/
@@ -287,7 +287,7 @@ int get_requests(struct ssd_info *ssd)
 
 	
 	filepoint = ftell(ssd->tracefile);	
-	fgets(buffer, 200, ssd->tracefile);    //Ѱ����һ������ĵ���ʱ��?
+	fgets(buffer, 200, ssd->tracefile);    //Ѱ����һ������ĵ���ʱ��??
 	sscanf(buffer,"%lld %d %d %d %d",&time_t,&device,&lsn,&size,&ope);
 	ssd->next_request_time=time_t;
 	fseek(ssd->tracefile,filepoint,0);
@@ -1083,7 +1083,7 @@ struct ssd_info *dependency(struct ssd_info *ssd)
 
 
 /**********************************************************************************************************************************************
-*����buffer�Ǹ�дbuffer������Ϊд�������ģ���Ϊ��flash��ʱ��tRΪ20us��дflash��ʱ��tprogΪ200us������Ϊд������ܽ�ʡʱ��?
+*����buffer�Ǹ�дbuffer������Ϊд�������ģ���Ϊ��flash��ʱ��tRΪ20us��дflash��ʱ��tprogΪ200us������Ϊд������ܽ�ʡʱ��??
 *  �����������������buffer����buffer������ռ��channel��I/O���ߣ�û������buffer����flash����ռ��channel��I/O���ߣ����ǲ���buffer��
 *  д����������request�ֳ�sub_request����������Ƕ��?���䣬sub_request�ҵ�ssd->sub_request�ϣ���Ϊ��֪��Ҫ�ȹҵ��ĸ�channel��sub_request��
 *          ����Ǿ��?������sub_request�ҵ�channel��sub_request����,ͬʱ���ܶ�̬���仹�Ǿ�̬����sub_request��Ҫ�ҵ�request��sub_request����
@@ -1145,12 +1145,12 @@ struct ssd_info *buffer_management(struct ssd_info *ssd)
 				}
 
 				if(flag==1)				
-				{	//�����buffer�ڵ㲻��buffer�Ķ��ף���Ҫ������ڵ��ᵽ���ף�ʵ����LRU�㷨�������һ���?����С�?		       		
+				{	//�����buffer�ڵ㲻��buffer�Ķ��ף���Ҫ������ڵ��ᵽ���ף�ʵ����LRU�㷨�������һ���?����С�??		       		
 					if(ssd->dram->buffer->buffer_head!=buffer_node)     
 					{		
 						if(ssd->dram->buffer->buffer_tail==buffer_node)								
 						{			
-							buffer_node->LRU_link_pre->LRU_link_next=NULL;		//β�ڵ�Ͽ�?			
+							buffer_node->LRU_link_pre->LRU_link_next=NULL;		//β�ڵ�Ͽ�??			
 							ssd->dram->buffer->buffer_tail=buffer_node->LRU_link_pre;							
 						}				
 						else								
@@ -1193,7 +1193,7 @@ struct ssd_info *buffer_management(struct ssd_info *ssd)
 
 			if(lpn==first_lpn)
 			{
-				offset1=ssd->parameter->subpage_page-((lpn+1)*ssd->parameter->subpage_page-new_request->lsn);//������ĵ�һ��LPN����Ҫ��������ĵ�һ��lsn�Ƿ���LPN�ĵ�һ��lsn���������?
+				offset1=ssd->parameter->subpage_page-((lpn+1)*ssd->parameter->subpage_page-new_request->lsn);//������ĵ�һ��LPN����Ҫ��������ĵ�һ��lsn�Ƿ���LPN�ĵ�һ��lsn���������??
 				state=state&(0xffffffff<<offset1);
 			}
 			if(lpn==last_lpn)
@@ -1216,7 +1216,7 @@ struct ssd_info *buffer_management(struct ssd_info *ssd)
 	}
 
 	/*************************************************************
-	*��������Ѿ����?����buffer���񣬸�������Ա�ֱ����Ӧ��������?
+	*��������Ѿ����?����buffer���񣬸�������Ա�ֱ����Ӧ��������??
 	*�������dram�ķ���ʱ��Ϊ1000ns
 	**************************************************************/
 	if((complete_flag == 1)&&(new_request->subs==NULL))               
@@ -1245,8 +1245,8 @@ unsigned int lpn2ppn(struct ssd_info *ssd,unsigned int lsn)
 
 /**********************************************************************************
 *�����������������������ֻ����������д�����Ѿ���buffer_management()�����д�����
-*����������к�buffer���еļ��?��ÿ������ֽ�������󣬽���������й���channel�ϣ�
-*��ͬ��channel���Լ������������?
+*����������к�buffer���еļ��??��ÿ������ֽ�������󣬽���������й���channel�ϣ�
+*��ͬ��channel���Լ������������??
 **********************************************************************************/
 
 struct ssd_info *distribute(struct ssd_info *ssd) 
@@ -1290,7 +1290,7 @@ struct ssd_info *distribute(struct ssd_info *ssd)
 				{	
 					/*************************************************************************************
 					*һ��32λ���������ݵ�ÿһλ����һ����ҳ��32/ssd->parameter->subpage_page�ͱ�ʾ�ж���ҳ��
-					*�����ÿһҳ��״�?���������? req->need_distr_flag�У�Ҳ����complt�У�ͨ���Ƚ�complt��
+					*�����ÿһҳ��״�?���������?? req->need_distr_flag�У�Ҳ����complt�У�ͨ���Ƚ�complt��
 					*ÿһ����full_page���Ϳ���֪������һҳ�Ƿ�����ɡ����û����������?��creat_sub_request
 					��������������
 					*************************************************************************************/
@@ -1328,7 +1328,7 @@ struct ssd_info *distribute(struct ssd_info *ssd)
 
 
 /**********************************************************************
-*trace_output()��������ÿһ�����������������?��process()�����������?
+*trace_output()��������ÿһ�����������������??��process()�����������??
 *��ӡ�����ص����н����outputfile�ļ��У�����Ľ����Ҫ�����е�ʱ��
 **********************************************************************/
 void trace_output(struct ssd_info* ssd){
@@ -1576,6 +1576,8 @@ void statistic_output(struct ssd_info *ssd)
 {
 	unsigned int lpn_count=0,i,ii,j,k,m,erase=0,plane_erase=0;
 	double gc_energy=0.0;
+	unsigned int erase_block_avg=0,erase_plane_avg=0;
+	double std_block=0,std_plane=0;
 #ifdef DEBUG
 	printf("enter statistic_output,  current time:%lld\n",ssd->current_time);
 #endif
@@ -1600,6 +1602,33 @@ void statistic_output(struct ssd_info *ssd)
 				}
 				fprintf(ssd->outputfile,"the %d channel, %d chip, %d die, %d plane has : %13d erase operations\n",i,ii,j,k,plane_erase);
 				fprintf(ssd->statisticfile,"the %d channel, %d chip, %d die, %d plane has : %13d erase operations\n",i,ii,j,k,plane_erase);
+			  }
+		    }
+	    }
+	}
+
+	erase_block_avg=erase/(ssd->parameter->channel_number*ssd->parameter->chip_channel[0]*ssd->parameter->die_chip*ssd->parameter->plane_die*ssd->parameter->block_plane);
+	erase_plane_avg=erase/(ssd->parameter->channel_number*ssd->parameter->chip_channel[0]*ssd->parameter->die_chip*ssd->parameter->plane_die);
+	//KXC: to calcute the standard deviation of block erase counts
+	for(i=0;i<ssd->parameter->channel_number;i++)
+	{
+		for (ii=0;ii<ssd->parameter->chip_channel[i];ii++)
+        { 
+			for(j=0;j<ssd->parameter->die_chip;j++)
+		   {
+			  for(k=0;k<ssd->parameter->plane_die;k++)
+			  {
+				plane_erase=0;
+				for(m=0;m<ssd->parameter->block_plane;m++)
+				{
+					if(ssd->channel_head[i].chip_head[ii].die_head[j].plane_head[k].blk_head[m].erase_count>0)
+					{
+						//erase=erase+ssd->channel_head[i].chip_head[ii].die_head[j].plane_head[k].blk_head[m].erase_count;
+						plane_erase+=ssd->channel_head[i].chip_head[ii].die_head[j].plane_head[k].blk_head[m].erase_count;
+						std_block=std_block+(ssd->channel_head[i].chip_head[ii].die_head[j].plane_head[k].blk_head[m].erase_count-erase_block_avg)*(ssd->channel_head[i].chip_head[ii].die_head[j].plane_head[k].blk_head[m].erase_count-erase_block_avg);
+					}
+				}
+				std_plane=std_plane+(plane_erase-erase_plane_avg)*(plane_erase-erase_plane_avg);
 			  }
 		    }
 	    }
@@ -1635,6 +1664,8 @@ void statistic_output(struct ssd_info *ssd)
 	fprintf(ssd->outputfile,"interleave multiple plane erase count: %13d\n",ssd->interleave_mplane_erase_count);
 	fprintf(ssd->outputfile,"\n");
 	fprintf(ssd->outputfile,"erase: %13d\n",erase);
+	fprintf(ssd->outputfile,"block erase standard deviation: %.3f\n",sqrt(std_block));
+	fprintf(ssd->outputfile,"plane erase standard deviation: %.3f\n",sqrt(std_plane));
 	fprintf(ssd->outputfile,"raw count: %13d\n",ssd->raw);
 	fprintf(ssd->outputfile,"waw count: %13d\n",ssd->waw);
 	fprintf(ssd->outputfile,"read request count: %13d\n",ssd->read_request_count);
@@ -1653,6 +1684,8 @@ void statistic_output(struct ssd_info *ssd)
 	fprintf(ssd->outputfile,"read average wait time: %lld\n",ssd->read_wait_avg/ssd->read_request_count);
 	fprintf(ssd->outputfile,"write average wait time: %lld\n",ssd->write_wait_avg/ssd->write_request_count);
 	fprintf(ssd->outputfile,"total average wait time: %lld\n",ssd->wait_avg/(ssd->write_request_count+ssd->read_request_count));
+	fprintf(ssd->outputfile,"channel utilization: %.3f\n",ssd->channel_utilization/(ssd->parameter->channel_number*ssd->process_count));
+	fprintf(ssd->outputfile,"chip utilization: %.3f\n",ssd->chip_utilization/(ssd->parameter->channel_number*ssd->parameter->chip_channel[0]*ssd->process_count1));
 	fprintf(ssd->outputfile,"\n");
 
 	fflush(ssd->outputfile);
@@ -1691,6 +1724,8 @@ void statistic_output(struct ssd_info *ssd)
 	fprintf(ssd->statisticfile,"interleave multiple plane erase count: %13d\n",ssd->interleave_mplane_erase_count);
 	fprintf(ssd->statisticfile,"\n");
 	fprintf(ssd->statisticfile,"erase: %13d\n",erase);
+	fprintf(ssd->statisticfile,"block erase standard deviation: %.3f\n",sqrt(std_block));
+	fprintf(ssd->statisticfile,"plane erase standard deviation: %.3f\n",sqrt(std_plane));
 	fprintf(ssd->statisticfile,"raw count: %13d\n",ssd->raw);
 	fprintf(ssd->statisticfile,"waw count: %13d\n",ssd->waw);		
 	fprintf(ssd->statisticfile,"read request count: %13d\n",ssd->read_request_count);
@@ -1709,6 +1744,8 @@ void statistic_output(struct ssd_info *ssd)
 	fprintf(ssd->statisticfile,"read average wait time: %lld\n",ssd->read_wait_avg/ssd->read_request_count);
 	fprintf(ssd->statisticfile,"write average wait time: %lld\n",ssd->write_wait_avg/ssd->write_request_count);
 	fprintf(ssd->statisticfile,"total average wait time: %lld\n",ssd->wait_avg/(ssd->write_request_count+ssd->read_request_count));
+	fprintf(ssd->statisticfile,"channel utilization: %.3f\n",ssd->channel_utilization/(ssd->parameter->channel_number*ssd->process_count));
+	fprintf(ssd->statisticfile,"chip utilization: %.3f\n",ssd->chip_utilization/(ssd->parameter->channel_number*ssd->parameter->chip_channel[0]*ssd->process_count1));
 	fprintf(ssd->statisticfile,"\n");
 
 	fflush(ssd->statisticfile);
@@ -1742,7 +1779,7 @@ unsigned int size(unsigned int stored)
 /*********************************************************
 *transfer_size()���������þ��Ǽ�������������Ҫ������size
 *�����е���������first_lpn��last_lpn�������ر���������?��
-*��������º��п��ܲ��Ǵ���һ��ҳ���Ǵ���һҳ��һ���֣���?
+*��������º��п��ܲ��Ǵ���һ��ҳ���Ǵ���һҳ��һ���֣���??
 *Ϊlsn�п��ܲ���һҳ�ĵ�һ����ҳ��
 *********************************************************/
 unsigned int transfer_size(struct ssd_info *ssd,int need_distribute,unsigned int lpn,struct request *req)
@@ -1776,7 +1813,7 @@ unsigned int transfer_size(struct ssd_info *ssd,int need_distribute,unsigned int
 *int64_t find_nearest_event(struct ssd_info *ssd)       
 *Ѱ����������������絽����¸�״̬ʱ��,���ȿ��������һ��״�?ʱ�䣬���������¸�״̬ʱ��С�ڵ��ڵ�ǰʱ�䣬
 *˵��������������Ҫ�鿴channel���߶�Ӧdie����һ״̬ʱ�䡣Int64���з��� 64 λ�����������ͣ�ֵ���ͱ�ʾֵ����
-*-2^63 ( -9,223,372,036,854,775,808)��2^63-1(+9,223,372,036,854,775,807 )֮�����������?�ռ�ռ 8 �ֽڡ�
+*-2^63 ( -9,223,372,036,854,775,808)��2^63-1(+9,223,372,036,854,775,807 )֮�����������??�ռ�ռ 8 �ֽڡ�
 *channel,die���¼���ǰ�ƽ��Ĺؼ����أ������������ʹ�¼�������ǰ�ƽ���channel��die�ֱ�ص�idle״̬��die�е�
 *������׼������
 ***********************************************************************************************************/
@@ -1814,7 +1851,7 @@ int64_t find_nearest_event(struct ssd_info *ssd)
 }
 
 /***********************************************
-*free_all_node()���������þ����ͷ���������Ľڵ�?
+*free_all_node()���������þ����ͷ���������Ľڵ�??
 ************************************************/
 void free_all_node(struct ssd_info *ssd)
 {
@@ -1903,7 +1940,7 @@ struct ssd_info *make_aged(struct ssd_info *ssd)
 							{  
 								ssd->channel_head[i].chip_head[j].die_head[k].plane_head[l].blk_head[m].page_head[n].valid_state=0;        //��ʾĳһҳʧЧ��ͬʱ���valid��free״̬��Ϊ0
 								ssd->channel_head[i].chip_head[j].die_head[k].plane_head[l].blk_head[m].page_head[n].free_state=0;         //��ʾĳһҳʧЧ��ͬʱ���valid��free״̬��Ϊ0
-								ssd->channel_head[i].chip_head[j].die_head[k].plane_head[l].blk_head[m].page_head[n].lpn=0;  //��valid_state free_state lpn����Ϊ0��ʾҳʧЧ������ʱ��������?����lpn=0��������Чҳ
+								ssd->channel_head[i].chip_head[j].die_head[k].plane_head[l].blk_head[m].page_head[n].lpn=0;  //��valid_state free_state lpn����Ϊ0��ʾҳʧЧ������ʱ��������??����lpn=0��������Чҳ
 								ssd->channel_head[i].chip_head[j].die_head[k].plane_head[l].blk_head[m].free_page_num--;
 								ssd->channel_head[i].chip_head[j].die_head[k].plane_head[l].blk_head[m].invalid_page_num++;
 								ssd->channel_head[i].chip_head[j].die_head[k].plane_head[l].blk_head[m].last_write_page++;
@@ -2349,7 +2386,7 @@ struct ssd_info *no_buffer_distribute_s(struct ssd_info *ssd)
 		{          
 			if((ssd->channel_head[i].current_state==CHANNEL_IDLE)||((ssd->channel_head[i].next_state==CHANNEL_IDLE)&&(ssd->channel_head[i].next_state_predict_time<=ssd->current_time)))
 			{
-				pflag=1;                       //所有通道均无请求处理。上边一行，对于全动态分配策略的写请求，不挂在通道上，需要再分配
+				pflag=1;                       //所有通道均无请求处理。上边一行，对于全动态分配策略的写�?�求，不挂在通道上，需要再分配
 			}
 			else
 			{
