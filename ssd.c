@@ -850,6 +850,8 @@ void statistic_output(struct ssd_info *ssd)
 	fprintf(ssd->outputfile,"buffer write hits: %13d\n",ssd->dram->buffer->write_hit);
 	fprintf(ssd->outputfile,"buffer write miss: %13d\n",ssd->dram->buffer->write_miss_hit);
 	fprintf(ssd->outputfile,"erase: %13d\n",erase);
+	fprintf(ssd->outputfile,"wait read: %13d\n",ssd->wait_read);
+	fprintf(ssd->outputfile,"wait write: %13d\n",ssd->wait_write);
 	fflush(ssd->outputfile);
 
 	fclose(ssd->outputfile);
@@ -893,6 +895,8 @@ void statistic_output(struct ssd_info *ssd)
 	fprintf(ssd->statisticfile,"buffer write hits: %13d\n",ssd->dram->buffer->write_hit);
 	fprintf(ssd->statisticfile,"buffer write miss: %13d\n",ssd->dram->buffer->write_miss_hit);
 	fprintf(ssd->statisticfile,"erase: %13d\n",erase);
+	fprintf(ssd->statisticfile,"wait read: %13d\n",ssd->wait_read);
+	fprintf(ssd->statisticfile,"wait write: %13d\n",ssd->wait_write);
 	fflush(ssd->statisticfile);
 
 	fclose(ssd->statisticfile);
