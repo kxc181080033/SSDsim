@@ -686,12 +686,16 @@ void trace_output(struct ssd_info* ssd){
 					ssd->read_request_count++;
 					ssd->read_avg=ssd->read_avg+(end_time-req->time);
 					ssd->read_wait_avg=ssd->read_wait_avg+wait_time;
+					if(wait_time>0)
+						ssd->wait_read++;
 				} 
 				else
 				{
 					ssd->write_request_count++;
 					ssd->write_avg=ssd->write_avg+(end_time-req->time);
 					ssd->write_wait_avg=ssd->write_wait_avg+wait_time;
+					if(wait_time>0)
+						ssd->wait_write++;
 				}
 
 				while(req->subs!=NULL)

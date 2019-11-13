@@ -172,6 +172,8 @@ struct ssd_info{
 	int64_t wait_avg;                    //KXC:to record the average wait time of all the request
 	int64_t write_wait_avg;              //KXC:to record the average wait time of write request
 	int64_t read_wait_avg;               //KXC:to record the average wait time of read request
+	int wait_read;                       //KXC:to record the wait read request
+	int wait_write;                       //KXC:to record the wait write request
 
 	unsigned int min_lsn;
 	unsigned int max_lsn;
