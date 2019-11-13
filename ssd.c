@@ -1633,7 +1633,8 @@ void statistic_output(struct ssd_info *ssd)
 		    }
 	    }
 	}
-
+	std_plane=std_plane/(ssd->parameter->channel_number*ssd->parameter->chip_channel[0]*ssd->parameter->die_chip*ssd->parameter->plane_die);
+	std_block=std_block/(ssd->parameter->channel_number*ssd->parameter->chip_channel[0]*ssd->parameter->die_chip*ssd->parameter->plane_die*ssd->parameter->block_plane);
 	fprintf(ssd->outputfile,"\n");
 	fprintf(ssd->outputfile,"\n");
 	fprintf(ssd->outputfile,"---------------------------statistic data---------------------------\n");
