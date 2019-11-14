@@ -187,6 +187,7 @@ struct ssd_info{
 	int process_count1;
 	double chip_utilization;			 //KXC:to record the chip utilization
 	double channel_utilization;          //KXC:to record the channel utilization
+	int64_t max_wait_time;               //KXC:to record the max time gap in the request queue
 
 	unsigned int min_lsn;
 	unsigned int max_lsn;
@@ -485,6 +486,7 @@ struct parameter_value{
 	float aged_ratio; 
 	int queue_length;               //请求队列的长度限制
 	int deadline;                   //the maxmium deadline of the shcedule request
+	int avoid;                      //in our schedule algrithm 0-no avoid, 1-yes
 
 	struct ac_time_characteristics time_characteristics;
 };

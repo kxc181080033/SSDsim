@@ -133,7 +133,15 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 			
 			if(ssd->parameter->allocation_scheme==0&&ssd->parameter->dynamic_allocation==0)
 			{
-				schedule_ours(ssd);
+				if(ssd->parameter->avoid==0)
+				{
+					schedule_ours(ssd);
+				}
+				else
+				{
+					schedule_ours_avoid(ssd);
+				}
+					
 			}
 		}
 		
@@ -678,8 +686,8 @@ struct ssd_info *schedule_ours(struct ssd_info *ssd)
 		}
 
 	}
-	//seperate the read and write requests first, divided into 3parts
-	//1.scheduled requests;2.overtime requests;3.can be scheduled read and write request
+
+	//seperate the read and write requests first, no avoid the conflict
 	temp=ssd->request_tail;
 	while(temp!=NULL)
 	{
@@ -740,40 +748,343 @@ struct ssd_info *schedule_ours(struct ssd_info *ssd)
 		return 0;
 	}
 
-	//the read and write requests have been seperated
-	
-	//read_tail->next_node=write;
-	//overtime_tail->next_node=read;
-	//temp=overtime;
 
-	
-	/* if(read!=NULL)
+	temp=NULL;
+	if(read!=NULL)
 	{
-		temp2=read;
-		temp2_tail=read_tail;
-		if(write!=NULL)
+		temp=read;
+	}
+
+	temp2=NULL;               //to recorded the no conflict request
+	temp2_tail=NULL;
+	
+	while(1)
+	{
+		if(read==NULL)
+		{
+			break;
+		}
+		//conflict_flag=0;
+		while(temp!=NULL)
+		{
+			no_sche=0;
+			if(temp->dis==0)
+			{
+				//temp->sch=0;
+				last_lpn=(temp->lsn+temp->size-1)/ssd->parameter->subpage_page;
+				first_lpn=temp->lsn/ssd->parameter->subpage_page;
+				flag=0;
+				for(i=first_lpn;i<=last_lpn; i++)
+				{
+					loc = find_location(ssd,ssd->dram->map->map_entry[i].pn);
+					channel=loc->channel;
+					chip=loc->chip;
+					if((int)(vector[channel]&chip)==0)                //KXC:no conflict
+					{
+						continue;
+					}
+					else
+					{
+						flag=1;
+						break;
+					}	
+				}
+				if(flag==0)       //no conflict
+				{
+					//to update the vector
+					//conflict_flag=0;
+					for(i=first_lpn;i<=last_lpn; i++)
+					{
+						loc = find_location(ssd,ssd->dram->map->map_entry[i].pn);
+						channel=loc->channel;
+						chip=loc->chip;
+						vector[channel]=vector[channel]|chip;
+					}
+
+					//record temp2
+					if(temp2==NULL)
+					{
+						temp2=temp;
+						temp2_tail=temp;
+						//temp2_tail->next_node=NULL;
+					}
+					else
+					{
+						temp2_tail->next_node=temp;
+						temp2_tail=temp;
+						//temp2_tail->next_node=NULL;
+					}
+					
+				}
+				else
+				{
+					//conflict_flag=1;
+					if(conflict==NULL)
+					{
+						conflict=temp;
+						conflict_tail=temp;
+						//conflict_tail->next_node=NULL;
+					}
+					else
+					{
+						conflict_tail->next_node=temp;
+						conflict_tail=temp;
+						//conflict_tail->next_node=NULL;
+					}
+
+				}
+				temp->sch=1;            //the request has been scheduled
+				temp=temp->next_node;
+				
+			}
+			else
+			{
+				printf("the distributed request is in the schedule process!\n");
+				//no_sche=1;
+				break;
+			}
+		}
+		
+		memset(vector,0,sizeof(int)*ssd->parameter->channel_number);
+		
+		if(conflict!=NULL)
+		{
+			conflict_tail->next_node=NULL;
+			temp=conflict;
+			conflict=NULL;
+		}
+		else
+		{
+			break;
+		}
+				
+	}
+
+	if(write!=NULL)
+	{
+		if(temp2_tail!=NULL)
 		{
 			temp2_tail->next_node=write;
-			//temp2_tail=write_tail;
+			temp2_tail=write_tail;
+			write_tail->next_node=NULL;
 		}
-	}
-	else
-	{
-		if(write!=NULL)
+		else
 		{
 			temp2=write;
 			temp2_tail=write_tail;
+			temp2_tail->next_node=NULL;
 		}
-	} */
+	}
 
-	/* 	if(temp2==NULL)
+	if(temp1_tail!=NULL)
+	{
+		ssd->request_tail->next_node=temp2;
+		ssd->request_tail=temp2_tail;
+		ssd->request_tail->next_node=NULL;
+	}
+	else
+	{
+		ssd->request_queue=temp2;
+		ssd->request_tail=temp2_tail;
+		ssd->request_tail->next_node=NULL;
+	}	
+}
+
+//KXC: the schedule function to schedule the request in the queue and avoid conflict
+struct ssd_info *schedule_ours_avoid(struct ssd_info *ssd)
+{
+	struct request *temp=NULL;
+	struct request *temp_tail=NULL;
+	struct request *temp1=NULL;
+	struct request *temp1_tail=NULL;
+	struct request *temp2=NULL;
+	struct request *temp2_tail=NULL;
+	struct request *write=NULL;
+	struct request *write_tail=NULL;
+	struct request *read=NULL;
+	struct request *read_tail=NULL;
+	struct request *overtime=NULL;
+	struct request *overtime_tail=NULL;
+	struct request *conflict=NULL;
+	struct request *conflict_tail=NULL;
+	struct request *reqtemp=NULL;
+
+	struct local * loc=NULL;
+
+	unsigned int first_lpn,last_lpn;
+	int i,j,flag;
+	int channel,chip;
+	int conflict_flag=1;
+	int schetwo;       //1-read schedule and write schedule;0-only one type request schedule
+	int no_sche;       //KXC:to indicate the request can not shcedule 
+	int depend;
+
+	//int *channel;
+	//int *chip;
+
+	if(ssd->request_queue==NULL)    //no need to schedule
+		return 0;
+
+	//to find the tail of the distributed requests
+	temp1=ssd->request_queue;
+	while(temp1!=NULL)
+	{
+		if(temp1->dis==1)
 		{
-			return 0;
+			if(temp1->next_node!=NULL)
+			{
+				//temp1=temp1->next_node;
+				if(temp1->next_node->dis==1)
+				{
+					temp1=temp1->next_node;
+				}
+				else
+				{
+					temp1_tail=temp1;
+					//temp1_tail->next_node=NULL;
+					ssd->request_tail=temp1_tail;
+					break;
+				}
+			}
+			else
+			{
+				return 0;    //all the requests have been distributed, no need to schedule
+			}
 		}
- 	*/
+		else
+		{
+			temp1_tail=NULL;
+			ssd->request_tail=ssd->request_queue;
+			break;
+		}
+
+	}
+
+	//seperate the read and write requests first, meanwhile consider the conflict
+	temp=ssd->request_tail;
+	while(temp!=NULL)
+	{
+		if(temp->dis==1)
+		{
+			temp=temp->next_node;
+		}
+		else
+		{		
+			if(temp->operation==WRITE)
+			{
+				if(write==NULL)
+				{
+					write=temp;
+					write_tail=temp;
+					//write_tail->next_node=NULL;
+				}
+				else
+				{
+					write_tail->next_node=temp;
+					write_tail=temp;
+					//write_tail->next_node=NULL;
+				}	
+			}
+			else
+			{
+				//KXC:to detect the dependence
+				if(write!=NULL)
+				{
+					depend=0;
+					reqtemp=write;
+					while(reqtemp!=NULL)
+					{
+						if(reqtemp->operation==READ)
+						{
+							reqtemp=reqtemp->next_node;
+						}
+						else
+						{
+							if(temp->lsn>reqtemp->lsn)
+							{
+								if(temp->lsn-reqtemp->lsn<=reqtemp->size&&temp->time<reqtemp->time)
+								{
+									depend=1;
+									break;
+								}
+								else
+								{
+									reqtemp=reqtemp->next_node;
+								}
+							}
+							else
+							{
+								if(reqtemp->lsn-temp->lsn<=temp->size&&temp->time<reqtemp->time)
+								{
+									depend=1;
+									break;
+								}
+								else
+								{
+									reqtemp=reqtemp->next_node;
+								}
+							}
+						}
+					}	
+				}
+				else
+				{
+					depend=0;
+				}
+				
+				if(depend==0)
+				{
+					if(read==NULL)
+					{
+						read=temp;
+						read_tail=temp;
+						//read_tail->next_node=NULL;
+					}
+					else
+					{
+						read_tail->next_node=temp;
+						read_tail=temp;
+						//read_tail->next_node=NULL;
+					}
+				}
+				else
+				{
+					if(write==NULL)
+					{
+						write=temp;
+						write_tail=temp;
+						//write_tail->next_node=NULL;
+					}
+					else
+					{
+						write_tail->next_node=temp;
+						write_tail=temp;
+						//write_tail->next_node=NULL;
+					}	
+				}
+			}
+			
+			temp=temp->next_node;
+		}	
+	}
 	
-	//here the allocaton of PIQ is CWDP, allocation_scheme=1,static_allocation=1
-	//
+	if(write!=NULL)
+	{
+		write_tail->next_node=NULL;
+	}
+	if(read!=NULL)
+	{
+		read_tail->next_node=NULL;
+	}
+
+	
+
+	if(read==NULL&&write==NULL)
+	{
+		return 0;
+	}
+
+
 	temp=NULL;
 	if(read!=NULL)
 	{
@@ -1471,6 +1782,10 @@ void trace_output(struct ssd_info* ssd){
 					getchar();
 				}
 				//KXC:to update the value
+				if(wait_time>ssd->max_wait_time)
+				{
+					ssd->max_wait_time=wait_time;
+				}
 				ssd->previous_response_time=end_time;
 				ssd->wait_avg=ssd->wait_avg+wait_time;
 				ssd->total_avg=ssd->total_avg+(end_time-start_time);
@@ -1682,9 +1997,11 @@ void statistic_output(struct ssd_info *ssd)
 	fprintf(ssd->outputfile,"write request average response time including wait time: %lld\n",ssd->write_avg_wait/ssd->write_request_count);
 	fprintf(ssd->outputfile,"total average response time including wait time: %lld\n",ssd->total_avg_wait/(ssd->write_request_count+ssd->read_request_count));
 	fprintf(ssd->outputfile,"\n");
+	fprintf(ssd->outputfile,"max wait time: %lld\n",ssd->max_wait_time);
 	fprintf(ssd->outputfile,"read average wait time: %lld\n",ssd->read_wait_avg/ssd->read_request_count);
 	fprintf(ssd->outputfile,"write average wait time: %lld\n",ssd->write_wait_avg/ssd->write_request_count);
 	fprintf(ssd->outputfile,"total average wait time: %lld\n",ssd->wait_avg/(ssd->write_request_count+ssd->read_request_count));
+	fprintf(ssd->outputfile,"\n");
 	fprintf(ssd->outputfile,"channel utilization: %.3f\n",ssd->channel_utilization/(ssd->parameter->channel_number*ssd->process_count));
 	fprintf(ssd->outputfile,"chip utilization: %.3f\n",ssd->chip_utilization/(ssd->parameter->channel_number*ssd->parameter->chip_channel[0]*ssd->process_count1));
 	fprintf(ssd->outputfile,"\n");
@@ -1742,9 +2059,11 @@ void statistic_output(struct ssd_info *ssd)
 	fprintf(ssd->statisticfile,"write request average response time including wait time: %lld\n",ssd->write_avg_wait/ssd->write_request_count);
 	fprintf(ssd->statisticfile,"total average response time including wait time: %lld\n",ssd->total_avg_wait/(ssd->write_request_count+ssd->read_request_count));
 	fprintf(ssd->statisticfile,"\n");
+	fprintf(ssd->statisticfile,"max wait time: %lld\n",ssd->max_wait_time);
 	fprintf(ssd->statisticfile,"read average wait time: %lld\n",ssd->read_wait_avg/ssd->read_request_count);
 	fprintf(ssd->statisticfile,"write average wait time: %lld\n",ssd->write_wait_avg/ssd->write_request_count);
 	fprintf(ssd->statisticfile,"total average wait time: %lld\n",ssd->wait_avg/(ssd->write_request_count+ssd->read_request_count));
+	fprintf(ssd->statisticfile,"\n");
 	fprintf(ssd->statisticfile,"channel utilization: %.3f\n",ssd->channel_utilization/(ssd->parameter->channel_number*ssd->process_count));
 	fprintf(ssd->statisticfile,"chip utilization: %.3f\n",ssd->chip_utilization/(ssd->parameter->channel_number*ssd->parameter->chip_channel[0]*ssd->process_count1));
 	fprintf(ssd->statisticfile,"\n");

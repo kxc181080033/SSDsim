@@ -88,3 +88,4 @@ aged=0;                         #1 for making SSD aged, 0 for keeping SSD non-ag
 aged ratio=0.7;                #If we need to make SSD aged, set the aged ratio in advance
 queue_length=64;               #the length of request queue
 deadline=200000;
+avoid=1;       #0-no conflict avoid,1-yes  jusr in our schedule algorithm
