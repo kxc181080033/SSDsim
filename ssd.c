@@ -110,6 +110,7 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 
 	while(flag!=100)      
 	{
+		//KXC:get requests
 		while(ssd->request_queue_length<ssd->parameter->queue_length)
 		{
 			flag=get_requests(ssd);
@@ -123,14 +124,34 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 				break;
 			}
 		}
-		
+		//KXC:PIQ
 		if(ssd->parameter->scheduling_algorithm==1)
 		{
 			if(ssd->parameter->allocation_scheme==1&&ssd->parameter->static_allocation==1)
 			{
 				schedule_PIQ(ssd);
 			}
+			else
+			{
+				printf("error in allocation scheme");
+			}
 			
+		}
+		//KXC:AMPHIBIAN
+		if(ssd->parameter->scheduling_algorithm==2)
+		{
+			if(ssd->parameter->allocation_scheme==1&&ssd->parameter->static_allocation==1)
+			{
+				schedule_AM(ssd);
+			}
+			else
+			{
+				printf("error in allocation scheme");
+			}
+		}
+		//KXC:OUR
+		if(ssd->parameter->scheduling_algorithm==3)
+		{	
 			if(ssd->parameter->allocation_scheme==0&&ssd->parameter->dynamic_allocation==0)
 			{
 				if(ssd->parameter->avoid==0)
@@ -143,26 +164,38 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 				}
 					
 			}
+			else
+			{
+				printf("error in allocation scheme");
+			}
 		}
 		
+		//to count the dependence
 		dependency(ssd);
+		
 		//KXC:here just modify the function no_buffer_distribute so there is no buffer
 		if(ssd->parameter->dram_capacity==0)
 		{
-			if(ssd->parameter->allocation_scheme==1)
+			if(ssd->parameter->scheduling_algorithm==0||ssd->parameter->scheduling_algorithm==1)
 			{
 				no_buffer_distribute_s(ssd);
+			}
+			else if(ssd->parameter->scheduling_algorithm==2)
+			{
+				no_buffer_distribute_am(ssd);
 			}
 			else
 			{
 				no_buffer_distribute_sch(ssd);
-			}
-			
+			}		
 		}
+
 		process(ssd);                                      //ִ�д�������
 		trace_output(ssd);
 		if(flag == 0 && ssd->request_queue == NULL)        //����ִ����ɣ�����??
+		{
 			flag = 100;
+		}
 	}
 
 	fclose(ssd->tracefile);
@@ -320,7 +353,7 @@ int get_requests(struct ssd_info *ssd)
 }
 
 
-//KXC: the schedule function to schedule the request in the queue
+//KXC: the schedule function PIQ
 struct ssd_info *schedule_PIQ(struct ssd_info *ssd)
 {
 	struct request *temp=NULL;
@@ -619,7 +652,305 @@ struct ssd_info *schedule_PIQ(struct ssd_info *ssd)
 	}	
 }
 
-//KXC: the schedule function to schedule the request in the queue
+//KXC: the schedule function AMPHIBIAN
+struct ssd_info *schedule_AM(struct ssd_info *ssd)
+{
+	struct request *temp=NULL;
+	struct request *temp_tail=NULL;
+	struct request *temp1=NULL;
+	struct request *temp1_tail=NULL;
+	struct request *temp2=NULL;
+	struct request *temp2_tail=NULL;
+	struct request *write=NULL;
+	struct request *write_tail=NULL;
+	struct request *read=NULL;
+	struct request *read_tail=NULL;
+	struct request *overtime=NULL;
+	struct request *overtime_tail=NULL;
+	struct request *conflict=NULL;
+	struct request *conflict_tail=NULL;
+
+	unsigned int first_lpn,last_lpn;
+	int i,j,flag;
+	int channel,chip;
+	int conflict_flag=1;
+	int schetwo;       //1-read schedule and write schedule;0-only one type request schedule
+	int no_sche;       //KXC:to indicate the request can not shcedule 
+
+	//int *channel;
+	//int *chip;
+
+	if(ssd->request_queue==NULL)    //no need to schedule
+		return 0;
+
+	//to find the tail of the distributed requests
+	temp1=ssd->request_queue;
+	while(temp1!=NULL)
+	{
+		if(temp1->dis==1)
+		{
+			if(temp1->next_node!=NULL)
+			{
+				//temp1=temp1->next_node;
+				if(temp1->next_node->dis==1)
+				{
+					temp1=temp1->next_node;
+				}
+				else
+				{
+					temp1_tail=temp1;
+					//temp1_tail->next_node=NULL;
+					ssd->request_tail=temp1_tail;
+					break;
+				}
+			}
+			else
+			{
+				return 0;    //all the requests have been distributed, no need to schedule
+			}
+		}
+		else
+		{
+			temp1_tail=NULL;
+			ssd->request_tail=ssd->request_queue;
+			break;
+		}
+
+	}
+	//seperate the read and write requests first, divided into 3parts
+	//1.scheduled requests;2.overtime requests;3.can be scheduled read and write request
+	temp=ssd->request_tail;
+	while(temp!=NULL)
+	{
+		if(temp->dis==1)
+		{
+			temp=temp->next_node;
+		}
+		else
+		{		
+			if(temp->operation==WRITE)
+			{
+				if(write==NULL)
+				{
+					write=temp;
+					write_tail=temp;
+					//write_tail->next_node=NULL;
+				}
+				else
+				{
+					write_tail->next_node=temp;
+					write_tail=temp;
+					//write_tail->next_node=NULL;
+				}	
+			}
+			else
+			{
+				if(read==NULL)
+				{
+					read=temp;
+					read_tail=temp;
+					//read_tail->next_node=NULL;
+				}
+				else
+				{
+					read_tail->next_node=temp;
+					read_tail=temp;
+					//read_tail->next_node=NULL;
+				}
+			}
+			
+			temp=temp->next_node;
+		}	
+	}
+	
+	if(write!=NULL)
+	{
+		write_tail->next_node=NULL;
+	}
+	if(read!=NULL)
+	{
+		read_tail->next_node=NULL;
+	}
+
+	
+
+	if(read==NULL&&write==NULL)
+	{
+		return 0;
+	}
+
+	//the read and write requests have been seperated
+	
+	//read_tail->next_node=write;
+	//overtime_tail->next_node=read;
+	//temp=overtime;
+
+	
+	/* if(read!=NULL)
+	{
+		temp2=read;
+		temp2_tail=read_tail;
+		if(write!=NULL)
+		{
+			temp2_tail->next_node=write;
+			//temp2_tail=write_tail;
+		}
+	}
+	else
+	{
+		if(write!=NULL)
+		{
+			temp2=write;
+			temp2_tail=write_tail;
+		}
+	} */
+
+	/* 	if(temp2==NULL)
+		{
+			return 0;
+		}
+ 	*/
+	
+	//here the allocaton of PIQ is CWDP, allocation_scheme=1,static_allocation=1
+	//
+	//if(ssd->parameter->allocation_scheme==1&&ssd->parameter->static_allocation==1)    //here the allocaton of PIQ is CWDP, allocation_scheme=1,static_allocation=1
+	//{
+	if(read!=NULL)
+	{
+		temp=read;
+		if(write!=NULL)
+		{
+			schetwo=1;
+		}
+	}
+	else
+	{
+		temp=write;
+		schetwo=0;
+	}
+	temp2=NULL;               //to recorded the no conflict request
+	temp2_tail=NULL;
+	
+	while(1)
+	{
+		//conflict_flag=0;
+		while(temp!=NULL)
+		{
+			no_sche=0;
+			if(temp->dis==0)
+			{
+				//temp->sch=0;
+				last_lpn=(temp->lsn+temp->size-1)/ssd->parameter->subpage_page;
+				first_lpn=temp->lsn/ssd->parameter->subpage_page;
+				flag=0;
+				for(i=first_lpn;i<=last_lpn; i++)
+				{
+					channel=i%ssd->parameter->channel_number;
+					chip=(i/ssd->parameter->channel_number)%ssd->parameter->chip_channel[0];
+					if((int)(vector[channel]&chip)==0)                //KXC:no conflict
+					{
+						continue;
+					}
+					else
+					{
+						flag=1;
+						break;
+					}	
+				}
+				if(flag==0)       //no conflict
+				{
+					//to update the vector
+					//conflict_flag=0;
+					for(i=first_lpn;i<=last_lpn; i++)
+					{
+						channel=i%ssd->parameter->channel_number;
+						chip=(i/ssd->parameter->channel_number)%ssd->parameter->chip_channel[0];
+						vector[channel]=vector[channel]|chip;
+					}
+
+					//record temp2
+					if(temp2==NULL)
+					{
+						temp2=temp;
+						temp2_tail=temp;
+						//temp2_tail->next_node=NULL;
+					}
+					else
+					{
+						temp2_tail->next_node=temp;
+						temp2_tail=temp;
+						//temp2_tail->next_node=NULL;
+					}
+					
+				}
+				else
+				{
+					//conflict_flag=1;
+					if(conflict==NULL)
+					{
+						conflict=temp;
+						conflict_tail=temp;
+						//conflict_tail->next_node=NULL;
+					}
+					else
+					{
+						conflict_tail->next_node=temp;
+						conflict_tail=temp;
+						//conflict_tail->next_node=NULL;
+					}
+
+				}
+				temp->sch=1;            //the request has been scheduled
+				temp=temp->next_node;
+				
+			}
+			else
+			{
+				printf("the distributed request is in the schedule process!\n");
+				//no_sche=1;
+				break;
+			}
+		}
+		
+		memset(vector,0,sizeof(int)*ssd->parameter->channel_number);
+		
+		if(conflict!=NULL)
+		{
+			conflict_tail->next_node=NULL;
+			temp=conflict;
+			conflict=NULL;
+		}
+		else
+		{
+			if(schetwo==1)
+			{
+				temp=write;
+				schetwo=0;
+			}
+			else
+			{
+				break;
+			}
+			
+		}
+				
+	}
+	//}
+
+	if(temp1_tail!=NULL)
+	{
+		ssd->request_tail->next_node=temp2;
+		ssd->request_tail=temp2_tail;
+		ssd->request_tail->next_node=NULL;
+	}
+	else
+	{
+		ssd->request_queue=temp2;
+		ssd->request_tail=temp2_tail;
+		ssd->request_tail->next_node=NULL;
+	}	
+}
+//KXC: the schedule function OUR
 struct ssd_info *schedule_ours(struct ssd_info *ssd)
 {
 	struct request *temp=NULL;
@@ -890,7 +1221,7 @@ struct ssd_info *schedule_ours(struct ssd_info *ssd)
 	}	
 }
 
-//KXC: the schedule function to schedule the request in the queue and avoid conflict
+//KXC: the schedule function tour and avoid conflict
 struct ssd_info *schedule_ours_avoid(struct ssd_info *ssd)
 {
 	struct request *temp=NULL;
@@ -1002,7 +1333,7 @@ struct ssd_info *schedule_ours_avoid(struct ssd_info *ssd)
 						{
 							if(temp->lsn>reqtemp->lsn)
 							{
-								if(temp->lsn-reqtemp->lsn<=reqtemp->size&&temp->time<reqtemp->time)
+								if(temp->lsn-reqtemp->lsn<reqtemp->size&&temp->time>reqtemp->time)
 								{
 									depend=1;
 									break;
@@ -1014,7 +1345,7 @@ struct ssd_info *schedule_ours_avoid(struct ssd_info *ssd)
 							}
 							else
 							{
-								if(reqtemp->lsn-temp->lsn<=temp->size&&temp->time<reqtemp->time)
+								if(reqtemp->lsn-temp->lsn<temp->size&&temp->time>reqtemp->time)
 								{
 									depend=1;
 									break;
@@ -1293,7 +1624,7 @@ struct ssd_info *dependency(struct ssd_info *ssd)
 				{
 					if(temp1->lsn>temp1_tail->lsn)
 					{
-						if(temp1->lsn-temp1_tail->lsn<=temp1_tail->size&&temp1->time>temp1_tail->time)
+						if(temp1->lsn-temp1_tail->lsn<temp1_tail->size&&temp1->time>temp1_tail->time)
 						{
 							if(temp1->operation==WRITE)
 							{
@@ -1313,7 +1644,7 @@ struct ssd_info *dependency(struct ssd_info *ssd)
 					}
 					else
 					{
-						if(temp1_tail->lsn-temp1->lsn<=temp1->size&&temp1->time>temp1_tail->time)
+						if(temp1_tail->lsn-temp1->lsn<temp1->size&&temp1->time>temp1_tail->time)
 						{
 							if(temp1->operation==WRITE)
 							{
@@ -2592,6 +2923,191 @@ struct ssd_info *no_buffer_distribute_nosch(struct ssd_info *ssd)
 }
 
 struct ssd_info *no_buffer_distribute_s(struct ssd_info *ssd)
+{
+	unsigned int lsn,lpn,last_lpn,first_lpn,complete_flag=0, state;
+	unsigned int flag=0,flag1=1,active_region_flag=0;           //to indicate the lsn is hitted or not
+	struct request *req=NULL,*reqtemp;
+	struct sub_request *sub=NULL,*sub_r=NULL,*update=NULL;
+	struct local *loc=NULL;
+	struct channel_info *p_ch=NULL;
+
+	int64_t nearest_event_time;
+	int64_t next_time;
+	unsigned int mask=0; 
+	unsigned int offset1=0, offset2=0;
+	unsigned int sub_size=0;
+	unsigned int sub_state=0;
+
+	int i=0,pflag=0;
+
+	//KXC:the request is empty,exit and get next request
+	if(ssd->request_queue==NULL)
+	{
+		ssd->empty=1;
+		return 0;
+	}
+	else
+	{
+		next_time=ssd->request_queue->time;
+	}
+		
+	//to find the next not distributed request
+	req=ssd->request_queue;
+	while(req!=NULL)
+	{
+		if (req->dis==1)
+		{
+			if(req->next_node!=NULL)
+			{
+				if(req->next_node->dis==1)
+				{
+					req=req->next_node;
+				}
+				else
+				{
+					req=req->next_node;
+					break;
+				}
+				
+			}
+			else
+			{
+				//req=ssd->request_tail;
+				break;
+			}
+			
+		}	
+		else
+		{
+			//req=ssd->request_tail;
+			break;
+		}
+	} 
+
+	//to update the current time of ssd
+	nearest_event_time=find_nearest_event(ssd);
+	if (nearest_event_time==MAX_INT64)
+	{
+		ssd->current_time=ssd->request_queue->time;           
+	}
+	else
+	{   
+		next_time=req->time;
+		
+		if(nearest_event_time<next_time)
+		{
+			if(req->subs==NULL)     //the request is in the queue but not distribute
+				ssd->current_time=req->time>nearest_event_time?req->time:nearest_event_time;
+			//fseek(ssd->tracefile,filepoint,0); 
+			else
+			{
+				if(ssd->current_time<=nearest_event_time)  //the request has been distributed but not finish
+				{
+					ssd->current_time=nearest_event_time;
+					//return -1;
+				}	
+			}
+			
+		}
+		else
+		{
+
+			if(req->subs!=NULL)   //the request has ben distributed 
+			{
+				ssd->current_time=nearest_event_time;
+			}
+			else
+			{
+				ssd->current_time=next_time>nearest_event_time?next_time:nearest_event_time;
+			}
+			
+		}
+	}
+	
+	
+
+	while(req!=NULL)
+	{
+		if(req->time>ssd->current_time)
+		{
+			break;
+		}
+
+		for(i=0;i<ssd->parameter->channel_number;i++)
+		{          
+			if((ssd->channel_head[i].current_state==CHANNEL_IDLE)||((ssd->channel_head[i].next_state==CHANNEL_IDLE)&&(ssd->channel_head[i].next_state_predict_time<=ssd->current_time)))
+			{
+				pflag=1;                       //所有通道均无请求处理。上边一行，对于全动态分配策略的写�?�求，不挂在通道上，需要再分配
+			}
+			else
+			{
+				pflag=0;
+				break;
+			}
+		}
+
+		if(ssd->parameter->allocation_scheme==1&&pflag==0)
+		{
+			break;
+		}
+
+		ssd->dram->current_time=ssd->current_time;
+		//req=ssd->request_tail;       
+		lsn=req->lsn;
+		lpn=req->lsn/ssd->parameter->subpage_page;
+		last_lpn=(req->lsn+req->size-1)/ssd->parameter->subpage_page;
+		first_lpn=req->lsn/ssd->parameter->subpage_page;
+
+		if(req->subs!=NULL)
+		{
+			req=req->next_node;
+			continue;
+		}
+			
+
+		if(req->operation==READ)        
+		{		
+			while(lpn<=last_lpn) 		
+			{
+				sub_state=(ssd->dram->map->map_entry[lpn].state&0x7fffffff);
+				sub_size=size(sub_state);
+				sub=creat_sub_request(ssd,lpn,sub_size,sub_state,req,req->operation);
+				lpn++;
+			}
+		}
+		else if(req->operation==WRITE)
+		{
+			while(lpn<=last_lpn)     	
+			{	
+				mask=~(0xffffffff<<(ssd->parameter->subpage_page));
+				state=mask;
+				if(lpn==first_lpn)
+				{
+					offset1=ssd->parameter->subpage_page-((lpn+1)*ssd->parameter->subpage_page-req->lsn);
+					state=state&(0xffffffff<<offset1);
+				}
+				if(lpn==last_lpn)
+				{
+					offset2=ssd->parameter->subpage_page-((lpn+1)*ssd->parameter->subpage_page-(req->lsn+req->size));
+					state=state&(~(0xffffffff<<offset2));
+				}
+				sub_size=size(state);
+
+				sub=creat_sub_request(ssd,lpn,sub_size,state,req,req->operation);
+				lpn++;
+			}
+		}
+		req->dis=1;
+		req=req->next_node;
+		if(ssd->parameter->scheduling_algorithm==0)
+		{
+			break;
+		}
+	}
+	return(ssd);	
+}
+
+struct ssd_info *no_buffer_distribute_am(struct ssd_info *ssd)
 {
 	unsigned int lsn,lpn,last_lpn,first_lpn,complete_flag=0, state;
 	unsigned int flag=0,flag1=1,active_region_flag=0;           //to indicate the lsn is hitted or not

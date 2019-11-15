@@ -39,10 +39,12 @@ unsigned int transfer_size(struct ssd_info *,int,unsigned int,struct request *);
 int64_t find_nearest_event(struct ssd_info *);
 void free_all_node(struct ssd_info *);
 struct ssd_info *make_aged(struct ssd_info *);
-struct ssd_info *no_buffer_distribute_sch(struct ssd_info *);
+struct ssd_info *no_buffer_distribute_sch(struct ssd_info *);  //KXC:OUR
 struct ssd_info *no_buffer_distribute_nosch(struct ssd_info *);
-struct ssd_info *no_buffer_distribute_s(struct ssd_info *);
+struct ssd_info *no_buffer_distribute_s(struct ssd_info *);   //KXC:NOOP and PIQ
+struct ssd_info *no_buffer_distribute_am(struct ssd_info *);  //KXC:AMPHIBIAN
 struct ssd_info *schedule_PIQ(struct ssd_info *);   //KXC:the schedule function of PIQ
+struct ssd_info *schedule_AM(struct ssd_info *);   //KXC:the schedule function of PIQ
 struct ssd_info *schedule_ours(struct ssd_info *);   //KXC:the schedule function of ours
 struct ssd_info *schedule_ours_avoid(struct ssd_info *);   //KXC:the schedule function of ours and avoid the conflict
 struct ssd_info *dependency(struct ssd_info *);   //KXC:the schedule function of ours
