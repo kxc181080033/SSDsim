@@ -187,7 +187,8 @@ struct ssd_info{
 	int process_count1;
 	double chip_utilization;			 //KXC:to record the chip utilization
 	double channel_utilization;          //KXC:to record the channel utilization
-	int64_t max_wait_time;               //KXC:to record the max time gap in the request queue
+	int64_t max_wait_time;               //KXC:to record the max wait time
+	int64_t max_queue_time;              //KXC:to record the max time gap in the request queue
 
 	unsigned int min_lsn;
 	unsigned int max_lsn;
@@ -402,7 +403,7 @@ struct sub_request{
 	int64_t current_time;
 	unsigned int next_state;
 	int64_t next_state_predict_time;
-	 unsigned int state;              //使用state的最高位表示该子请求是否是一对多映射关系中的一个，是的话，需要读到buffer中。1表示是一对多，0表示不用写到buffer
+	unsigned int state;              //使用state的最高位表示该子请求是否是一对多映射关系中的一个，是的话，需要读到buffer中。1表示是一对多，0表示不用写到buffer
 	                                  //读请求不需要这个成员，lsn加size就可以分辨出该页的状态;但是写请求需要这个成员，大部分写子请求来自于buffer写回操作，可能有类似子页不连续的情况，所以需要单独维持该成员
 
 	int64_t begin_time;               //子请求开始时间

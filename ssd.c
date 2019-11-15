@@ -676,9 +676,24 @@ struct ssd_info *schedule_AM(struct ssd_info *ssd)
 	int conflict_flag=1;
 	int schetwo;       //1-read schedule and write schedule;0-only one type request schedule
 	int no_sche;       //KXC:to indicate the request can not shcedule 
-
-	//int *channel;
-	//int *chip;
+	int readcount=0;
+	int writecount=0;
+	//the exchange in the bubble sort
+	int64_t time_swap;                      
+	unsigned int lsn_swap;                 
+	unsigned int size_swap;                 
+	unsigned int operation_swap;            
+	int dis_swap;                           
+	int sch_swap;                          
+	int cnt_swap;                           
+	unsigned int* need_distr_flag_swap;
+	unsigned int complete_lsn_count_swap;   
+	int distri_flag_swap;		           
+	int64_t begin_time_swap;
+	int64_t response_time_swap;
+	double energy_consumption_swap;        
+	struct sub_request *subs_swap;          
+	struct request *next_node_swap;
 
 	if(ssd->request_queue==NULL)    //no need to schedule
 		return 0;
@@ -779,163 +794,196 @@ struct ssd_info *schedule_AM(struct ssd_info *ssd)
 		return 0;
 	}
 
-	//the read and write requests have been seperated
-	
-	//read_tail->next_node=write;
-	//overtime_tail->next_node=read;
-	//temp=overtime;
+	//KXC:to count the length of read queue and write queue
+	while(read!=NULL)
+	{
+		readcount++;
+		read=read->next_node;
+	}
+	while(write!=NULL)
+	{
+		writecount++;
+		read=read->next_node;
+	}
 
-	
-	/* if(read!=NULL)
+	temp=NULL;
+	temp_tail=NULL;
+	temp=read;
+	while(temp!=temp_tail)
+	{
+		while(temp->next_node!=NULL)
+		{
+			if(temp->size>temp->next_node->size)
+			{
+				time_swap=temp->time;
+				temp->time=temp->next_node->time;
+				temp->next_node->time=time_swap;
+
+				lsn_swap=temp->lsn;
+				temp->lsn=temp->next_node->lsn;
+				temp->next_node->lsn=lsn_swap;
+
+				size_swap=temp->size;
+				temp->size=temp->next_node->size;
+				temp->next_node->size=size_swap;
+
+				operation_swap=temp->operation;
+				temp->operation=temp->next_node->operation;
+				temp->next_node->operation=operation_swap;
+
+				dis_swap=temp->dis;
+				temp->dis=temp->next_node->dis;
+				temp->next_node->dis=dis_swap;
+
+				sch_swap=temp->sch;
+				temp->sch=temp->next_node->sch;
+				temp->next_node->sch=sch_swap;
+
+				cnt_swap=temp->cnt;
+				temp->cnt=temp->next_node->cnt;
+				temp->next_node->cnt=cnt_swap;
+
+				need_distr_flag_swap=temp->need_distr_flag;
+				temp->need_distr_flag=temp->next_node->need_distr_flag;
+				temp->next_node->need_distr_flag=need_distr_flag_swap;
+
+				complete_lsn_count_swap=temp->complete_lsn_count;
+				temp->complete_lsn_count=temp->next_node->complete_lsn_count;
+				temp->next_node->complete_lsn_count=complete_lsn_count_swap;
+
+				distri_flag_swap=temp->distri_flag;
+				temp->distri_flag=temp->next_node->distri_flag;
+				temp->next_node->distri_flag=distri_flag_swap;
+
+				begin_time_swap=temp->begin_time;
+				temp->begin_time=temp->next_node->begin_time;
+				temp->next_node->begin_time=begin_time_swap;
+
+				response_time_swap=temp->response_time;
+				temp->response_time=temp->next_node->response_time;
+				temp->next_node->response_time=response_time_swap;
+
+				energy_consumption_swap=temp->energy_consumption;
+				temp->energy_consumption=temp->next_node->energy_consumption;
+				temp->next_node->energy_consumption=energy_consumption_swap;
+
+				subs_swap=temp->subs;
+				temp->subs=temp->next_node->subs;
+				temp->next_node->subs=subs_swap;
+
+				next_node_swap=temp->next_node;
+				temp->next_node=temp->next_node->next_node;
+				temp->next_node->next_node=next_node_swap;
+			}
+			temp=temp->next_node;
+		}
+		if(temp_tail==NULL)
+		{
+			read_tail=temp;
+		}
+		temp_tail=temp;
+		temp=read;
+	}
+
+	temp=NULL;
+	temp_tail=NULL;
+	temp=write;
+	while(temp!=temp_tail)
+	{
+		while(temp->next_node!=NULL)
+		{
+			if(temp->size>temp->next_node->size)
+			{
+				time_swap=temp->time;
+				temp->time=temp->next_node->time;
+				temp->next_node->time=time_swap;
+
+				lsn_swap=temp->lsn;
+				temp->lsn=temp->next_node->lsn;
+				temp->next_node->lsn=lsn_swap;
+
+				size_swap=temp->size;
+				temp->size=temp->next_node->size;
+				temp->next_node->size=size_swap;
+
+				operation_swap=temp->operation;
+				temp->operation=temp->next_node->operation;
+				temp->next_node->operation=operation_swap;
+
+				dis_swap=temp->dis;
+				temp->dis=temp->next_node->dis;
+				temp->next_node->dis=dis_swap;
+
+				sch_swap=temp->sch;
+				temp->sch=temp->next_node->sch;
+				temp->next_node->sch=sch_swap;
+
+				cnt_swap=temp->cnt;
+				temp->cnt=temp->next_node->cnt;
+				temp->next_node->cnt=cnt_swap;
+
+				need_distr_flag_swap=temp->need_distr_flag;
+				temp->need_distr_flag=temp->next_node->need_distr_flag;
+				temp->next_node->need_distr_flag=need_distr_flag_swap;
+
+				complete_lsn_count_swap=temp->complete_lsn_count;
+				temp->complete_lsn_count=temp->next_node->complete_lsn_count;
+				temp->next_node->complete_lsn_count=complete_lsn_count_swap;
+
+				distri_flag_swap=temp->distri_flag;
+				temp->distri_flag=temp->next_node->distri_flag;
+				temp->next_node->distri_flag=distri_flag_swap;
+
+				begin_time_swap=temp->begin_time;
+				temp->begin_time=temp->next_node->begin_time;
+				temp->next_node->begin_time=begin_time_swap;
+
+				response_time_swap=temp->response_time;
+				temp->response_time=temp->next_node->response_time;
+				temp->next_node->response_time=response_time_swap;
+
+				energy_consumption_swap=temp->energy_consumption;
+				temp->energy_consumption=temp->next_node->energy_consumption;
+				temp->next_node->energy_consumption=energy_consumption_swap;
+
+				subs_swap=temp->subs;
+				temp->subs=temp->next_node->subs;
+				temp->next_node->subs=subs_swap;
+
+				next_node_swap=temp->next_node;
+				temp->next_node=temp->next_node->next_node;
+				temp->next_node->next_node=next_node_swap;
+			}
+			temp=temp->next_node;
+		}
+		if(temp_tail==NULL)
+		{
+			write_tail=temp;
+		}
+		temp_tail=temp;
+		temp=write;
+	}
+
+	if(write!=NULL)
+	{
+		temp2=write;
+		temp2_tail=read_tail;
+	}
+
+	if(temp2!=NULL)
+	{
+		if(read!=NULL)
+		{
+			read_tail->next_node=temp2;
+			temp2=read;
+		}
+	}
+	else
 	{
 		temp2=read;
 		temp2_tail=read_tail;
-		if(write!=NULL)
-		{
-			temp2_tail->next_node=write;
-			//temp2_tail=write_tail;
-		}
 	}
-	else
-	{
-		if(write!=NULL)
-		{
-			temp2=write;
-			temp2_tail=write_tail;
-		}
-	} */
-
-	/* 	if(temp2==NULL)
-		{
-			return 0;
-		}
- 	*/
 	
-	//here the allocaton of PIQ is CWDP, allocation_scheme=1,static_allocation=1
-	//
-	//if(ssd->parameter->allocation_scheme==1&&ssd->parameter->static_allocation==1)    //here the allocaton of PIQ is CWDP, allocation_scheme=1,static_allocation=1
-	//{
-	if(read!=NULL)
-	{
-		temp=read;
-		if(write!=NULL)
-		{
-			schetwo=1;
-		}
-	}
-	else
-	{
-		temp=write;
-		schetwo=0;
-	}
-	temp2=NULL;               //to recorded the no conflict request
-	temp2_tail=NULL;
-	
-	while(1)
-	{
-		//conflict_flag=0;
-		while(temp!=NULL)
-		{
-			no_sche=0;
-			if(temp->dis==0)
-			{
-				//temp->sch=0;
-				last_lpn=(temp->lsn+temp->size-1)/ssd->parameter->subpage_page;
-				first_lpn=temp->lsn/ssd->parameter->subpage_page;
-				flag=0;
-				for(i=first_lpn;i<=last_lpn; i++)
-				{
-					channel=i%ssd->parameter->channel_number;
-					chip=(i/ssd->parameter->channel_number)%ssd->parameter->chip_channel[0];
-					if((int)(vector[channel]&chip)==0)                //KXC:no conflict
-					{
-						continue;
-					}
-					else
-					{
-						flag=1;
-						break;
-					}	
-				}
-				if(flag==0)       //no conflict
-				{
-					//to update the vector
-					//conflict_flag=0;
-					for(i=first_lpn;i<=last_lpn; i++)
-					{
-						channel=i%ssd->parameter->channel_number;
-						chip=(i/ssd->parameter->channel_number)%ssd->parameter->chip_channel[0];
-						vector[channel]=vector[channel]|chip;
-					}
-
-					//record temp2
-					if(temp2==NULL)
-					{
-						temp2=temp;
-						temp2_tail=temp;
-						//temp2_tail->next_node=NULL;
-					}
-					else
-					{
-						temp2_tail->next_node=temp;
-						temp2_tail=temp;
-						//temp2_tail->next_node=NULL;
-					}
-					
-				}
-				else
-				{
-					//conflict_flag=1;
-					if(conflict==NULL)
-					{
-						conflict=temp;
-						conflict_tail=temp;
-						//conflict_tail->next_node=NULL;
-					}
-					else
-					{
-						conflict_tail->next_node=temp;
-						conflict_tail=temp;
-						//conflict_tail->next_node=NULL;
-					}
-
-				}
-				temp->sch=1;            //the request has been scheduled
-				temp=temp->next_node;
-				
-			}
-			else
-			{
-				printf("the distributed request is in the schedule process!\n");
-				//no_sche=1;
-				break;
-			}
-		}
-		
-		memset(vector,0,sizeof(int)*ssd->parameter->channel_number);
-		
-		if(conflict!=NULL)
-		{
-			conflict_tail->next_node=NULL;
-			temp=conflict;
-			conflict=NULL;
-		}
-		else
-		{
-			if(schetwo==1)
-			{
-				temp=write;
-				schetwo=0;
-			}
-			else
-			{
-				break;
-			}
-			
-		}
-				
-	}
-	//}
 
 	if(temp1_tail!=NULL)
 	{
@@ -2329,6 +2377,7 @@ void statistic_output(struct ssd_info *ssd)
 	fprintf(ssd->outputfile,"total average response time including wait time: %lld\n",ssd->total_avg_wait/(ssd->write_request_count+ssd->read_request_count));
 	fprintf(ssd->outputfile,"\n");
 	fprintf(ssd->outputfile,"max wait time: %lld\n",ssd->max_wait_time);
+	fprintf(ssd->outputfile,"max queue wait time: %lld\n",ssd->max_queue_time);
 	fprintf(ssd->outputfile,"read average wait time: %lld\n",ssd->read_wait_avg/ssd->read_request_count);
 	fprintf(ssd->outputfile,"write average wait time: %lld\n",ssd->write_wait_avg/ssd->write_request_count);
 	fprintf(ssd->outputfile,"total average wait time: %lld\n",ssd->wait_avg/(ssd->write_request_count+ssd->read_request_count));
@@ -2391,6 +2440,7 @@ void statistic_output(struct ssd_info *ssd)
 	fprintf(ssd->statisticfile,"total average response time including wait time: %lld\n",ssd->total_avg_wait/(ssd->write_request_count+ssd->read_request_count));
 	fprintf(ssd->statisticfile,"\n");
 	fprintf(ssd->statisticfile,"max wait time: %lld\n",ssd->max_wait_time);
+	fprintf(ssd->statisticfile,"max queue wait time: %lld\n",ssd->max_queue_time);
 	fprintf(ssd->statisticfile,"read average wait time: %lld\n",ssd->read_wait_avg/ssd->read_request_count);
 	fprintf(ssd->statisticfile,"write average wait time: %lld\n",ssd->write_wait_avg/ssd->write_request_count);
 	fprintf(ssd->statisticfile,"total average wait time: %lld\n",ssd->wait_avg/(ssd->write_request_count+ssd->read_request_count));
@@ -2775,6 +2825,7 @@ struct ssd_info *no_buffer_distribute_sch(struct ssd_info *ssd)
 				lpn++;
 			}
 		}
+		ssd->max_queue_time=ssd->max_queue_time>(ssd->current_time-req->time)?ssd->max_queue_time:(ssd->current_time-req->time);
 		req->dis=1;
 		req=req->next_node;
 		if(ssd->parameter->scheduling_algorithm==0)
@@ -3124,6 +3175,7 @@ struct ssd_info *no_buffer_distribute_am(struct ssd_info *ssd)
 	unsigned int sub_state=0;
 
 	int i=0,pflag=0;
+	int channel=0,chip=0;
 
 	//KXC:the request is empty,exit and get next request
 	if(ssd->request_queue==NULL)
@@ -3218,23 +3270,13 @@ struct ssd_info *no_buffer_distribute_am(struct ssd_info *ssd)
 			break;
 		}
 
-		for(i=0;i<ssd->parameter->channel_number;i++)
-		{          
-			if((ssd->channel_head[i].current_state==CHANNEL_IDLE)||((ssd->channel_head[i].next_state==CHANNEL_IDLE)&&(ssd->channel_head[i].next_state_predict_time<=ssd->current_time)))
-			{
-				pflag=1;                       //所有通道均无请求处理。上边一行，对于全动态分配策略的写�?�求，不挂在通道上，需要再分配
-			}
-			else
-			{
-				pflag=0;
-				break;
-			}
-		}
-
-		if(ssd->parameter->allocation_scheme==1&&pflag==0)
+		if(req->subs!=NULL)
 		{
-			break;
+			req=req->next_node;
+			continue;
 		}
+			
+
 
 		ssd->dram->current_time=ssd->current_time;
 		//req=ssd->request_tail;       
@@ -3243,12 +3285,33 @@ struct ssd_info *no_buffer_distribute_am(struct ssd_info *ssd)
 		last_lpn=(req->lsn+req->size-1)/ssd->parameter->subpage_page;
 		first_lpn=req->lsn/ssd->parameter->subpage_page;
 
-		if(req->subs!=NULL)
+		for(i=first_lpn;i<=last_lpn; i++)
+		{
+			channel=i%ssd->parameter->channel_number;
+			chip=(i/ssd->parameter->channel_number)%ssd->parameter->chip_channel[0];
+		         
+			if(ssd->channel_head[channel].gc_command->priority==GC_UNINTERRUPT)
+			{
+				pflag=1;
+				break;
+			}
+			else
+			{
+				pflag=0;
+			}
+			
+		}
+		if(pflag==1)
 		{
 			req=req->next_node;
 			continue;
 		}
-			
+
+		if(ssd->parameter->allocation_scheme==1&&pflag==0)
+		{
+			break;
+		}
+
 
 		if(req->operation==READ)        
 		{		
@@ -3284,10 +3347,7 @@ struct ssd_info *no_buffer_distribute_am(struct ssd_info *ssd)
 		}
 		req->dis=1;
 		req=req->next_node;
-		if(ssd->parameter->scheduling_algorithm==0)
-		{
-			break;
-		}
+		break;
 	}
 	return(ssd);	
 }
