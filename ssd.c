@@ -860,9 +860,6 @@ struct ssd_info *schedule_AM(struct ssd_info *ssd)
 				temp->subs=temp->next_node->subs;
 				temp->next_node->subs=subs_swap;
 
-				next_node_swap=temp->next_node;
-				temp->next_node=temp->next_node->next_node;
-				temp->next_node->next_node=next_node_swap;
 			}
 			temp=temp->next_node;
 		}
@@ -939,9 +936,6 @@ struct ssd_info *schedule_AM(struct ssd_info *ssd)
 				temp->subs=temp->next_node->subs;
 				temp->next_node->subs=subs_swap;
 
-				next_node_swap=temp->next_node;
-				temp->next_node=temp->next_node->next_node;
-				temp->next_node->next_node=next_node_swap;
 			}
 			temp=temp->next_node;
 		}
@@ -2958,7 +2952,8 @@ struct ssd_info *no_buffer_distribute_nosch(struct ssd_info *ssd)
 			lpn++;
 		}
 	}
-	req->dis=1;	
+	req->dis=1;
+	ssd->max_queue_time=ssd->max_queue_time>(ssd->current_time-req->time)?ssd->max_queue_time:(ssd->current_time-req->time);	
 	return ssd;
 }
 
@@ -3139,6 +3134,7 @@ struct ssd_info *no_buffer_distribute_s(struct ssd_info *ssd)
 		}
 		req->dis=1;
 		req=req->next_node;
+		ssd->max_queue_time=ssd->max_queue_time>(ssd->current_time-req->time)?ssd->max_queue_time:(ssd->current_time-req->time);
 		if(ssd->parameter->scheduling_algorithm==0)
 		{
 			break;
@@ -3283,8 +3279,11 @@ struct ssd_info *no_buffer_distribute_am(struct ssd_info *ssd)
 			{
 				if(ssd->channel_head[channel].gc_command->priority==GC_UNINTERRUPT)
 				{	
-					pflag=1;
-					break;
+					if(ssd->channel_head[channel].gc_command->chip==chip)
+					{
+						pflag=1;
+						break;
+					}
 				}
 				else
 				{
@@ -3302,11 +3301,6 @@ struct ssd_info *no_buffer_distribute_am(struct ssd_info *ssd)
 		{
 			req=req->next_node;
 			continue;
-		}
-
-		if(ssd->parameter->allocation_scheme==1&&pflag==0)
-		{
-			break;
 		}
 
 
@@ -3344,7 +3338,8 @@ struct ssd_info *no_buffer_distribute_am(struct ssd_info *ssd)
 		}
 		req->dis=1;
 		req=req->next_node;
-		break;
+		ssd->max_queue_time=ssd->max_queue_time>(ssd->current_time-req->time)?ssd->max_queue_time:(ssd->current_time-req->time);
+		//break;
 	}
 	return(ssd);	
 }
