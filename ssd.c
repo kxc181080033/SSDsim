@@ -3161,6 +3161,9 @@ struct ssd_info *no_buffer_distribute_am(struct ssd_info *ssd)
 
 	int i=0,pflag=0;
 	int channel=0,chip=0;
+	//first two = 0 the gc chip do not allocate request just allocate reqeust which chip is not gc
+	//second two = 1 the request which is in the gc chip also allocate 
+	int two=0;  
 
 	//KXC:the request is empty,exit and get next request
 	if(ssd->request_queue==NULL)
@@ -3247,7 +3250,8 @@ struct ssd_info *no_buffer_distribute_am(struct ssd_info *ssd)
 	}
 	
 	
-
+	reqtemp=req;
+	two=0;
 	while(req!=NULL)
 	{
 		if(req->time>ssd->current_time)
@@ -3302,7 +3306,7 @@ struct ssd_info *no_buffer_distribute_am(struct ssd_info *ssd)
 			}
 			
 		}
-		if(pflag==1)
+		if(two==0&&pflag==1)
 		{
 			req=req->next_node;
 			continue;
@@ -3344,6 +3348,11 @@ struct ssd_info *no_buffer_distribute_am(struct ssd_info *ssd)
 		req->dis=1;
 		ssd->max_queue_time=ssd->max_queue_time>(ssd->current_time-req->time)?ssd->max_queue_time:(ssd->current_time-req->time);
 		req=req->next_node;
+		if(two==0&&req==NULL)
+		{
+			two=1;
+			req=reqtemp;
+		}
 		//break;
 	}
 	return(ssd);	
