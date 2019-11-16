@@ -3309,6 +3309,11 @@ struct ssd_info *no_buffer_distribute_am(struct ssd_info *ssd)
 		if(two==0&&pflag==1)
 		{
 			req=req->next_node;
+			if(two==0&&req==NULL)
+			{
+				two=1;
+				req=reqtemp;
+			}
 			continue;
 		}
 
