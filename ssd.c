@@ -794,24 +794,13 @@ struct ssd_info *schedule_AM(struct ssd_info *ssd)
 		return 0;
 	}
 
-	//KXC:to count the length of read queue and write queue
-	while(read!=NULL)
-	{
-		readcount++;
-		read=read->next_node;
-	}
-	while(write!=NULL)
-	{
-		writecount++;
-		read=read->next_node;
-	}
-
+	//KXC:sort the request accrding to the size 
 	temp=NULL;
 	temp_tail=NULL;
 	temp=read;
 	while(temp!=temp_tail)
 	{
-		while(temp->next_node!=NULL)
+		while(temp->next_node!=temp_tail)
 		{
 			if(temp->size>temp->next_node->size)
 			{
@@ -890,7 +879,7 @@ struct ssd_info *schedule_AM(struct ssd_info *ssd)
 	temp=write;
 	while(temp!=temp_tail)
 	{
-		while(temp->next_node!=NULL)
+		while(temp->next_node!=temp_tail)
 		{
 			if(temp->size>temp->next_node->size)
 			{
@@ -967,7 +956,7 @@ struct ssd_info *schedule_AM(struct ssd_info *ssd)
 	if(write!=NULL)
 	{
 		temp2=write;
-		temp2_tail=read_tail;
+		temp2_tail=write_tail;
 	}
 
 	if(temp2!=NULL)
@@ -3290,10 +3279,18 @@ struct ssd_info *no_buffer_distribute_am(struct ssd_info *ssd)
 			channel=i%ssd->parameter->channel_number;
 			chip=(i/ssd->parameter->channel_number)%ssd->parameter->chip_channel[0];
 		         
-			if(ssd->channel_head[channel].gc_command->priority==GC_UNINTERRUPT)
+			if(ssd->channel_head[channel].gc_command!=NULL)
 			{
-				pflag=1;
-				break;
+				if(ssd->channel_head[channel].gc_command->priority==GC_UNINTERRUPT)
+				{	
+					pflag=1;
+					break;
+				}
+				else
+				{
+					pflag=0;
+				}
+				
 			}
 			else
 			{
