@@ -3133,8 +3133,8 @@ struct ssd_info *no_buffer_distribute_s(struct ssd_info *ssd)
 			}
 		}
 		req->dis=1;
-		req=req->next_node;
 		ssd->max_queue_time=ssd->max_queue_time>(ssd->current_time-req->time)?ssd->max_queue_time:(ssd->current_time-req->time);
+		req=req->next_node;
 		if(ssd->parameter->scheduling_algorithm==0)
 		{
 			break;
@@ -3284,6 +3284,11 @@ struct ssd_info *no_buffer_distribute_am(struct ssd_info *ssd)
 						pflag=1;
 						break;
 					}
+					else
+					{
+						pflag=0;
+					}
+					
 				}
 				else
 				{
@@ -3337,8 +3342,8 @@ struct ssd_info *no_buffer_distribute_am(struct ssd_info *ssd)
 			}
 		}
 		req->dis=1;
-		req=req->next_node;
 		ssd->max_queue_time=ssd->max_queue_time>(ssd->current_time-req->time)?ssd->max_queue_time:(ssd->current_time-req->time);
+		req=req->next_node;
 		//break;
 	}
 	return(ssd);	
