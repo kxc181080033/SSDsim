@@ -3330,7 +3330,7 @@ struct ssd_info *no_buffer_distribute_am(struct ssd_info *ssd)
 			}
 		}
 
-		if(ssd->parameter->allocation_scheme==2&&ppflag==0)
+		if(ssd->parameter->scheduling_algorithm==2&&ppflag==0)
 		{
 			break;
 		}
@@ -3375,7 +3375,7 @@ struct ssd_info *no_buffer_distribute_am(struct ssd_info *ssd)
 			two=1;
 			req=reqtemp;
 		}
-		//break;
+		break;
 	}
 	return(ssd);	
 }
