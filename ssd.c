@@ -3159,7 +3159,7 @@ struct ssd_info *no_buffer_distribute_am(struct ssd_info *ssd)
 	unsigned int sub_size=0;
 	unsigned int sub_state=0;
 
-	int i=0,pflag=0;
+	int i=0,pflag=0,ppflag=0;
 	int channel=0,chip=0;
 	//first two = 0 the gc chip do not allocate request just allocate reqeust which chip is not gc
 	//second two = 1 the request which is in the gc chip also allocate 
@@ -3317,6 +3317,23 @@ struct ssd_info *no_buffer_distribute_am(struct ssd_info *ssd)
 			continue;
 		}
 
+		for(i=0;i<ssd->parameter->channel_number;i++)
+		{          
+			if((ssd->channel_head[i].current_state==CHANNEL_IDLE)||((ssd->channel_head[i].next_state==CHANNEL_IDLE)&&(ssd->channel_head[i].next_state_predict_time<=ssd->current_time)))
+			{
+				ppflag=1;                       //所有通道均无请求处理。上边一行，对于全动态分配策略的写�?�求，不挂在通道上，需要再分配
+			}
+			else
+			{
+				ppflag=0;
+				break;
+			}
+		}
+
+		if(ssd->parameter->allocation_scheme==2&&ppflag==0)
+		{
+			break;
+		}
 
 		if(req->operation==READ)        
 		{		
