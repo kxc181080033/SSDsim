@@ -3264,8 +3264,6 @@ struct ssd_info *no_buffer_distribute_am(struct ssd_info *ssd)
 			req=req->next_node;
 			continue;
 		}
-			
-
 
 		ssd->dram->current_time=ssd->current_time;
 		//req=ssd->request_tail;       
@@ -3317,6 +3315,24 @@ struct ssd_info *no_buffer_distribute_am(struct ssd_info *ssd)
 			continue;
 		}
 
+		for(i=0;i<ssd->parameter->channel_number;i++)
+		{          
+			if((ssd->channel_head[i].current_state==CHANNEL_IDLE)||((ssd->channel_head[i].next_state==CHANNEL_IDLE)&&(ssd->channel_head[i].next_state_predict_time<=ssd->current_time)))
+			{
+				ppflag=1;                       //所有通道均无请求处理。上边一行，对于全动态分配策略的写�?�求，不挂在通道上，需要再分配
+			}
+			else
+			{
+				ppflag=0;
+				break;
+			}
+		}
+
+		if(ssd->parameter->scheduling_algorithm==2&&ppflag==0)
+		{
+			break;
+		}
+
 		if(req->operation==READ)        
 		{		
 			while(lpn<=last_lpn) 		
@@ -3357,7 +3373,7 @@ struct ssd_info *no_buffer_distribute_am(struct ssd_info *ssd)
 			two=1;
 			req=reqtemp;
 		}
-		break;
+		//break;
 	}
 	return(ssd);	
 }
