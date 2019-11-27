@@ -3070,9 +3070,9 @@ struct ssd_info *no_buffer_distribute_s(struct ssd_info *ssd)
 
 		for(i=0;i<ssd->parameter->channel_number;i++)
 		{          
-			if((ssd->channel_head[i].current_state==CHANNEL_IDLE)||((ssd->channel_head[i].next_state==CHANNEL_IDLE)&&(ssd->channel_head[i].next_state_predict_time<=ssd->current_time)))
+			if((ssd->channel_head[i].subs_r_head==NULL)&&(ssd->channel_head[i].subs_w_head==NULL)&&(ssd->subs_w_head==NULL))
 			{
-				pflag=1;                       //æ‰€æœ‰é€šé“å‡æ— è¯·æ±‚å¤„ç†ã€‚ä¸Šè¾¹ä¸€è¡Œï¼Œå¯¹äºŽå…¨åŠ¨æ€åˆ†é…ç­–ç•¥çš„å†™è?·æ±‚ï¼Œä¸æŒ‚åœ¨é€šé“ä¸Šï¼Œéœ€è¦å†åˆ†é…
+				pflag=1;                       //ËùÓÐÍ¨µÀ¾ùÎÞÇëÇó´¦Àí¡£ÉÏ±ßÒ»ÐÐ£¬¶ÔÓÚÈ«¶¯Ì¬·ÖÅä²ßÂÔµÄÐ´ÇëÇó£¬²»¹ÒÔÚÍ¨µÀÉÏ£¬ÐèÒªÔÙ·ÖÅä
 			}
 			else
 			{
@@ -3317,9 +3317,9 @@ struct ssd_info *no_buffer_distribute_am(struct ssd_info *ssd)
 
 		for(i=0;i<ssd->parameter->channel_number;i++)
 		{          
-			if((ssd->channel_head[i].current_state==CHANNEL_IDLE)||((ssd->channel_head[i].next_state==CHANNEL_IDLE)&&(ssd->channel_head[i].next_state_predict_time<=ssd->current_time)))
+			if((ssd->channel_head[i].subs_r_head==NULL)&&(ssd->channel_head[i].subs_w_head==NULL)&&(ssd->subs_w_head==NULL))
 			{
-				ppflag=1;                       //æ‰€æœ‰é€šé“å‡æ— è¯·æ±‚å¤„ç†ã€‚ä¸Šè¾¹ä¸€è¡Œï¼Œå¯¹äºŽå…¨åŠ¨æ€åˆ†é…ç­–ç•¥çš„å†™è?·æ±‚ï¼Œä¸æŒ‚åœ¨é€šé“ä¸Šï¼Œéœ€è¦å†åˆ†é…
+				ppflag=1;                       //ËùÓÐÍ¨µÀ¾ùÎÞÇëÇó´¦Àí¡£ÉÏ±ßÒ»ÐÐ£¬¶ÔÓÚÈ«¶¯Ì¬·ÖÅä²ßÂÔµÄÐ´ÇëÇó£¬²»¹ÒÔÚÍ¨µÀÉÏ£¬ÐèÒªÔÙ·ÖÅä
 			}
 			else
 			{
