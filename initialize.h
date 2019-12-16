@@ -168,12 +168,25 @@ struct ssd_info{
 	unsigned int write_request_count;    //记录写操作的次数
 	unsigned int read_request_count;     //记录读操作的次数
 	int64_t write_avg;                   //记录用于计算写请求平均响应时间的时间
+	int64_t write_avg_wait;              //KXC:to record the response time of write requests including the wait time
 	int64_t read_avg;                    //记录用于计算读请求平均响应时间的时间
+	int64_t read_avg_wait;               //KXC:to record the response time of read requests including the wait time
+	int64_t total_avg;                   //KXC:to record the total average response time
+	int64_t total_avg_wait;              //KXC:to record the total average response time including the wait time
 	int64_t wait_avg;                    //KXC:to record the average wait time of all the request
 	int64_t write_wait_avg;              //KXC:to record the average wait time of write request
 	int64_t read_wait_avg;               //KXC:to record the average wait time of read request
-	int wait_read;                       //KXC:to record the wait read request
-	int wait_write;                       //KXC:to record the wait write request
+	int empty;                           //KXC:to record the request if empty or not 0-not 1-empty
+	int sch_read;                        //KXC:to record the number of priorit read request
+	int sch_write;                       //KXC:to record the number of priorit write request
+	int raw;                             //KXC:to record the number of RAW conflict
+	int waw;                             //KXC:to record the numbre of WAW conflict
+	int process_count;                   //KXC:to record the processing times
+	int process_count1;
+	double chip_utilization;			 //KXC:to record the chip utilization
+	double channel_utilization;          //KXC:to record the channel utilization
+	int64_t max_wait_time;               //KXC:to record the max wait time
+	int64_t max_queue_time;              //KXC:to record the max time gap in the request queue
 
 	unsigned int min_lsn;
 	unsigned int max_lsn;
