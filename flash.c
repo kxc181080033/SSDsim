@@ -534,19 +534,48 @@ struct ssd_info * insert2buffer(struct ssd_info *ssd,unsigned int lpn,int state,
 ***************************************************************************************/
 Status  find_active_block(struct ssd_info *ssd,unsigned int channel,unsigned int chip,unsigned int die,unsigned int plane)
 {
-	unsigned int active_block;
+	unsigned int active_block,active_block1;
 	unsigned int free_page_num=0;
 	unsigned int count=0;
+	int i=0;
 	
 	active_block=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].active_block;
 	free_page_num=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].free_page_num;
 	//last_write_page=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].free_page_num;
-	while((free_page_num==0)&&(count<ssd->parameter->block_plane))
+	if(ssd->parameter->scheduling_algorithm==3)
 	{
-		active_block=(active_block+1)%ssd->parameter->block_plane;	
-		free_page_num=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].free_page_num;
-		count++;
+		for(i=0;i<ssd->parameter->block_plane;i++)
+		{
+			if(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].free_page_num==0)
+			{
+				active_block=(active_block+1)%ssd->parameter->block_plane;		
+			}
+			else
+			{
+				active_block1=(active_block+1)%ssd->parameter->block_plane;
+				if(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block1].erase_count<ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].erase_count)
+				{
+					active_block=active_block1;
+				}
+			}
+		}
+		while((free_page_num==0)&&(count<ssd->parameter->block_plane))
+		{
+			active_block=(active_block+1)%ssd->parameter->block_plane;	
+			free_page_num=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].free_page_num;
+			count++;
+		}
 	}
+	else
+	{
+		while((free_page_num==0)&&(count<ssd->parameter->block_plane))
+		{
+			active_block=(active_block+1)%ssd->parameter->block_plane;	
+			free_page_num=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].free_page_num;
+			count++;
+		}
+	}
+		
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].active_block=active_block;
 	if(count<ssd->parameter->block_plane)
 	{
