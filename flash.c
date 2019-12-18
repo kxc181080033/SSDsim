@@ -544,26 +544,23 @@ Status  find_active_block(struct ssd_info *ssd,unsigned int channel,unsigned int
 	//last_write_page=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].free_page_num;
 	if(ssd->parameter->scheduling_algorithm==3)
 	{
-		for(i=0;i<ssd->parameter->block_plane;i++)
+		if(free_page_num==0)
 		{
-			if(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].free_page_num==0)
+			for(i=0;i<ssd->parameter->block_plane;i++)
 			{
-				active_block=(active_block+1)%ssd->parameter->block_plane;		
-			}
-			else
-			{
-				active_block1=(active_block+1)%ssd->parameter->block_plane;
-				if(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block1].erase_count<ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].erase_count)
+				if(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].free_page_num==0)
 				{
-					active_block=active_block1;
+					active_block=(active_block+1)%ssd->parameter->block_plane;		
+				}
+				else
+				{
+					active_block1=(active_block+1)%ssd->parameter->block_plane;
+					if(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block1].erase_count<ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].erase_count)
+					{
+						active_block=active_block1;
+					}
 				}
 			}
-		}
-		while((free_page_num==0)&&(count<ssd->parameter->block_plane))
-		{
-			active_block=(active_block+1)%ssd->parameter->block_plane;	
-			free_page_num=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].free_page_num;
-			count++;
 		}
 	}
 	else
