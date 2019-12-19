@@ -537,7 +537,7 @@ Status  find_active_block(struct ssd_info *ssd,unsigned int channel,unsigned int
 	unsigned int active_block,active_block1;
 	unsigned int free_page_num=0;
 	unsigned int count=0;
-	int i=0;
+	int i=0,j=0;
 	
 	active_block=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].active_block;
 	free_page_num=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].free_page_num;
@@ -550,16 +550,24 @@ Status  find_active_block(struct ssd_info *ssd,unsigned int channel,unsigned int
 			{
 				if(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].free_page_num==0)
 				{
-					active_block=(active_block+1)%ssd->parameter->block_plane;		
+					active_block=(active_block+1)%ssd->parameter->block_plane;
+					active_block1=(active_block+1)%ssd->parameter->block_plane;		
 				}
 				else
 				{
-					active_block1=(active_block+1)%ssd->parameter->block_plane;
-					if(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block1].erase_count<ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].erase_count)
+					active_block1=(active_block1+1)%ssd->parameter->block_plane;
+					if (ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block1].free_page_num==0)
 					{
-						active_block=active_block1;
+						continue;
 					}
-				}
+					else
+					{
+						if(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block1].erase_count<ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].erase_count)
+						{
+							active_block=active_block1;
+						}
+					}
+				}					
 			}
 		}
 	}
