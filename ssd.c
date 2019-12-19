@@ -3081,7 +3081,7 @@ struct ssd_info *no_buffer_distribute_s(struct ssd_info *ssd)
 			}
 		}
 
-		if(ssd->parameter->allocation_scheme==1&&pflag==0)
+		if((ssd->parameter->allocation_scheme==1||ssd->parameter->allocation_scheme==0)&&pflag==0)
 		{
 			break;
 		}
