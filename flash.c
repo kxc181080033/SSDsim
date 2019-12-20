@@ -1590,8 +1590,10 @@ struct ssd_info *process(struct ssd_info *ssd)
 	sub1=ssd->subs_w_head;  
 	while (sub1!=NULL)
 	{
+		sub1=sub1->next_node;
 		count1++;
 	}
+	count1=count1>ssd->parameter->channel_number?ssd->parameter->channel_number:count1;
 	
 	for(i=0;i<ssd->parameter->channel_number;i++)
 	{        
