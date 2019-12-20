@@ -1578,17 +1578,24 @@ struct ssd_info *process(struct ssd_info *ssd)
 	unsigned int i,j,chan,random_num;     
 	unsigned int flag=0,new_write=0,chg_cur_time_flag=1,flag2=0,flag_gc=0;       
 	int64_t time, channel_time=MAX_INT64;
-	struct sub_request *sub;          
-	int count;
+	struct sub_request *sub,*sub1;          
+	int count=0,count1=0;
 #ifdef DEBUG
 	printf("enter process,  current time:%lld\n",ssd->current_time);
 #endif
 
 	//KXC:to cacluate the channel utilization
-	count=0;  
+	count=0;
+	count1=0;
+	sub1=ssd->subs_w_head;  
+	while (sub1!=NULL)
+	{
+		count1++;
+	}
+	
 	for(i=0;i<ssd->parameter->channel_number;i++)
 	{        
-		if((ssd->channel_head[i].subs_r_head==NULL)&&(ssd->channel_head[i].subs_w_head==NULL)&&(ssd->subs_w_head==NULL))
+		if((ssd->channel_head[i].subs_r_head==NULL)&&(ssd->channel_head[i].subs_w_head==NULL))
 		{
 			continue;
 		}
@@ -1598,7 +1605,7 @@ struct ssd_info *process(struct ssd_info *ssd)
 
 		}	
 	}
-	
+	count=count>count1?count:count1;
 	if (count!=0)
 	{
 		ssd->process_count++;
@@ -3638,6 +3645,7 @@ Status go_one_step(struct ssd_info * ssd, struct sub_request * sub1,struct sub_r
 				*此时channel，chip的当前状态变为CHANNEL_TRANSFER，CHIP_WRITE_BUSY
 				*下一个状态变为CHANNEL_IDLE，CHIP_IDLE
 				*******************************************************************************************************/
+				sub->begin_time=ssd->current_time;
 				sub->current_time=ssd->current_time;
 				sub->current_state=SR_W_TRANSFER;
 				sub->next_state=SR_COMPLETE;        //写子请求将命令传输和数据传输的时间计算放在一起，因为这两个状态连续，且动作相同
