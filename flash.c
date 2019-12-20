@@ -3647,7 +3647,7 @@ Status go_one_step(struct ssd_info * ssd, struct sub_request * sub1,struct sub_r
 				*此时channel，chip的当前状态变为CHANNEL_TRANSFER，CHIP_WRITE_BUSY
 				*下一个状态变为CHANNEL_IDLE，CHIP_IDLE
 				*******************************************************************************************************/
-				sub->begin_time=ssd->current_time;
+				//sub->begin_time=ssd->current_time;
 				sub->current_time=ssd->current_time;
 				sub->current_state=SR_W_TRANSFER;
 				sub->next_state=SR_COMPLETE;        //写子请求将命令传输和数据传输的时间计算放在一起，因为这两个状态连续，且动作相同
