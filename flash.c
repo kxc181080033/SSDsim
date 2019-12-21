@@ -1607,7 +1607,8 @@ struct ssd_info *process(struct ssd_info *ssd)
 
 		}	
 	}
-	count=count>count1?count:count1;
+	count=count+count1;
+	count=count>ssd->parameter->channel_number?ssd->parameter->channel_number:count;
 	if (count!=0)
 	{
 		ssd->process_count++;
