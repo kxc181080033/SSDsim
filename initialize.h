@@ -190,6 +190,8 @@ struct ssd_info{
 	int64_t max_wait_time;               //KXC:to record the max wait time
 	int64_t max_queue_time;              //KXC:to record the max time gap in the request queue
 
+	unsigned int disributed[12];         //KXC:to record the distribution of response time 0.02 0.04 0.1 0.2 0.8 1 2 3 10
+
 	unsigned int min_lsn;
 	unsigned int max_lsn;
 	unsigned long read_count;

@@ -334,6 +334,12 @@ struct ssd_info * initialize_channels(struct ssd_info * ssd )
 		}
 	}
 
+	for ( i = 0; i < 12; i++)
+	{
+		ssd->disributed[i] = 0;   //initialize the distributed
+	}
+	
+
 	return ssd;
 }
 
