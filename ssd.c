@@ -115,7 +115,7 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 		{
 			flag=get_requests(ssd);
 
-			if(flag==0)
+			if(flag==0 || ssd->parameter->scheduling_algorithm == 9)
 			{
 				break;
 			}
@@ -176,7 +176,7 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 		//KXC:here just modify the function no_buffer_distribute so there is no buffer
 		if(ssd->parameter->dram_capacity==0)
 		{
-			if(ssd->parameter->scheduling_algorithm==0||ssd->parameter->scheduling_algorithm==1)
+			if(ssd->parameter->scheduling_algorithm==0||ssd->parameter->scheduling_algorithm==1 )
 			{
 				no_buffer_distribute_s(ssd);
 			}
@@ -184,10 +184,15 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 			{
 				no_buffer_distribute_am(ssd);
 			}
-			else
+			else if(ssd->parameter->scheduling_algorithm==3)
 			{
 				no_buffer_distribute_sch(ssd);
-			}		
+			}
+			else
+			{
+				no_buffer_distribute_original(ssd);
+			}
+					
 		}
 
 		process(ssd);                                      //ִ�д�������
@@ -2970,6 +2975,380 @@ struct ssd_info *no_buffer_distribute_nosch(struct ssd_info *ssd)
 	ssd->max_queue_time=ssd->max_queue_time>(ssd->current_time-req->time)?ssd->max_queue_time:(ssd->current_time-req->time);	
 	return ssd;
 }
+
+struct ssd_info *no_buffer_distribute_s(struct ssd_info *ssd)
+{
+	unsigned int lsn,lpn,last_lpn,first_lpn,complete_flag=0, state;
+	unsigned int flag=0,flag1=1,active_region_flag=0;           //to indicate the lsn is hitted or not
+	struct request *req=NULL,*reqtemp;
+	struct sub_request *sub=NULL,*sub_r=NULL,*update=NULL;
+	struct local *loc=NULL;
+	struct channel_info *p_ch=NULL;
+
+	int64_t nearest_event_time;
+	int64_t next_time;
+	unsigned int mask=0; 
+	unsigned int offset1=0, offset2=0;
+	unsigned int sub_size=0;
+	unsigned int sub_state=0;
+
+	int i=0,pflag=0;
+
+	//KXC:the request is empty,exit and get next request
+	if(ssd->request_queue==NULL)
+	{
+		ssd->empty=1;
+		return 0;
+	}
+	else
+	{
+		next_time=ssd->request_queue->time;
+	}
+		
+	//to find the next not distributed request
+	req=ssd->request_queue;
+	while(req!=NULL)
+	{
+		if (req->dis==1)
+		{
+			if(req->next_node!=NULL)
+			{
+				if(req->next_node->dis==1)
+				{
+					req=req->next_node;
+				}
+				else
+				{
+					req=req->next_node;
+					break;
+				}
+				
+			}
+			else
+			{
+				//req=ssd->request_tail;
+				break;
+			}
+			
+		}	
+		else
+		{
+			//req=ssd->request_tail;
+			break;
+		}
+	} 
+
+	//to update the current time of ssd
+	nearest_event_time=find_nearest_event(ssd);
+	if (nearest_event_time==MAX_INT64)
+	{
+		ssd->current_time=ssd->request_queue->time;           
+	}
+	else
+	{   
+		next_time=req->time;
+		
+		if(nearest_event_time<next_time)
+		{
+			if(req->subs==NULL)     //the request is in the queue but not distribute
+				ssd->current_time=req->time>nearest_event_time?req->time:nearest_event_time;
+			//fseek(ssd->tracefile,filepoint,0); 
+			else
+			{
+				if(ssd->current_time<=nearest_event_time)  //the request has been distributed but not finish
+				{
+					ssd->current_time=nearest_event_time;
+					//return -1;
+				}	
+			}
+			
+		}
+		else
+		{
+
+			if(req->subs!=NULL)   //the request has ben distributed 
+			{
+				ssd->current_time=nearest_event_time;
+			}
+			else
+			{
+				ssd->current_time=next_time>nearest_event_time?next_time:nearest_event_time;
+			}
+			
+		}
+	}
+	
+	
+
+	while(req!=NULL)
+	{
+		if(req->time>ssd->current_time)
+		{
+			break;
+		}
+
+		for(i=0;i<ssd->parameter->channel_number;i++)
+		{          
+			if((ssd->channel_head[i].current_state==CHANNEL_IDLE)||((ssd->channel_head[i].next_state==CHANNEL_IDLE)&&(ssd->channel_head[i].next_state_predict_time<=ssd->current_time)))
+			{
+				pflag=1;                       //所有通靓均无请求处睆。上边一行，对于全动思分酝策略的写�?�求，丝挂在通靓上，需覝冝分酝
+			}
+			else
+			{
+				pflag=0;
+				break;
+			}
+		}
+
+		if((ssd->parameter->allocation_scheme==1||ssd->parameter->allocation_scheme==0)&&pflag==0)
+		{
+			break;
+		}
+
+		ssd->dram->current_time=ssd->current_time;
+		//req=ssd->request_tail;       
+		lsn=req->lsn;
+		lpn=req->lsn/ssd->parameter->subpage_page;
+		last_lpn=(req->lsn+req->size-1)/ssd->parameter->subpage_page;
+		first_lpn=req->lsn/ssd->parameter->subpage_page;
+
+		if(req->subs!=NULL)
+		{
+			req=req->next_node;
+			continue;
+		}
+			
+
+		if(req->operation==READ)        
+		{		
+			while(lpn<=last_lpn) 		
+			{
+				sub_state=(ssd->dram->map->map_entry[lpn].state&0x7fffffff);
+				sub_size=size(sub_state);
+				sub=creat_sub_request(ssd,lpn,sub_size,sub_state,req,req->operation);
+				lpn++;
+			}
+		}
+		else if(req->operation==WRITE)
+		{
+			while(lpn<=last_lpn)     	
+			{	
+				mask=~(0xffffffff<<(ssd->parameter->subpage_page));
+				state=mask;
+				if(lpn==first_lpn)
+				{
+					offset1=ssd->parameter->subpage_page-((lpn+1)*ssd->parameter->subpage_page-req->lsn);
+					state=state&(0xffffffff<<offset1);
+				}
+				if(lpn==last_lpn)
+				{
+					offset2=ssd->parameter->subpage_page-((lpn+1)*ssd->parameter->subpage_page-(req->lsn+req->size));
+					state=state&(~(0xffffffff<<offset2));
+				}
+				sub_size=size(state);
+
+				sub=creat_sub_request(ssd,lpn,sub_size,state,req,req->operation);
+				lpn++;
+			}
+		}
+		req->dis=1;
+		ssd->max_queue_time=ssd->max_queue_time>(ssd->current_time-req->time)?ssd->max_queue_time:(ssd->current_time-req->time);
+		req=req->next_node;
+		if(ssd->parameter->scheduling_algorithm==0)
+		{
+			break;
+		}
+	}
+	return(ssd);	
+}
+
+//no_buffer_dis original?one by one
+struct ssd_info *no_buffer_distribute_original(struct ssd_info *ssd)
+{
+	unsigned int lsn,lpn,last_lpn,first_lpn,complete_flag=0, state;
+	unsigned int flag=0,flag1=1,active_region_flag=0;           //to indicate the lsn is hitted or not
+	struct request *req=NULL,*reqtemp;
+	struct sub_request *sub=NULL,*sub_r=NULL,*update=NULL;
+	struct local *loc=NULL;
+	struct channel_info *p_ch=NULL;
+
+	int64_t nearest_event_time;
+	int64_t next_time;
+	unsigned int mask=0; 
+	unsigned int offset1=0, offset2=0;
+	unsigned int sub_size=0;
+	unsigned int sub_state=0;
+
+	int i=0,pflag=0;
+
+	//KXC:the request is empty,exit and get next request
+	if(ssd->request_queue==NULL)
+	{
+		ssd->empty=1;
+		return 0;
+	}
+	else
+	{
+		next_time=ssd->request_queue->time;
+	}
+		
+	//to find the next not distributed request
+	req=ssd->request_queue;
+	while(req!=NULL)
+	{
+		if (req->dis==1)
+		{
+			if(req->next_node!=NULL)
+			{
+				if(req->next_node->dis==1)
+				{
+					req=req->next_node;
+				}
+				else
+				{
+					req=req->next_node;
+					break;
+				}
+				
+			}
+			else
+			{
+				//req=ssd->request_tail;
+				break;
+			}
+			
+		}	
+		else
+		{
+			//req=ssd->request_tail;
+			break;
+		}
+	} 
+
+	//to update the current time of ssd
+	nearest_event_time=find_nearest_event(ssd);
+	if (nearest_event_time==MAX_INT64)
+	{
+		ssd->current_time=ssd->request_queue->time;           
+	}
+	else
+	{   
+		next_time=req->time;
+		
+		if(nearest_event_time<next_time)
+		{
+			if(req->subs==NULL)     //the request is in the queue but not distribute
+				ssd->current_time=req->time>nearest_event_time?req->time:nearest_event_time;
+			//fseek(ssd->tracefile,filepoint,0); 
+			else
+			{
+				if(ssd->current_time<=nearest_event_time)  //the request has been distributed but not finish
+				{
+					ssd->current_time=nearest_event_time;
+					//return -1;
+				}	
+			}
+			
+		}
+		else
+		{
+
+			if(req->subs!=NULL)   //the request has ben distributed 
+			{
+				ssd->current_time=nearest_event_time;
+			}
+			else
+			{
+				ssd->current_time=next_time>nearest_event_time?next_time:nearest_event_time;
+			}
+			
+		}
+	}
+	
+	
+
+	
+	
+		/*if(req->time>ssd->current_time)
+		{
+			break;
+		}*/
+
+		/*for(i=0;i<ssd->parameter->channel_number;i++)
+		{          
+			if((ssd->channel_head[i].current_state==CHANNEL_IDLE)||((ssd->channel_head[i].next_state==CHANNEL_IDLE)&&(ssd->channel_head[i].next_state_predict_time<=ssd->current_time)))
+			{
+				pflag=1;                       //所有通靓均无请求处睆。上边一行，对于全动思分酝策略的写�?�求，丝挂在通靓上，需覝冝分酝
+			}
+			else
+			{
+				pflag=0;
+				break;
+			}
+		}*/
+
+		/*if((ssd->parameter->allocation_scheme==1||ssd->parameter->allocation_scheme==0)&&pflag==0)
+		{
+			break;
+		}*/
+
+		ssd->dram->current_time=ssd->current_time;
+		//req=ssd->request_tail;       
+		lsn=req->lsn;
+		lpn=req->lsn/ssd->parameter->subpage_page;
+		last_lpn=(req->lsn+req->size-1)/ssd->parameter->subpage_page;
+		first_lpn=req->lsn/ssd->parameter->subpage_page;
+
+		/*if(req->subs!=NULL)
+		{
+			req=req->next_node;
+			continue;
+		}*/
+			
+
+		if(req->operation==READ)        
+		{		
+			while(lpn<=last_lpn) 		
+			{
+				sub_state=(ssd->dram->map->map_entry[lpn].state&0x7fffffff);
+				sub_size=size(sub_state);
+				sub=creat_sub_request(ssd,lpn,sub_size,sub_state,req,req->operation);
+				lpn++;
+			}
+		}
+		else if(req->operation==WRITE)
+		{
+			while(lpn<=last_lpn)     	
+			{	
+				mask=~(0xffffffff<<(ssd->parameter->subpage_page));
+				state=mask;
+				if(lpn==first_lpn)
+				{
+					offset1=ssd->parameter->subpage_page-((lpn+1)*ssd->parameter->subpage_page-req->lsn);
+					state=state&(0xffffffff<<offset1);
+				}
+				if(lpn==last_lpn)
+				{
+					offset2=ssd->parameter->subpage_page-((lpn+1)*ssd->parameter->subpage_page-(req->lsn+req->size));
+					state=state&(~(0xffffffff<<offset2));
+				}
+				sub_size=size(state);
+
+				sub=creat_sub_request(ssd,lpn,sub_size,state,req,req->operation);
+				lpn++;
+			}
+		}
+		req->dis=1;
+		ssd->max_queue_time=ssd->max_queue_time>(ssd->current_time-req->time)?ssd->max_queue_time:(ssd->current_time-req->time);
+		//req=req->next_node;
+		/*if(ssd->parameter->scheduling_algorithm==0)
+		{
+			break;
+		}*/
+	
+	return(ssd);	
+}
+
 
 struct ssd_info *no_buffer_distribute_s(struct ssd_info *ssd)
 {

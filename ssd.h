@@ -49,3 +49,4 @@ struct ssd_info *schedule_ours(struct ssd_info *);   //KXC:the schedule function
 struct ssd_info *schedule_ours_avoid(struct ssd_info *);   //KXC:the schedule function of ours and avoid the conflict
 struct ssd_info *dependency(struct ssd_info *);   //KXC:the schedule function of ours
 void dis_count(struct ssd_info *ssd, int64_t a);
+struct ssd_info *no_buffer_distribute_original(struct ssd_info *);   //KXC:the schedule function of PIQ
