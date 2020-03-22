@@ -2138,7 +2138,7 @@ void trace_output(struct ssd_info* ssd){
 				{
 					wait_time=0;
 				}
-				res = end_time-start_time;
+				res = end_time-req->time;
 				dis_count(ssd,res);
 				//fprintf(ssd->outputfile,"%10I64u %10u %6u %2u %16I64u %16I64u %10I64u\n",req->time,req->lsn, req->size, req->operation, start_time, end_time, end_time-req->time);
 				fprintf(ssd->outputfile,"%16lld %10d %6d %2d %16lld %16lld %10lld %16lld\n",req->time,req->lsn, req->size, req->operation, start_time, end_time, end_time-start_time,wait_time);
@@ -3611,7 +3611,7 @@ void dis_count(struct ssd_info *ssd, int64_t a)
 	{
 		ssd->disributed[2]++;
 	}
-		else if (a > 100000 && a <= 200000)
+	else if (a > 100000 && a <= 200000)
 	{
 		ssd->disributed[3]++;
 	}
@@ -3619,7 +3619,7 @@ void dis_count(struct ssd_info *ssd, int64_t a)
 	{
 		ssd->disributed[4]++;
 	}
-		else if (a > 400000 && a <= 600000)
+	else if (a > 400000 && a <= 600000)
 	{
 		ssd->disributed[5]++;
 	}
@@ -3627,7 +3627,7 @@ void dis_count(struct ssd_info *ssd, int64_t a)
 	{
 		ssd->disributed[6]++;
 	}
-		else if (a > 800000 && a <= 1000000)
+	else if (a > 800000 && a <= 1000000)
 	{
 		ssd->disributed[7]++;
 	}
@@ -3635,7 +3635,7 @@ void dis_count(struct ssd_info *ssd, int64_t a)
 	{
 		ssd->disributed[8]++;
 	}
-		else if (a > 2000000 && a <= 3000000)
+	else if (a > 2000000 && a <= 3000000)
 	{
 		ssd->disributed[9]++;
 	}
