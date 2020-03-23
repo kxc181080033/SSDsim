@@ -1008,7 +1008,7 @@ int uninterrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,u
 	unsigned int block,min_block,active_block,transfer_size,free_page,page_move_count=0;                           /*记录失效页最多的块号*/
 	struct local *  location=NULL;
 	unsigned int invalid_block,valid_block,erase_block,total_invalid_page_num=0;
-	double lamda,score_tmp,score=10000000;
+	double lamda=0.0,score_tmp=0.0,score=10000000.0;
 	int flag =0;
 
 	if(find_active_block(ssd,channel,chip,die,plane)!=SUCCESS)                                           /*获取活跃块*/
@@ -1058,7 +1058,8 @@ int uninterrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,u
 				//min_block=i;						
 			}
 		}
-		if (max_erase - min_erase ==0)
+
+		if ((max_erase - min_erase) ==0)
 		{
 			lamda = 0;
 		}
@@ -1072,7 +1073,7 @@ int uninterrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,u
 		{
 			invalid_block = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num;
 			valid_block = ssd->parameter->page_block - invalid_block-ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].free_page_num;
-			score_tmp = (double)((1-lamda)*(valid_block/(valid_block+invalid_block))+lamda*(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count/(1+max_erase)));
+			score_tmp = (double)((1-lamda)*(valid_block/(valid_block+invalid_block+1))+lamda*(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count/(1+max_erase)));
 			if((active_block!=i)&&(score > score_tmp))
 			{
 				score = score_tmp;
@@ -1104,7 +1105,7 @@ int uninterrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,u
 			}
 		}
 
-		if (max_erase - min_erase >5)   //wl
+		if (max_erase - min_erase >1)   //wl
 		{
 			flag = 0;
 		}
@@ -1120,7 +1121,7 @@ int uninterrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,u
 			{
 				//invalid_block = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num;
 				//valid_block = ssd->parameter->page_block - invalid_block-ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].free_page_num;
-				score_tmp =(double)(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count/max_erase+ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].last_gc_time/ssd->current_time);
+				score_tmp =(double)(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count/(max_erase+1)+ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].last_gc_time/ssd->current_time);
 				if((active_block!=i)&&(score > score_tmp))
 				{
 					score =score_tmp;
