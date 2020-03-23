@@ -39,3 +39,4 @@ int64_t find_nearest_event(struct ssd_info *);
 void free_all_node(struct ssd_info *);
 struct ssd_info *make_aged(struct ssd_info *);
 struct ssd_info *no_buffer_distribute(struct ssd_info *);
+void dis_count(struct ssd_info *ssd, int64_t a);
