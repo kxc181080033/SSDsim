@@ -20,6 +20,7 @@ Hao Luo         2011/01/01        2.0           Change               luohao13568
 
 #include <sys/types.h>
 #include "initialize.h"
+#include <math.h>
 
 #define MAX_INT64  0x7fffffffffffffffll
 

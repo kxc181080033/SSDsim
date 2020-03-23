@@ -306,6 +306,7 @@ struct blk_info{
 	unsigned int invalid_page_num;     //记录该块中失效页的个数，同上
 	int last_write_page;               //记录最近一次写操作执行的页数,-1表示该块没有一页被写过
 	struct page_info *page_head;       //记录每一子页的状态
+	int64_t last_gc_time;
 };
 
 
@@ -483,6 +484,7 @@ struct parameter_value{
 	int aged;                       //1表示需要将这个SSD变成aged，0表示需要将这个SSD保持non-aged
 	float aged_ratio; 
 	int queue_length;               //请求队列的长度限制
+	int WL;
 
 	struct ac_time_characteristics time_characteristics;
 };
