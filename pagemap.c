@@ -620,6 +620,7 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 Status erase_operation(struct ssd_info * ssd,unsigned int channel ,unsigned int chip ,unsigned int die ,unsigned int plane ,unsigned int block)
 {
 	unsigned int i=0;
+	int i, ii, j, m, n, k;
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[block].free_page_num=ssd->parameter->page_block;
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[block].invalid_page_num=0;
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[block].last_write_page=-1;
@@ -637,10 +638,70 @@ Status erase_operation(struct ssd_info * ssd,unsigned int channel ,unsigned int 
 	//KXC:to record the last gc time
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[block].last_gc_time = ssd->current_time;
 
+	//KXC:to update the priority
+	unsigned long channel_t[ssd->parameter->channel_number]; 
+	for (i=0;i<ssd->parameter->channel_number;i++)//???????????????????????????????????????????????°?????????????
+	{
+		channel_t[i] = ssd->channel_head[i].erase_count;
+		unsigned long chip_t[(int)ssd->parameter->chip_channel];
+	    for (ii=0;ii<ssd->parameter->chip_channel[i];ii++)
+        {
+        	chip_t[ii] = ssd->channel_head[i].chip_head[ii].erase_count;
+			/*unsigned long die_t[ssd->parameter->die_chip];
+			for (j=0;j<ssd->parameter->die_chip;j++)
+			{
+				die_t[j] = ssd->channel_head[i].chip_head[ii].die_head[j].erase_count;
+				for (k=0;k<ssd->parameter->plane_die;k++)
+				{
+					printf("%d channel,%d chip,%d die,%d plane has free page num:  %5d\n",i,ii,j,k,ssd->channel_head[i].chip_head[ii].die_head[j].plane_head[k].free_page);
+				}
+            }*/
+			//Priority(ssd->channel_head)
+  	    }
+		Priority(ssd->channel_head[i].chip_priority,chip_t,ssd->parameter->chip_channel);
+	}
+	Priority(ssd->channel_priority,channel_t,ssd->parameter->channel_number);
+	
+
 	return SUCCESS;
 
 }
 
+void Priority(int *b, unsigned long*a, int length)
+{
+    int i, j, token_j = 0;
+    unsigned long temp;
+    unsigned long s[length];
+    for ( i = 0; i < length; i++)
+    {
+        s[i] = a[i];
+    }
+    
+    for ( i = 0; i < length; i++)
+    {
+        for (j = length-1; j > i; j--)
+        {
+            if (s[j] < s[j-1])
+            {
+                temp = s[j];
+                s[j] = s[j-1];
+                s[j-1] = temp;
+            }   
+        }    
+    }
+
+    for ( i = 0; i < length; i++)
+    {
+        for ( j = 0; j < length; j++)
+        {
+            if(a[i] == s[j])
+            {
+                b[token_j++] = j;
+            }
+        }
+        
+    }   
+}
 
 /**************************************************************************************
 *这个函数的功能是处理INTERLEAVE_TWO_PLANE，INTERLEAVE，TWO_PLANE，NORMAL下的擦除的操作。

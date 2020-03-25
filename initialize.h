@@ -189,6 +189,7 @@ struct ssd_info{
 	int64_t max_queue_time;              //KXC:to record the max time gap in the request queue
 
 	unsigned int distributed[12];        //KXC:to record the response time distribution
+	int *channel_priority;               //KXC:to record the prority of channels
 
 	unsigned int min_lsn;
 	unsigned int max_lsn;
@@ -233,6 +234,7 @@ struct ssd_info{
 	struct sub_request *subs_w_tail;
 	struct event_node *event;            //事件队列，每产生一个新的事件，按照时间顺序加到这个队列，在simulate函数最后，根据这个队列队首的时间，确定时间
 	struct channel_info *channel_head;   //指向channel结构体数组的首地址
+	int token_index;
 };
 
 
@@ -254,7 +256,9 @@ struct channel_info{
 	struct sub_request *subs_w_head;     //channel上的写请求队列头，先服务处于队列头的子请求
 	struct sub_request *subs_w_tail;     //channel上的写请求队列，新加进来的子请求加到队尾
 	struct gc_operation *gc_command;     //记录需要产生gc的位置
-	struct chip_info *chip_head;        
+	struct chip_info *chip_head;   
+	int *chip_priority;                   //to recoed the chip priority     
+	int token_index;
 };
 
 
@@ -278,6 +282,8 @@ struct chip_info{
 
     struct ac_time_characteristics ac_timing;  
 	struct die_info *die_head;
+	int *die_priority;
+	int token_index; 
 };
 
 
@@ -285,6 +291,8 @@ struct die_info{
 
 	unsigned int token;                 //在动态分配中，为防止每次分配在第一个plane需要维持一个令牌，每次从令牌所指的位置开始分配
 	struct plane_info *plane_head;
+	int *plane_priority;
+	int token_index;
 	
 };
 
