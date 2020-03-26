@@ -644,31 +644,33 @@ Status erase_operation(struct ssd_info * ssd,unsigned int channel ,unsigned int 
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[block].last_gc_time = ssd->current_time;
 
 	//KXC:to update the priority
-	unsigned long channel_t[ssd->parameter->channel_number]; 
-	for (i=0;i<ssd->parameter->channel_number;i++)//???????????????????????????????????????????????бу?????????????
+	if(ssd->parameter->scheduling_algorithm == 3 && ssd->parameter->allocation_scheme ==0)
 	{
-		channel_t[i] = ssd->channel_head[i].erase_count;
-		unsigned long chip_t[ssd->parameter->chip_channel[i]];
-	    for (ii=0;ii<ssd->parameter->chip_channel[i];ii++)
-        {
-        	chip_t[ii] = ssd->channel_head[i].chip_head[ii].erase_count;
-			unsigned long die_t[ssd->parameter->die_chip];
-			for (j=0;j<ssd->parameter->die_chip;j++)
+		unsigned long channel_t[ssd->parameter->channel_number]; 
+		for (i=0;i<ssd->parameter->channel_number;i++)//???????????????????????????????????????????????бу?????????????
+		{
+			channel_t[i] = ssd->channel_head[i].erase_count;
+			unsigned long chip_t[ssd->parameter->chip_channel[i]];
+			for (ii=0;ii<ssd->parameter->chip_channel[i];ii++)
 			{
-				die_t[j] = ssd->channel_head[i].chip_head[ii].die_head[j].erase_count;
-				unsigned long plane_t[ssd->parameter->plane_die];
-				for (k=0;k<ssd->parameter->plane_die;k++)
+				chip_t[ii] = ssd->channel_head[i].chip_head[ii].erase_count;
+				unsigned long die_t[ssd->parameter->die_chip];
+				for (j=0;j<ssd->parameter->die_chip;j++)
 				{
-					plane_t[k] = ssd->channel_head[i].chip_head[ii].die_head[j].plane_head[k].erase_count;
+					die_t[j] = ssd->channel_head[i].chip_head[ii].die_head[j].erase_count;
+					unsigned long plane_t[ssd->parameter->plane_die];
+					for (k=0;k<ssd->parameter->plane_die;k++)
+					{
+						plane_t[k] = ssd->channel_head[i].chip_head[ii].die_head[j].plane_head[k].erase_count;
+					}
+					Priority(ssd->channel_head[i].chip_head[ii].die_head[j].plane_priority,plane_t,ssd->parameter->plane_die);
 				}
-				Priority(ssd->channel_head[i].chip_head[ii].die_head[j].plane_priority,plane_t,ssd->parameter->plane_die);
-            }
-			Priority(ssd->channel_head[i].chip_head[ii].die_priority,die_t,ssd->parameter->die_chip);
-  	    }
-		Priority(ssd->channel_head[i].chip_priority,chip_t,ssd->parameter->chip_channel[i]);
+				Priority(ssd->channel_head[i].chip_head[ii].die_priority,die_t,ssd->parameter->die_chip);
+			}
+			Priority(ssd->channel_head[i].chip_priority,chip_t,ssd->parameter->chip_channel[i]);
+		}
+		Priority(ssd->channel_priority,channel_t,ssd->parameter->channel_number);
 	}
-	Priority(ssd->channel_priority,channel_t,ssd->parameter->channel_number);
-	
 
 	return SUCCESS;
 
@@ -676,38 +678,24 @@ Status erase_operation(struct ssd_info * ssd,unsigned int channel ,unsigned int 
 
 void Priority(int *b, unsigned long*a, int length)
 {
-    int i, j, token_j = 0;
+    int i, j, temp2 = 0;
     unsigned long temp;
     unsigned long s[length];
     for ( i = 0; i < length; i++)
     {
-        s[i] = a[i];
-    }
-    
-    for ( i = 0; i < length; i++)
-    {
         for (j = length-1; j > i; j--)
         {
-            if (s[j] < s[j-1])
+            if (a[j] < a[j-1])
             {
-                temp = s[j];
-                s[j] = s[j-1];
-                s[j-1] = temp;
+                temp = a[j];
+                a[j] = a[j-1];
+                a[j-1] = temp;
+                temp2 = b[j];
+                b[j] = b[j-1];
+                b[j-1] = temp2;
             }   
         }    
-    }
-
-    for ( i = 0; i < length; i++)
-    {
-        for ( j = 0; j < length; j++)
-        {
-            if(a[i] == s[j])
-            {
-                b[token_j++] = j;
-            }
-        }
-        
-    }   
+    } 
 }
 
 /**************************************************************************************

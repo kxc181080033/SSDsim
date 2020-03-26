@@ -256,6 +256,7 @@ struct die_info * initialize_die(struct die_info * p_die,struct parameter_value 
 {
 	unsigned int i;
 	struct plane_info * p_plane;
+	int k;
 
 	p_die->token=0;
 		
@@ -270,8 +271,12 @@ struct die_info * initialize_die(struct die_info * p_die,struct parameter_value 
 	}
 
 	p_die->plane_priority = (int *)malloc(sizeof(int)*parameter->plane_die);
-	memset(p_die->plane_priority,0,sizeof(int)*parameter->plane_die);
+	//memset(p_die->plane_priority,0,sizeof(int)*parameter->plane_die);
 	p_die->token_index = 0;
+	for (k = 0; k < parameter->plane_die; k++)
+	{
+		p_die->plane_priority[k] = k;
+	}
 
 	return p_die;
 }
@@ -280,6 +285,7 @@ struct chip_info * initialize_chip(struct chip_info * p_chip,struct parameter_va
 {
 	unsigned int i;
 	struct die_info *p_die;
+	int k;
 	
 	p_chip->current_state = CHIP_IDLE;
 	p_chip->next_state = CHIP_IDLE;
@@ -308,15 +314,19 @@ struct chip_info * initialize_chip(struct chip_info * p_chip,struct parameter_va
 	}
 
 	p_chip->die_priority = (int *)malloc(sizeof(int)*parameter->die_chip);
-	memset(p_chip->die_priority,0,sizeof(int)*parameter->die_chip);
+	//memset(p_chip->die_priority,0,sizeof(int)*parameter->die_chip);
 	p_chip->token_index = 0;
+	for (k = 0; k < parameter->die_chip; k++)
+	{
+		p_chip->die_priority[k] = k;
+	}
 
 	return p_chip;
 }
 
 struct ssd_info * initialize_channels(struct ssd_info * ssd )
 {
-	unsigned int i,j;
+	unsigned int i,j,k;
 	struct channel_info * p_channel;
 	struct chip_info * p_chip;
 
@@ -339,7 +349,12 @@ struct ssd_info * initialize_channels(struct ssd_info * ssd )
 		}
 		ssd->channel_head[i].token_index = 0;
 		ssd->channel_head[i].chip_priority = (int *)malloc(sizeof(int)*ssd->parameter->chip_channel[i]);
-		memset(ssd->channel_head[i].chip_priority,0,sizeof(int)*ssd->parameter->chip_channel[i]);
+		//memset(ssd->channel_head[i].chip_priority,0,sizeof(int)*ssd->parameter->chip_channel[i]);
+		for (k = 0; k < ssd->parameter->chip_channel[i]; k++)
+		{
+			ssd->channel_head[i].chip_priority[k] = k;
+		}
+		
 	}
 
 	for ( i = 0; i < 12; i++)
@@ -348,8 +363,13 @@ struct ssd_info * initialize_channels(struct ssd_info * ssd )
 	}
 	
 	ssd->channel_priority = (int *)malloc(sizeof(int)*ssd->parameter->channel_number);
-	memset(p_chip->die_priority,0,sizeof(int)*ssd->parameter->channel_number);
+	//memset(p_chip->die_priority,0,sizeof(int)*ssd->parameter->channel_number);
 	ssd->token_index = 0;
+
+	for (k = 0; k < ssd->parameter->channel_number; k++)
+	{
+		ssd->channel_priority[k] = k;
+	}
 
 	return ssd;
 }
