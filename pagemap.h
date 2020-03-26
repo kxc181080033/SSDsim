@@ -46,6 +46,7 @@ int erase_planes(struct ssd_info * ssd, unsigned int channel, unsigned int chip,
 int move_page(struct ssd_info * ssd, struct local *location,unsigned int * transfer_size);
 int gc_for_channel(struct ssd_info *ssd, unsigned int channel);
 int delete_gc_node(struct ssd_info *ssd, unsigned int channel,struct gc_operation *gc_node);
+void Priority(int *b, unsigned long*a, int length);
 
 #endif
 

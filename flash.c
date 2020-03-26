@@ -1378,7 +1378,16 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 					break;
 				}
 				
-				chip_token=ssd->channel_head[channel].token;                            /*令牌*/
+				if (ssd->parameter->scheduling_algorithm == 3)
+				{
+					chip_token = ssd->channel_head[channel].chip_priority[ssd->channel_head[channel].token_index];
+				}
+				else
+				{
+					chip_token=ssd->channel_head[channel].token; /*令牌*/
+				}
+				
+				//chip_token=ssd->channel_head[channel].token;                            /*令牌*/
 				if (*channel_busy_flag==0)
 				{
 					if((ssd->channel_head[channel].chip_head[chip_token].current_state==CHIP_IDLE)||((ssd->channel_head[channel].chip_head[chip_token].next_state==CHIP_IDLE)&&(ssd->channel_head[channel].chip_head[chip_token].next_state_predict_time<=ssd->current_time)))				
@@ -1387,7 +1396,16 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 							{
 								break;
 							}
-							die_token=ssd->channel_head[channel].chip_head[chip_token].token;	
+
+							if (ssd->parameter->scheduling_algorithm == 3)
+							{
+								die_token = ssd->channel_head[channel].chip_head[chip_token].die_priority[ssd->channel_head[channel].chip_head[chip_token].token_index];
+							}
+							else
+							{
+								die_token=ssd->channel_head[channel].chip_head[chip_token].token;
+							}
+							//die_token=ssd->channel_head[channel].chip_head[chip_token].token;	
 							if (((ssd->parameter->advanced_commands&AD_INTERLEAVE)!=AD_INTERLEAVE)&&((ssd->parameter->advanced_commands&AD_TWOPLANE)!=AD_TWOPLANE))       //can't use advanced commands
 							{
 								sub=find_write_sub_request(ssd,channel);
@@ -1398,11 +1416,27 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 								
 								if(sub->current_state==SR_WAIT)
 								{
-									plane_token=ssd->channel_head[channel].chip_head[chip_token].die_head[die_token].token;
+									if (ssd->parameter->scheduling_algorithm == 3)
+									{
+										plane_token = ssd->channel_head[channel].chip_head[chip_token].die_head[die_token].plane_priority[ssd->channel_head[channel].chip_head[chip_token].die_head[die_token].token_index];
+									}
+									else
+									{
+										plane_token=ssd->channel_head[channel].chip_head[chip_token].die_head[die_token].token;
+									}
+									//plane_token=ssd->channel_head[channel].chip_head[chip_token].die_head[die_token].token;
 
 									get_ppn(ssd,channel,chip_token,die_token,plane_token,sub);
 
-									ssd->channel_head[channel].chip_head[chip_token].die_head[die_token].token=(ssd->channel_head[channel].chip_head[chip_token].die_head[die_token].token+1)%ssd->parameter->plane_die;
+									if (ssd->parameter->scheduling_algorithm == 3)
+									{
+										ssd->channel_head[channel].chip_head[chip_token].die_head[die_token].token_index=(ssd->channel_head[channel].chip_head[chip_token].die_head[die_token].token_index+1)%ssd->parameter->plane_die;
+									}
+									else
+									{
+										ssd->channel_head[channel].chip_head[chip_token].die_head[die_token].token=(ssd->channel_head[channel].chip_head[chip_token].die_head[die_token].token+1)%ssd->parameter->plane_die;
+									}
+									//ssd->channel_head[channel].chip_head[chip_token].die_head[die_token].token=(ssd->channel_head[channel].chip_head[chip_token].die_head[die_token].token+1)%ssd->parameter->plane_die;
 
 									*change_current_time_flag=0;
 
@@ -1419,8 +1453,26 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 									*这里的token的变化完全取决于在这个channel chip die plane下写是否成功 
 									*成功了就break 没成功token就要变化直到找到能写成功的channel chip die plane
 									***************************************************************************/
-									ssd->channel_head[channel].chip_head[chip_token].token=(ssd->channel_head[channel].chip_head[chip_token].token+1)%ssd->parameter->die_chip;
-									ssd->channel_head[channel].token=(ssd->channel_head[channel].token+1)%ssd->parameter->chip_channel[channel];
+									if(ssd->parameter->scheduling_algorithm == 3)
+									{
+										ssd->channel_head[channel].chip_head[chip_token].token_index=(ssd->channel_head[channel].chip_head[chip_token].token_index+1)%ssd->parameter->die_chip;
+									}
+									else
+									{
+										ssd->channel_head[channel].chip_head[chip_token].token=(ssd->channel_head[channel].chip_head[chip_token].token+1)%ssd->parameter->die_chip;
+									}
+
+									if(ssd->parameter->scheduling_algorithm == 3)
+									{
+										ssd->channel_head[channel].token_index=(ssd->channel_head[channel].token_index+1)%ssd->parameter->chip_channel[channel];
+									}
+									else
+									{
+										ssd->channel_head[channel].token=(ssd->channel_head[channel].token+1)%ssd->parameter->chip_channel[channel];
+									}
+
+									//ssd->channel_head[channel].chip_head[chip_token].token=(ssd->channel_head[channel].chip_head[chip_token].token+1)%ssd->parameter->die_chip;
+									//ssd->channel_head[channel].token=(ssd->channel_head[channel].token+1)%ssd->parameter->chip_channel[channel];
 									break;
 								}
 							} 
@@ -1438,12 +1490,31 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 									break;
 								}
 							}	
+						if (ssd->parameter->scheduling_algorithm == 3)
+						{
+							ssd->channel_head[channel].chip_head[chip_token].token_index=(ssd->channel_head[channel].chip_head[chip_token].token_index+1)%ssd->parameter->die_chip;
+						}
+						else
+						{
+							ssd->channel_head[channel].chip_head[chip_token].token=(ssd->channel_head[channel].chip_head[chip_token].token+1)%ssd->parameter->die_chip;
+						}
+						
 								
-						ssd->channel_head[channel].chip_head[chip_token].token=(ssd->channel_head[channel].chip_head[chip_token].token+1)%ssd->parameter->die_chip;
+						//ssd->channel_head[channel].chip_head[chip_token].token=(ssd->channel_head[channel].chip_head[chip_token].token+1)%ssd->parameter->die_chip;
+
 					}
 				}
+				if (ssd->parameter->scheduling_algorithm == 3)
+				{
+					ssd->channel_head[channel].token_index=(ssd->channel_head[channel].token_index+1)%ssd->parameter->chip_channel[channel];
+				}
+				else
+				{
+					ssd->channel_head[channel].token=(ssd->channel_head[channel].token+1)%ssd->parameter->chip_channel[channel];
+				}
+				
 								
-				ssd->channel_head[channel].token=(ssd->channel_head[channel].token+1)%ssd->parameter->chip_channel[channel];
+				//ssd->channel_head[channel].token=(ssd->channel_head[channel].token+1)%ssd->parameter->chip_channel[channel];
 			}
 		} 
 		else if(ssd->parameter->allocation_scheme==1)                                     /*静态分配*/
