@@ -619,7 +619,7 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 
 Status erase_operation(struct ssd_info * ssd,unsigned int channel ,unsigned int chip ,unsigned int die ,unsigned int plane ,unsigned int block)
 {
-	unsigned int i=0;
+	//unsigned int i=0;
 	int i, ii, j, m, n, k;
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[block].free_page_num=ssd->parameter->page_block;
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[block].invalid_page_num=0;
@@ -634,6 +634,11 @@ Status erase_operation(struct ssd_info * ssd,unsigned int channel ,unsigned int 
 	ssd->erase_count++;
 	ssd->channel_head[channel].erase_count++;			
 	ssd->channel_head[channel].chip_head[chip].erase_count++;
+
+	//KXC: update the erase count of die and plane
+
+	ssd->channel_head[channel].chip_head[chip].die_head[die].erase_count++;
+	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].erase_count++;
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].free_page+=ssd->parameter->page_block;
 	//KXC:to record the last gc time
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[block].last_gc_time = ssd->current_time;
@@ -643,22 +648,24 @@ Status erase_operation(struct ssd_info * ssd,unsigned int channel ,unsigned int 
 	for (i=0;i<ssd->parameter->channel_number;i++)//???????????????????????????????????????????????бу?????????????
 	{
 		channel_t[i] = ssd->channel_head[i].erase_count;
-		unsigned long chip_t[(int)ssd->parameter->chip_channel];
+		unsigned long chip_t[ssd->parameter->chip_channel[i]];
 	    for (ii=0;ii<ssd->parameter->chip_channel[i];ii++)
         {
         	chip_t[ii] = ssd->channel_head[i].chip_head[ii].erase_count;
-			/*unsigned long die_t[ssd->parameter->die_chip];
+			unsigned long die_t[ssd->parameter->die_chip];
 			for (j=0;j<ssd->parameter->die_chip;j++)
 			{
 				die_t[j] = ssd->channel_head[i].chip_head[ii].die_head[j].erase_count;
+				unsigned long plane_t[ssd->parameter->plane_die];
 				for (k=0;k<ssd->parameter->plane_die;k++)
 				{
-					printf("%d channel,%d chip,%d die,%d plane has free page num:  %5d\n",i,ii,j,k,ssd->channel_head[i].chip_head[ii].die_head[j].plane_head[k].free_page);
+					plane_t[k] = ssd->channel_head[i].chip_head[ii].die_head[j].plane_head[k].erase_count;
 				}
-            }*/
-			//Priority(ssd->channel_head)
+				Priority(ssd->channel_head[i].chip_head[ii].die_head[j].plane_priority,plane_t,ssd->parameter->plane_die);
+            }
+			Priority(ssd->channel_head[i].chip_head[ii].die_priority,die_t,ssd->parameter->die_chip);
   	    }
-		Priority(ssd->channel_head[i].chip_priority,chip_t,ssd->parameter->chip_channel);
+		Priority(ssd->channel_head[i].chip_priority,chip_t,ssd->parameter->chip_channel[i]);
 	}
 	Priority(ssd->channel_priority,channel_t,ssd->parameter->channel_number);
 	

@@ -336,9 +336,10 @@ struct ssd_info * initialize_channels(struct ssd_info * ssd )
 		{
 			p_chip = &(p_channel->chip_head[j]);
 			initialize_chip(p_chip,ssd->parameter,ssd->current_time );
-			ssd->channel_head[j].token_index = 0;
-			ssd->channel_head[j].chip_priority = (int *)malloc(sizeof(int)*ssd->parameter->chip_channel[i]);
 		}
+		ssd->channel_head[i].token_index = 0;
+		ssd->channel_head[i].chip_priority = (int *)malloc(sizeof(int)*ssd->parameter->chip_channel[i]);
+		memset(ssd->channel_head[i].chip_priority,0,sizeof(int)*ssd->parameter->chip_channel[i]);
 	}
 
 	for ( i = 0; i < 12; i++)

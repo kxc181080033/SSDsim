@@ -293,6 +293,7 @@ struct die_info{
 	struct plane_info *plane_head;
 	int *plane_priority;
 	int token_index;
+	unsigned long erase_count;
 	
 };
 
@@ -305,6 +306,7 @@ struct plane_info{
 	int can_erase_block;                //记录在一个plane中准备在gc操作中被擦除操作的块,-1表示还没有找到合适的块
 	struct direct_erase *erase_node;    //用来记录可以直接删除的块号,在获取新的ppn时，每当出现invalid_page_num==64时，将其添加到这个指针上，供GC操作时直接删除
 	struct blk_info *blk_head;
+	unsigned long erase_count;
 };
 
 
