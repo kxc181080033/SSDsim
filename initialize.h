@@ -307,6 +307,8 @@ struct plane_info{
 	struct direct_erase *erase_node;    //用来记录可以直接删除的块号,在获取新的ppn时，每当出现invalid_page_num==64时，将其添加到这个指针上，供GC操作时直接删除
 	struct blk_info *blk_head;
 	unsigned long erase_count;
+	unsigned long max_erase;
+	unsigned long min_erase;
 };
 
 
