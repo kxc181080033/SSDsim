@@ -1124,7 +1124,7 @@ int uninterrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,u
 			lamda = 2/(1+exp(ssd->parameter->overprovide/(max_erase - min_erase)));
 		}
 
-		//score = (1-lamda)*(valid_block/(valid_block+invalid_block))+lamda*(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[0].erase_count/(1+max_erase));	
+		score = (double)((1-lamda)*(valid_block/(valid_block+invalid_block+1))+lamda*(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count/(1+max_erase)));	
 		for (i=0;i<ssd->parameter->block_plane;i++)
 		{
 			invalid_block = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num;
@@ -1161,7 +1161,7 @@ int uninterrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,u
 			}
 		}
 
-		if (max_erase - min_erase >1)   //wl
+		if (max_erase - min_erase >0)   //wl
 		{
 			flag = 0;
 		}
@@ -1172,7 +1172,7 @@ int uninterrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,u
 
 		if (flag == 0)
 		{
-			//score = (1-lamda)*(valid_block/(valid_block+invalid_block))+lamda*(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[0].erase_count/(1+max_erase));	
+			score=(double)(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count/(max_erase+1)+ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[0].last_gc_time/ssd->current_time);	
 			for (i=0;i<ssd->parameter->block_plane;i++)
 			{
 				//invalid_block = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num;
@@ -1204,7 +1204,7 @@ int uninterrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,u
 
 	if (block==-1)
 	{
-		return 1;
+		return 0;
 	}
 
 
