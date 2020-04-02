@@ -191,6 +191,7 @@ struct ssd_info{
 	int64_t max_queue_time;              //KXC:to record the max time gap in the request queue
 
 	unsigned int disributed[12];         //KXC:to record the distribution of response time 0.02 0.04 0.1 0.2 0.8 1 2 3 10
+	int *channel_priority;               //KXC:to record the prority of channels
 
 	unsigned int min_lsn;
 	unsigned int max_lsn;
@@ -235,6 +236,7 @@ struct ssd_info{
 	struct sub_request *subs_w_tail;
 	struct event_node *event;            //事件队列，每产生一个新的事件，按照时间顺序加到这个队列，在simulate函数最后，根据这个队列队首的时间，确定时间
 	struct channel_info *channel_head;   //指向channel结构体数组的首地址
+	int token_index;
 };
 
 
@@ -256,7 +258,9 @@ struct channel_info{
 	struct sub_request *subs_w_head;     //channel上的写请求队列头，先服务处于队列头的子请求
 	struct sub_request *subs_w_tail;     //channel上的写请求队列，新加进来的子请求加到队尾
 	struct gc_operation *gc_command;     //记录需要产生gc的位置
-	struct chip_info *chip_head;        
+	struct chip_info *chip_head;  
+	int *chip_priority;                   //to recoed the chip priority     
+	int token_index;      
 };
 
 
@@ -280,6 +284,8 @@ struct chip_info{
 
     struct ac_time_characteristics ac_timing;  
 	struct die_info *die_head;
+	int *die_priority;
+	int token_index; 
 };
 
 
@@ -287,6 +293,9 @@ struct die_info{
 
 	unsigned int token;                 //在动态分配中，为防止每次分配在第一个plane需要维持一个令牌，每次从令牌所指的位置开始分配
 	struct plane_info *plane_head;
+	int *plane_priority;
+	int token_index;
+	unsigned long erase_count;
 	
 };
 
@@ -299,6 +308,9 @@ struct plane_info{
 	int can_erase_block;                //记录在一个plane中准备在gc操作中被擦除操作的块,-1表示还没有找到合适的块
 	struct direct_erase *erase_node;    //用来记录可以直接删除的块号,在获取新的ppn时，每当出现invalid_page_num==64时，将其添加到这个指针上，供GC操作时直接删除
 	struct blk_info *blk_head;
+	unsigned long erase_count;
+	unsigned long max_erase;
+	unsigned long min_erase;
 };
 
 
@@ -308,6 +320,7 @@ struct blk_info{
 	unsigned int invalid_page_num;     //记录该块中失效页的个数，同上
 	int last_write_page;               //记录最近一次写操作执行的页数,-1表示该块没有一页被写过
 	struct page_info *page_head;       //记录每一子页的状态
+	int64_t last_gc_time;
 };
 
 
@@ -490,6 +503,7 @@ struct parameter_value{
 	int queue_length;               //请求队列的长度限制
 	int deadline;                   //the maxmium deadline of the shcedule request
 	int avoid;                      //in our schedule algrithm 0-no avoid, 1-yes
+	int WL;
 
 	struct ac_time_characteristics time_characteristics;
 };

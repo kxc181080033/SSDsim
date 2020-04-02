@@ -252,12 +252,13 @@ struct plane_info * initialize_plane(struct plane_info * p_plane,struct paramete
 		p_block = &(p_plane->blk_head[i]);
 		initialize_block( p_block ,parameter);			
 	}
+	
 	return p_plane;
 }
 
 struct die_info * initialize_die(struct die_info * p_die,struct parameter_value *parameter,long long current_time )
 {
-	unsigned int i;
+	unsigned int i, k;
 	struct plane_info * p_plane;
 
 	p_die->token=0;
@@ -271,13 +272,19 @@ struct die_info * initialize_die(struct die_info * p_die,struct parameter_value 
 		p_plane = &(p_die->plane_head[i]);
 		initialize_plane(p_plane,parameter );
 	}
-
+	p_die->plane_priority = (int *)malloc(sizeof(int)*parameter->plane_die);
+	//memset(p_die->plane_priority,0,sizeof(int)*parameter->plane_die);
+	p_die->token_index = 0;
+	for (k = 0; k < parameter->plane_die; k++)
+	{
+		p_die->plane_priority[k] = k;
+	}
 	return p_die;
 }
 
 struct chip_info * initialize_chip(struct chip_info * p_chip,struct parameter_value *parameter,long long current_time )
 {
-	unsigned int i;
+	unsigned int i, k;
 	struct die_info *p_die;
 	
 	p_chip->current_state = CHIP_IDLE;
@@ -305,13 +312,19 @@ struct chip_info * initialize_chip(struct chip_info * p_chip,struct parameter_va
 		p_die = &(p_chip->die_head[i]);
 		initialize_die( p_die,parameter,current_time );	
 	}
-
+	p_chip->die_priority = (int *)malloc(sizeof(int)*parameter->die_chip);
+	//memset(p_chip->die_priority,0,sizeof(int)*parameter->die_chip);
+	p_chip->token_index = 0;
+	for (k = 0; k < parameter->die_chip; k++)
+	{
+		p_chip->die_priority[k] = k;
+	}
 	return p_chip;
 }
 
 struct ssd_info * initialize_channels(struct ssd_info * ssd )
 {
-	unsigned int i,j;
+	unsigned int i,j,k;
 	struct channel_info * p_channel;
 	struct chip_info * p_chip;
 
@@ -332,6 +345,14 @@ struct ssd_info * initialize_channels(struct ssd_info * ssd )
 			p_chip = &(p_channel->chip_head[j]);
 			initialize_chip(p_chip,ssd->parameter,ssd->current_time );
 		}
+		ssd->channel_head[i].token_index = 0;
+		ssd->channel_head[i].chip_priority = (int *)malloc(sizeof(int)*ssd->parameter->chip_channel[i]);
+		//memset(ssd->channel_head[i].chip_priority,0,sizeof(int)*ssd->parameter->chip_channel[i]);
+		for (k = 0; k < ssd->parameter->chip_channel[i]; k++)
+		{
+			ssd->channel_head[i].chip_priority[k] = k;
+		}
+		
 	}
 
 	for ( i = 0; i < 12; i++)
@@ -339,7 +360,14 @@ struct ssd_info * initialize_channels(struct ssd_info * ssd )
 		ssd->disributed[i] = 0;   //initialize the distributed
 	}
 	
+	ssd->channel_priority = (int *)malloc(sizeof(int)*ssd->parameter->channel_number);
+	//memset(p_chip->die_priority,0,sizeof(int)*ssd->parameter->channel_number);
+	ssd->token_index = 0;
 
+	for (k = 0; k < ssd->parameter->channel_number; k++)
+	{
+		ssd->channel_priority[k] = k;
+	}
 	return ssd;
 }
 
@@ -566,7 +594,9 @@ struct parameter_value *load_parameters(char parameter_file[30])
 		}else if((res_eql=strcmp(buf,"deadline")) ==0){
 			sscanf(buf + next_eql,"%d",&p->deadline); 
 		}else if((res_eql=strcmp(buf,"avoid")) ==0){
-			sscanf(buf + next_eql,"%d",&p->avoid); 
+			sscanf(buf + next_eql,"%d",&p->avoid);
+		}else if((res_eql=strcmp(buf,"WL")) ==0){
+			sscanf(buf + next_eql,"%d",&p->WL);   
 		}else if((res_eql=strncmp(buf,"chip number",11)) ==0)
 		{
 			sscanf(buf+12,"%d",&i);
