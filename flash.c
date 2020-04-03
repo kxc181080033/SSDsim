@@ -546,12 +546,21 @@ Status  find_active_block(struct ssd_info *ssd,unsigned int channel,unsigned int
 	{
 		if(free_page_num==0)
 		{
-			active_block=(active_block+1)%ssd->parameter->block_plane;
+			//active_block=(active_block+1)%ssd->parameter->block_plane;
+			for(i=active_block;i<ssd->parameter->block_plane;i++)
+			{
+				if(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].free_page_num== ssd->parameter->page_block)
+				{
+					active_block = i;
+					break;	
+				}				
+			}
 			for(i=0;i<ssd->parameter->block_plane;i++)
 			{
 				if(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].free_page_num== ssd->parameter->page_block && ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count < ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].erase_count)
 				{
-					active_block = i;	
+					active_block = i;
+						
 				}				
 			}
 		}
@@ -560,7 +569,14 @@ Status  find_active_block(struct ssd_info *ssd,unsigned int channel,unsigned int
 	{
 		if(free_page_num==0)
 		{
-			active_block=(active_block+1)%ssd->parameter->block_plane;
+			for(i=active_block;i<ssd->parameter->block_plane;i++)
+			{
+				if(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].free_page_num== ssd->parameter->page_block)
+				{
+					active_block = i;
+					break;	
+				}				
+			}
 			for(i=0;i<ssd->parameter->block_plane;i++)
 			{
 				if(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].free_page_num== ssd->parameter->page_block && ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count > ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].erase_count)
@@ -2620,7 +2636,7 @@ Status make_level_page(struct ssd_info * ssd, struct sub_request * sub0,struct s
 				else
 				{
 					flash_page_state_modify(ssd,sub1,channel,chip,die,plane1,block1,page0);
-					//flash_page_state_modify(ssd,sub1,channel,chip,die,plane1,block1,page1);
+					//(ssd,sub1,channel,chip,die,plane1,block1,page1);
 					return SUCCESS;
 				}
 				
