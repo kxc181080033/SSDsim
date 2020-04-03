@@ -373,6 +373,7 @@ struct ssd_info * initialize_channels(struct ssd_info * ssd )
 	{
 		ssd->channel_priority[k] = k;
 	}
+<<<<<<< HEAD
 	return ssd;
 }
 struct ssd_info * set_erase(struct ssd_info * ssd )
@@ -406,6 +407,8 @@ struct ssd_info * set_erase(struct ssd_info * ssd )
 		}
 			
 	}
+=======
+>>>>>>> 4056b1c54a0eae766f78dc732123a6b7a5ad2ae1
 	return ssd;
 }
 

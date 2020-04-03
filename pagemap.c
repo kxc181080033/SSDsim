@@ -1106,7 +1106,107 @@ int uninterrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,u
 				block=i;						
 			}					
 			
+<<<<<<< HEAD
 		}
+	}
+
+	//KXC:the 2012 meeting's WL  
+	if (ssd->parameter->WL==1)
+	{
+		max_erase = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].max_erase;
+		min_erase = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].min_erase;
+
+
+		if ((max_erase - min_erase) ==0)
+		{
+			lamda = 0;
+		}
+		else
+		{
+			lamda = 2/(1+exp(10/(max_erase - min_erase)));
+		}
+
+		//score = (double)((1-lamda)*(valid_block/(valid_block+invalid_block+1))+lamda*(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count/(1+max_erase)));	
+		for (i=0;i<ssd->parameter->block_plane;i++)
+		{
+			invalid_block = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num;
+			valid_block = ssd->parameter->page_block - invalid_block-ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].free_page_num;
+			score_tmp = (double)((1-lamda)*(valid_block/(valid_block+invalid_block+1))+lamda*(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count/(1+max_erase)));
+			if((active_block!=i)&&(score > score_tmp))
+			{
+				score = score_tmp;
+				block = i;
+
+			}
+		}
+	}
+		
+	//KXC:the WL of 2017 paper
+	if (ssd->parameter->WL==2)
+	{
+		#if 0
+		max_erase = 0;
+		min_erase = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[0].erase_count;
+		//min_invalid_page = 0;
+		for(i=0;i<ssd->parameter->block_plane;i++)                                                           /*查找最多invalid_page的块号，以及最大的invalid_page_num*/
+		{	
+			//total_invalid_page_num+=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num;
+			if((active_block!=i)&&(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count>max_erase))						
+			{				
+				
+				max_erase = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count;
+				//block=i;						
+			}
+			if((active_block!=i)&&(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count<min_erase))						
+			{				
+				min_erase=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count;
+				//min_block=i;						
+			}
+		}
+		#endif
+		max_erase = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].max_erase;
+		min_erase = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].min_erase;
+		if (max_erase - min_erase >0)   //wl
+		{
+			flag = 0;
+		}
+		else
+		{
+			flag = 1;                   //ferformace
+		}
+
+		if (flag == 0)
+		{
+			//score=(double)(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count/(max_erase+1)+ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[0].last_gc_time/ssd->current_time);	
+			for (i=0;i<ssd->parameter->block_plane;i++)
+			{
+				//invalid_block = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num;
+				//valid_block = ssd->parameter->page_block - invalid_block-ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].free_page_num;
+				score_tmp =(double)(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count/(max_erase+1)+ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].last_gc_time/ssd->current_time);
+				if((active_block!=i)&&(score > score_tmp))
+				{
+					score =score_tmp;
+					block = i;
+				}
+			}
+						
+		}
+		else
+		{
+			for(i=0;i<ssd->parameter->block_plane;i++)                                                           /*查找最多invalid_page的块号，以及最大的invalid_page_num*/
+			{	
+				total_invalid_page_num+=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num;
+				if((active_block!=i)&&(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num>invalid_page))						
+				{				
+					invalid_page=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num;
+					block=i;						
+				}					
+			}
+=======
+>>>>>>> 4056b1c54a0eae766f78dc732123a6b7a5ad2ae1
+		}
+		
+		
 	}
 
 	//KXC:the 2012 meeting's WL  
@@ -1207,6 +1307,7 @@ int uninterrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,u
 	}
 	if (block==-1)
 	{
+<<<<<<< HEAD
 		for(i=0;i<ssd->parameter->block_plane;i++)                                                           /*查找最多invalid_page的块号，以及最大的invalid_page_num*/
 		{	
 			total_invalid_page_num+=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num;
@@ -1217,6 +1318,9 @@ int uninterrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,u
 			}					
 			
 		}
+=======
+		return 0;
+>>>>>>> 4056b1c54a0eae766f78dc732123a6b7a5ad2ae1
 	}
 
 	//if(invalid_page<5)
