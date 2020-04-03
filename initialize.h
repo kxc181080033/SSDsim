@@ -227,7 +227,7 @@ struct ssd_info{
 	FILE * tracefile;
 	FILE * statisticfile;
 	FILE * statisticfile2;
-
+  
     struct parameter_value *parameter;   //SSD参数因子
 	struct dram_info *dram;
 	struct request *request_queue;       //dynamic request queue
