@@ -122,6 +122,11 @@ struct ssd_info *initiation(struct ssd_info *ssd)
 	memset(ssd->channel_head,0,ssd->parameter->channel_number * sizeof(struct channel_info));
 	initialize_channels(ssd );
 	
+	if (ssd->parameter->wear_leveling == 1)
+	{
+		set_erase(ssd);
+	}
+	
 
 	printf("\n");
 	ssd->outputfile=fopen(ssd->outputfilename,"w");
@@ -370,7 +375,39 @@ struct ssd_info * initialize_channels(struct ssd_info * ssd )
 	}
 	return ssd;
 }
-
+struct ssd_info * set_erase(struct ssd_info * ssd )
+{
+	unsigned int i,j,m,n,b;
+	for(i = 0; i < ssd->parameter->channel_number/3; i++)
+	{
+		if (ssd->parameter->wear_leveling == 1)
+		{
+			for (j = 0; j < ssd->parameter->chip_channel[i]/3; j++)
+			{
+				for (m = 0; m < ssd->parameter->die_chip/3; m++)
+				{
+					for (n = 0; i < ssd->parameter->plane_die/3; n++)
+					{
+						ssd->channel_head[i].chip_head[j].die_head[m].plane_head[n].max_erase = 15;
+						for (b = 0; b < ssd->parameter->block_plane; b++)
+						{
+							ssd->erase_count++;
+							ssd->channel_head[i].erase_count++;			
+							ssd->channel_head[i].chip_head[j].erase_count++;
+							ssd->channel_head[i].chip_head[j].die_head[m].erase_count++;
+							ssd->channel_head[i].chip_head[j].die_head[m].plane_head[n].erase_count++;
+							ssd->channel_head[i].chip_head[j].die_head[m].plane_head[n].blk_head[b].erase_count += b % 15;
+						}
+					}
+					
+				}
+				
+			}
+		}
+			
+	}
+	return ssd;
+}
 
 /*************************************************
 *将page.parameters里面的参数导入到ssd->parameter里
