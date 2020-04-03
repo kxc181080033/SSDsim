@@ -384,9 +384,9 @@ struct ssd_info * set_erase(struct ssd_info * ssd )
 		{
 			for (j = 0; j < ssd->parameter->chip_channel[i]/3; j++)
 			{
-				for (m = 0; m < ssd->parameter->die_chip/3; m++)
+				for (m = 0; m < ssd->parameter->die_chip; m++)
 				{
-					for (n = 0; i < ssd->parameter->plane_die/3; n++)
+					for (n = 0; n < ssd->parameter->plane_die; n++)
 					{
 						ssd->channel_head[i].chip_head[j].die_head[m].plane_head[n].max_erase = 15;
 						for (b = 0; b < ssd->parameter->block_plane; b++)
@@ -396,7 +396,7 @@ struct ssd_info * set_erase(struct ssd_info * ssd )
 							ssd->channel_head[i].chip_head[j].erase_count++;
 							ssd->channel_head[i].chip_head[j].die_head[m].erase_count++;
 							ssd->channel_head[i].chip_head[j].die_head[m].plane_head[n].erase_count++;
-							ssd->channel_head[i].chip_head[j].die_head[m].plane_head[n].blk_head[b].erase_count += b % 15;
+							ssd->channel_head[i].chip_head[j].die_head[m].plane_head[n].blk_head[b].erase_count = b % 15;
 						}
 					}
 					
