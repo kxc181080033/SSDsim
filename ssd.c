@@ -2257,16 +2257,16 @@ void trace_output(struct ssd_info* ssd){
 *******************************************************************************/
 void statistic_output(struct ssd_info *ssd)
 {
-	unsigned int lpn_count=0,i,ii,j,k,m,erase=0,plane_erase=0,chip_erase = 0, channel_erase = 0;
+	unsigned int lpn_count=0,i,ii,j,k,m,erase=0,plane_erase=0,die_erase=0,chip_erase = 0, channel_erase = 0;
 	double gc_energy=0.0;
-	unsigned int erase_block_avg=0,erase_plane_avg=0, erase_chip_avg=0, erase_channel_avg = 0;
-	double std_block=0,std_plane=0, std_chip = 0, std_channel = 0;
+	unsigned int erase_block_avg=0,erase_plane_avg=0, erase_die_avg=0,erase_chip_avg=0, erase_channel_avg = 0;
+	double std_block=0,std_plane=0, std_die = 0, std_chip = 0, std_channel = 0;
 #ifdef DEBUG
 	printf("enter statistic_output,  current time:%lld\n",ssd->current_time);
 #endif
 
 /************KXC:?????????????????????  2019.8.12*********/
-	for(i=0;i<ssd->parameter->channel_number;i++)
+	/*for(i=0;i<ssd->parameter->channel_number;i++)
 	{
 		//channel_erase = 0;
 		for (ii=0;ii<ssd->parameter->chip_channel[i];ii++)
@@ -2289,47 +2289,43 @@ void statistic_output(struct ssd_info *ssd)
 			  }
 		    }
 	    }
-	}
+	}*/
 
-	erase_block_avg=erase/(ssd->parameter->channel_number*ssd->parameter->chip_channel[0]*ssd->parameter->die_chip*ssd->parameter->plane_die*ssd->parameter->block_plane);
-	erase_plane_avg=erase/(ssd->parameter->channel_number*ssd->parameter->chip_channel[0]*ssd->parameter->die_chip*ssd->parameter->plane_die);
-	erase_chip_avg = erase/(ssd->parameter->channel_number*ssd->parameter->chip_channel[0]);
-	erase_channel_avg=erase/(ssd->parameter->channel_number);
+	erase_block_avg=ssd->erase_count/(ssd->parameter->channel_number*ssd->parameter->chip_channel[0]*ssd->parameter->die_chip*ssd->parameter->plane_die*ssd->parameter->block_plane);
+	erase_plane_avg=ssd->erase_count/(ssd->parameter->channel_number*ssd->parameter->chip_channel[0]*ssd->parameter->die_chip*ssd->parameter->plane_die);
+	erase_die_avg=ssd->erase_count/(ssd->parameter->channel_number*ssd->parameter->chip_channel[0]*ssd->parameter->die_chip);
+	erase_chip_avg =ssd->erase_count/(ssd->parameter->channel_number*ssd->parameter->chip_channel[0]);
+	erase_channel_avg=ssd->erase_count/(ssd->parameter->channel_number);
 	//KXC: to calcute the standard deviation of block erase counts
 	for(i=0;i<ssd->parameter->channel_number;i++)
 	{
-		channel_erase = 0;
+		//channel_erase = 0;
 		for (ii=0;ii<ssd->parameter->chip_channel[i];ii++)
         { 
-			chip_erase = 0;
+			//chip_erase = 0;
 			for(j=0;j<ssd->parameter->die_chip;j++)
 			{
 			  	for(k=0;k<ssd->parameter->plane_die;k++)
 			  	{
-					plane_erase=0;
+					//plane_erase=0;
 					for(m=0;m<ssd->parameter->block_plane;m++)
 					{
-						if(ssd->channel_head[i].chip_head[ii].die_head[j].plane_head[k].blk_head[m].erase_count>0)
-						{
-							//erase=erase+ssd->channel_head[i].chip_head[ii].die_head[j].plane_head[k].blk_head[m].erase_count;
-							plane_erase+=ssd->channel_head[i].chip_head[ii].die_head[j].plane_head[k].blk_head[m].erase_count;
-						}
-
 						std_block=std_block+(ssd->channel_head[i].chip_head[ii].die_head[j].plane_head[k].blk_head[m].erase_count-erase_block_avg)*(ssd->channel_head[i].chip_head[ii].die_head[j].plane_head[k].blk_head[m].erase_count-erase_block_avg);	
 					}
-					std_plane=std_plane+(plane_erase-erase_plane_avg)*(plane_erase-erase_plane_avg);
-					chip_erase = chip_erase + plane_erase;
-					channel_erase = channel_erase + plane_erase;
+					std_plane=std_plane+(ssd->channel_head[i].chip_head[ii].die_head[j].plane_head[k].erase_count-erase_plane_avg)*(ssd->channel_head[i].chip_head[ii].die_head[j].plane_head[k].erase_count-erase_plane_avg);
 			    }
+				std_die=std_die+(ssd->channel_head[i].chip_head[ii].die_head[j].erase_count-erase_die_avg)*(ssd->channel_head[i].chip_head[ii].die_head[j].erase_count-erase_die_avg);
 		    }
-			std_chip = std_chip + (chip_erase-erase_chip_avg)*(chip_erase-erase_chip_avg);
+			std_chip = std_chip + (ssd->channel_head[i].chip_head[ii].erase_count-erase_chip_avg)*(ssd->channel_head[i].chip_head[ii].erase_count-erase_chip_avg);
 	    }
-		std_channel = std_channel + (channel_erase-erase_channel_avg)*(channel_erase-erase_channel_avg);
+		std_channel = std_channel + (ssd->channel_head[i].erase_count-erase_channel_avg)*(ssd->channel_head[i].erase_count-erase_channel_avg);
 	}
-	std_plane=std_plane/(ssd->parameter->channel_number*ssd->parameter->chip_channel[0]*ssd->parameter->die_chip*ssd->parameter->plane_die);
-	std_block=std_block/(ssd->parameter->channel_number*ssd->parameter->chip_channel[0]*ssd->parameter->die_chip*ssd->parameter->plane_die*ssd->parameter->block_plane);
-	std_channel=std_channel/(ssd->parameter->channel_number*ssd->parameter->chip_channel[0]);
-	std_channel=std_channel/(ssd->parameter->channel_number);
+	
+	std_block=std_block/(ssd->parameter->channel_number*ssd->parameter->chip_channel[0]*ssd->parameter->die_chip*ssd->parameter->plane_die*ssd->parameter->block_plane-1);
+	std_plane=std_plane/(ssd->parameter->channel_number*ssd->parameter->chip_channel[0]*ssd->parameter->die_chip*ssd->parameter->plane_die-1);
+	std_die=std_die/(ssd->parameter->channel_number*ssd->parameter->chip_channel[0]*ssd->parameter->die_chip-1);
+	std_chip=std_chip/(ssd->parameter->channel_number*ssd->parameter->chip_channel[0]-1);
+	std_channel=std_channel/(ssd->parameter->channel_number-1);
 	fprintf(ssd->outputfile,"\n");
 	fprintf(ssd->outputfile,"\n");
 	fprintf(ssd->outputfile,"---------------------------statistic data---------------------------\n");
@@ -2359,7 +2355,7 @@ void statistic_output(struct ssd_info *ssd)
 	fprintf(ssd->outputfile,"multiple plane erase count: %13d\n",ssd->mplane_erase_conut);
 	fprintf(ssd->outputfile,"interleave multiple plane erase count: %13d\n",ssd->interleave_mplane_erase_count);
 	fprintf(ssd->outputfile,"\n");
-	fprintf(ssd->outputfile,"erase: %13d\n",erase);
+	fprintf(ssd->outputfile,"erase: %13d\n",ssd->erase_count);
 	fprintf(ssd->outputfile,"block erase standard deviation: %.3f\n",sqrt(std_block));
 	fprintf(ssd->outputfile,"plane erase standard deviation: %.3f\n",sqrt(std_plane));
 	fprintf(ssd->outputfile,"raw count: %13d\n",ssd->raw);
@@ -2422,7 +2418,7 @@ void statistic_output(struct ssd_info *ssd)
 	fprintf(ssd->statisticfile,"multiple plane erase count: %13d\n",ssd->mplane_erase_conut);
 	fprintf(ssd->statisticfile,"interleave multiple plane erase count: %13d\n",ssd->interleave_mplane_erase_count);
 	fprintf(ssd->statisticfile,"\n");
-	fprintf(ssd->statisticfile,"erase: %13d\n",erase);
+	//fprintf(ssd->statisticfile,"erase: %13d\n",erase);
 	fprintf(ssd->statisticfile,"block erase standard deviation: %.3f\n",sqrt(std_block));
 	fprintf(ssd->statisticfile,"plane erase standard deviation: %.3f\n",sqrt(std_plane));
 	fprintf(ssd->statisticfile,"raw count: %13d\n",ssd->raw);
@@ -2465,6 +2461,7 @@ void statistic_output(struct ssd_info *ssd)
 		
 	fprintf(ssd->statisticfile,"\n");
 
+	fprintf(ssd->statisticfile,"die erase standard deviation: %.3f\n",sqrt(std_die));
 	fprintf(ssd->statisticfile,"chip erase standard deviation: %.3f\n",sqrt(std_chip));
 	fprintf(ssd->statisticfile,"channel erase standard deviation: %.3f\n",sqrt(std_channel));
 
