@@ -544,7 +544,7 @@ struct ssd_info *distribute(struct ssd_info *ssd)
 **********************************************************************/
 void trace_output(struct ssd_info* ssd){
 	int flag = 1;	
-	int64_t start_time, end_time,wait_time;
+	int64_t start_time, end_time,wait_time,res;
 	struct request *req, *pre_node;
 	struct sub_request *sub, *tmp;
 	int i,channel,chip;
@@ -671,7 +671,8 @@ void trace_output(struct ssd_info* ssd){
 				{
 					wait_time=0;
 				}
-							
+				res = end_time-req->time;
+				dis_count(ssd,res);			
 				//fprintf(ssd->outputfile,"%10I64u %10u %6u %2u %16I64u %16I64u %10I64u\n",req->time,req->lsn, req->size, req->operation, start_time, end_time, end_time-req->time);
 				fprintf(ssd->outputfile,"%16lld %10d %6d %2d %16lld %16lld %10lld %16lld\n",req->time,req->lsn, req->size, req->operation, start_time, end_time, end_time-req->time,wait_time);
 				fflush(ssd->outputfile);
@@ -790,10 +791,10 @@ void trace_output(struct ssd_info* ssd){
 *******************************************************************************/
 void statistic_output(struct ssd_info *ssd)
 {
-	unsigned int lpn_count=0,i,ii,j,k,m,erase=0,plane_erase=0;
+	unsigned int lpn_count=0,i,ii,j,k,m,erase=0,plane_erase=0,channel_erase = 0;
 	double gc_energy=0.0;
-	unsigned int erase_block_avg=0,erase_plane_avg=0;
-	double std_block=0,std_plane=0;
+	unsigned int erase_block_avg=0,erase_plane_avg=0, erase_channel_avg = 0;
+	double std_block=0,std_plane=0, std_channel = 0;
 #ifdef DEBUG
 	printf("enter statistic_output,  current time:%lld\n",ssd->current_time);
 #endif
@@ -801,6 +802,7 @@ void statistic_output(struct ssd_info *ssd)
 /************KXC:�޸����ʹ������߼�  2019.8.12*********/
 	for(i=0;i<ssd->parameter->channel_number;i++)
 	{
+		//channel_erase = 0;
 		for (ii=0;ii<ssd->parameter->chip_channel[i];ii++)
         { 
 			for(j=0;j<ssd->parameter->die_chip;j++)
@@ -825,13 +827,15 @@ void statistic_output(struct ssd_info *ssd)
 
 	erase_block_avg=erase/(ssd->parameter->channel_number*ssd->parameter->chip_channel[0]*ssd->parameter->die_chip*ssd->parameter->plane_die*ssd->parameter->block_plane);
 	erase_plane_avg=erase/(ssd->parameter->channel_number*ssd->parameter->chip_channel[0]*ssd->parameter->die_chip*ssd->parameter->plane_die);
+	erase_channel_avg=erase/(ssd->parameter->channel_number);
 	//KXC: to calcute the standard deviation of block erase counts
 	for(i=0;i<ssd->parameter->channel_number;i++)
 	{
+		channel_erase = 0;
 		for (ii=0;ii<ssd->parameter->chip_channel[i];ii++)
         { 
 			for(j=0;j<ssd->parameter->die_chip;j++)
-		   {
+			{
 			  for(k=0;k<ssd->parameter->plane_die;k++)
 			  {
 				plane_erase=0;
@@ -841,17 +845,20 @@ void statistic_output(struct ssd_info *ssd)
 					{
 						//erase=erase+ssd->channel_head[i].chip_head[ii].die_head[j].plane_head[k].blk_head[m].erase_count;
 						plane_erase+=ssd->channel_head[i].chip_head[ii].die_head[j].plane_head[k].blk_head[m].erase_count;
-						std_block=std_block+(ssd->channel_head[i].chip_head[ii].die_head[j].plane_head[k].blk_head[m].erase_count-erase_block_avg)*(ssd->channel_head[i].chip_head[ii].die_head[j].plane_head[k].blk_head[m].erase_count-erase_block_avg);
 					}
+
+					std_block=std_block+(ssd->channel_head[i].chip_head[ii].die_head[j].plane_head[k].blk_head[m].erase_count-erase_block_avg)*(ssd->channel_head[i].chip_head[ii].die_head[j].plane_head[k].blk_head[m].erase_count-erase_block_avg);	
 				}
 				std_plane=std_plane+(plane_erase-erase_plane_avg)*(plane_erase-erase_plane_avg);
+				channel_erase = channel_erase + plane_erase;
 			  }
 		    }
 	    }
+		std_channel = std_channel + (channel_erase-erase_channel_avg)*(channel_erase-erase_channel_avg);
 	}
 	std_plane=std_plane/(ssd->parameter->channel_number*ssd->parameter->chip_channel[0]*ssd->parameter->die_chip*ssd->parameter->plane_die);
 	std_block=std_block/(ssd->parameter->channel_number*ssd->parameter->chip_channel[0]*ssd->parameter->die_chip*ssd->parameter->plane_die*ssd->parameter->block_plane);
-	
+	std_channel=std_channel/(ssd->parameter->channel_number);
 	fprintf(ssd->outputfile,"\n");
 	fprintf(ssd->outputfile,"\n");
 	fprintf(ssd->outputfile,"---------------------------statistic data---------------------------\n");	 
@@ -970,7 +977,23 @@ void statistic_output(struct ssd_info *ssd)
 	//fprintf(ssd->statisticfile,"channel utilization: %.3f\n",ssd->channel_utilization/(ssd->parameter->channel_number*ssd->process_count));
 	//fprintf(ssd->statisticfile,"chip utilization: %.3f\n",ssd->chip_utilization/(ssd->parameter->channel_number*ssd->parameter->chip_channel[0]*ssd->process_count1));
 	fprintf(ssd->statisticfile,"\n");
+
+	fprintf(ssd->statisticfile,"0-0.02: %.3f\n",((double)ssd->distributed[0])/(double)(ssd->read_request_count+ssd->write_request_count));
+	fprintf(ssd->statisticfile,"0.02-0.04: %.3f\n",((double)ssd->distributed[1])/(double)(ssd->read_request_count+ssd->write_request_count));
+	fprintf(ssd->statisticfile,"0.04-0.1: %.3f\n",((double)ssd->distributed[2])/(double)(ssd->read_request_count+ssd->write_request_count));
+	fprintf(ssd->statisticfile,"0.1-0.2: %.3f\n",((double)ssd->distributed[3])/(double)(ssd->read_request_count+ssd->write_request_count));
+	fprintf(ssd->statisticfile,"0.2-0.4: %.3f\n",((double)ssd->distributed[4])/(double)(ssd->read_request_count+ssd->write_request_count));
+	fprintf(ssd->statisticfile,"0.4-0.6: %.3f\n",((double)ssd->distributed[5])/(double)(ssd->read_request_count+ssd->write_request_count));
+	fprintf(ssd->statisticfile,"0.6-0.8: %.3f\n",((double)ssd->distributed[6])/(double)(ssd->read_request_count+ssd->write_request_count));
+	fprintf(ssd->statisticfile,"0.8-1: %.3f\n",((double)ssd->distributed[7])/(double)(ssd->read_request_count+ssd->write_request_count));
+	fprintf(ssd->statisticfile,"1-2: %.3f\n",((double)ssd->distributed[8])/(double)(ssd->read_request_count+ssd->write_request_count));
+	fprintf(ssd->statisticfile,"2-3: %.3f\n",((double)ssd->distributed[9])/(double)(ssd->read_request_count+ssd->write_request_count));
+	fprintf(ssd->statisticfile,"3-10: %.3f\n",((double)ssd->distributed[10])/(double)(ssd->read_request_count+ssd->write_request_count));
+	fprintf(ssd->statisticfile,"10: %.3f\n",((double)ssd->distributed[11])/(double)(ssd->read_request_count+ssd->write_request_count));
 	
+	fprintf(ssd->statisticfile,"\n");
+
+	fprintf(ssd->statisticfile,"channel erase standard deviation: %.3f\n",sqrt(std_channel));
 	fflush(ssd->statisticfile);
 	fclose(ssd->statisticfile);
 }
@@ -1247,3 +1270,56 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 }
 
 
+void dis_count(struct ssd_info *ssd, int64_t a)
+{
+	if (a <= 20000)
+	{
+		ssd->distributed[0]++;
+	}
+	else if (a > 20000 && a <= 40000)
+	{
+		ssd->distributed[1]++;
+	}
+	else if (a > 40000 && a <= 100000)
+	{
+		ssd->distributed[2]++;
+	}
+	else if (a > 100000 && a <= 200000)
+	{
+		ssd->distributed[3]++;
+	}
+	else if (a > 200000 && a <= 400000)
+	{
+		ssd->distributed[4]++;
+	}
+	else if (a > 400000 && a <= 600000)
+	{
+		ssd->distributed[5]++;
+	}
+	else if (a > 600000 && a <= 800000)
+	{
+		ssd->distributed[6]++;
+	}
+	else if (a > 800000 && a <= 1000000)
+	{
+		ssd->distributed[7]++;
+	}
+	else if (a > 1000000 && a <= 2000000)
+	{
+		ssd->distributed[8]++;
+	}
+	else if (a > 2000000 && a <= 3000000)
+	{
+		ssd->distributed[9]++;
+	}
+	else if (a > 3000000 && a <= 10000000)
+	{
+		ssd->distributed[10]++;
+	}
+	else 
+	{
+		ssd->distributed[11]++;
+	}
+
+	
+}
