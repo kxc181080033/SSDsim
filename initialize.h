@@ -483,6 +483,7 @@ struct parameter_value{
 	int aged;                       //1表示需要将这个SSD变成aged，0表示需要将这个SSD保持non-aged
 	float aged_ratio; 
 	int queue_length;               //请求队列的长度限制
+	int active_erase;				//KXC_2：to indicate whether adopt active block erase when channel idle
 
 	struct ac_time_characteristics time_characteristics;
 };

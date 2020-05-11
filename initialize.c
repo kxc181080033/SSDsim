@@ -559,7 +559,9 @@ struct parameter_value *load_parameters(char parameter_file[30])
 		}else if((res_eql=strcmp(buf,"aged ratio")) ==0){
 			sscanf(buf + next_eql,"%f",&p->aged_ratio); 
 		}else if((res_eql=strcmp(buf,"queue_length")) ==0){
-			sscanf(buf + next_eql,"%d",&p->queue_length); 
+			sscanf(buf + next_eql,"%d",&p->queue_length);
+		}else if((res_eql=strcmp(buf,"active_erase")) ==0){
+			sscanf(buf + next_eql,"%d",&p->active_erase); 
 		}else if((res_eql=strncmp(buf,"chip number",11)) ==0)
 		{
 			sscanf(buf+12,"%d",&i);

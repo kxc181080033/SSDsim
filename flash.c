@@ -1541,10 +1541,12 @@ struct ssd_info *process(struct ssd_info *ssd)
 	*初始认为需要调整，置为1，当任何一个channel处理了传送命令或者数据时，这个值置为0，表示不需要调整；
 	**********************************************************************************************************/
 	int old_ppn=-1,flag_die=-1; 
-	unsigned int i,chan,random_num;     
+	unsigned int i,j,chan,chip,die,plane,random_num;     
 	unsigned int flag=0,new_write=0,chg_cur_time_flag=1,flag2=0,flag_gc=0;       
 	int64_t time, channel_time=MAX_INT64;
-	struct sub_request *sub;          
+	struct sub_request *sub;
+	unsigned int current_state=0, next_state=0; 
+	long long next_state_predict_time=0;         
 
 #ifdef DEBUG
 	printf("enter process,  current time:%lld\n",ssd->current_time);
@@ -1553,6 +1555,7 @@ struct ssd_info *process(struct ssd_info *ssd)
 	/*********************************************************
 	*判断是否有读写子请求，如果有那么flag令为0，没有flag就为1
 	*当flag为1时，若ssd中有gc操作这时就可以执行gc操作
+	*这里没有问题，不管有没有GC都先切换不影响通道状态的读子请求。若无读写请求再去所有通道GC
 	**********************************************************/
 	for(i=0;i<ssd->parameter->channel_number;i++)
 	{          
@@ -1621,7 +1624,35 @@ struct ssd_info *process(struct ssd_info *ssd)
 				services_2_write(ssd,i,&flag,&chg_cur_time_flag);
 				
 			}	
+
+
 		}	
+
+		//KXC_2:to erase blocks that all pages are invalid when the plane is idel
+		if(ssd->parameter->active_erase == 1)
+		{
+			if((ssd->channel_head[i].current_state==CHANNEL_IDLE)||(ssd->channel_head[i].next_state==CHANNEL_IDLE&&ssd->channel_head[i].next_state_predict_time<=ssd->current_time))
+			{
+				for(chip = 0; chip < ssd->parameter->chip_channel[0];chip++)
+				{
+					
+					current_state=ssd->channel_head[chan].chip_head[chip].current_state;
+					next_state=ssd->channel_head[chan].chip_head[chip].next_state;
+					next_state_predict_time=ssd->channel_head[chan].chip_head[chip].next_state_predict_time;
+					if((current_state==CHIP_IDLE)||((next_state==CHIP_IDLE)&&(next_state_predict_time<=ssd->current_time)))
+					{
+						for(die = 0; die < ssd->parameter->die_chip; die++)
+						{
+							for(plane = 0; die < ssd->parameter->plane_die; plane++)
+							{
+								gc_direct_erase(ssd,chan,chip,die,plane);
+							}
+						}
+					}
+				}
+			}
+			
+		}
 	}
 
 	return ssd;
