@@ -190,6 +190,9 @@ struct ssd_info{
 
 	unsigned int distributed[12];        //KXC:to record the response time distribution
 
+	unsigned long gc_soft_count;         //KXC_2: to record the number of soft gc
+	unsigned long gc_hard_count;         //KXC_2: to record the number of hard gc
+	int gc_buf_count;					 //KXC_2: to record the number of gc buffer
 	unsigned int min_lsn;
 	unsigned int max_lsn;
 	unsigned long read_count;
@@ -472,6 +475,7 @@ struct parameter_value{
 	int threshold_value;
 	int active_write;               //表示是否执行主动写操作1,yes;0,no
 	float gc_hard_threshold;        //普通策略中用不到该参数，只有在主动写策略中，当满足这个阈值时，GC操作不可中断
+	float gc_soft_threshold;        // the threshold of soft gc
 	int allocation_scheme;          //记录分配方式的选择，0表示动态分配，1表示静态分配
 	int static_allocation;          //记录是那种静态分配方式，如ICS09那篇文章所述的所有静态分配方式
 	int dynamic_allocation;         //记录动态分配的方式
@@ -484,6 +488,8 @@ struct parameter_value{
 	float aged_ratio; 
 	int queue_length;               //请求队列的长度限制
 	int active_erase;				//KXC_2：to indicate whether adopt active block erase when channel idle
+	int interruptible;              //KXC_2: to indicate whether adopt soft gc(1--yes   0--not)
+	int gc_buffer;                  //KXC_2: the size of gc buffer
 
 	struct ac_time_characteristics time_characteristics;
 };

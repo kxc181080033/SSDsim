@@ -559,6 +559,26 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 			gc_node->next_node=ssd->channel_head[channel].gc_command;
 			ssd->channel_head[channel].gc_command=gc_node;
 			ssd->gc_request++;
+			ssd->gc_hard_count++;
+		}//KXC_2: to produce interruptible gc suing soft gc threshold
+		else if(ssd->parameter->interruptible == 1 &&  ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].free_page<(ssd->parameter->page_block*ssd->parameter->block_plane*ssd->parameter->gc_soft_threshold))
+		{
+			gc_node=(struct gc_operation *)malloc(sizeof(struct gc_operation));
+			alloc_assert(gc_node,"gc_node");
+			memset(gc_node,0, sizeof(struct gc_operation));
+
+			gc_node->next_node=NULL;
+			gc_node->chip=chip;
+			gc_node->die=die;
+			gc_node->plane=plane;
+			gc_node->block=0xffffffff;
+			gc_node->page=0;
+			gc_node->state=GC_WAIT;
+			gc_node->priority=GC_INTERRUPT;
+			gc_node->next_node=ssd->channel_head[channel].gc_command;
+			ssd->channel_head[channel].gc_command=gc_node;
+			ssd->gc_request++;
+			ssd->gc_soft_count++;
 		}
 	} 
 
@@ -1306,16 +1326,18 @@ Status gc_for_channel(struct ssd_info *ssd, unsigned int channel)
 	*可中断的gc请求，需要首先确认该channel上没有子请求在这个时刻需要使用这个channel，
 	*没有的话，在执行gc操作，有的话，不执行gc操作
 	********************************************************************************/
+	/*KXC_2: the interruptible gc is not process here*/
+
 	else        
 	{
-		flag_invoke_gc=decide_gc_invoke(ssd,channel);                                  /*判断是否有子请求需要channel，如果有子请求需要这个channel，那么这个gc操作就被中断了*/
+		flag_invoke_gc=decide_gc_invoke(ssd,channel);                                  //判断是否有子请求需要channel，如果有子请求需要这个channel，那么这个gc操作就被中断了
 
 		if (flag_invoke_gc==1)
 		{
 			flag_direct_erase=gc_direct_erase(ssd,channel,chip,die,plane);
 			if (flag_direct_erase==-1)
 			{
-				flag_gc=interrupt_gc(ssd,channel,chip,die,plane,gc_node);             /*当一个完整的gc操作完成时（已经擦除一个块，回收了一定数量的flash空间），返回1，将channel上相应的gc操作请求节点删除*/
+				flag_gc=interrupt_gc(ssd,channel,chip,die,plane,gc_node);             //当一个完整的gc操作完成时（已经擦除一个块，回收了一定数量的flash空间），返回1，将channel上相应的gc操作请求节点删除
 				if (flag_gc==1)
 				{
 					delete_gc_node(ssd,channel,gc_node);

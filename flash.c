@@ -1643,9 +1643,12 @@ struct ssd_info *process(struct ssd_info *ssd)
 					{
 						for(die = 0; die < ssd->parameter->die_chip; die++)
 						{
-							for(plane = 0; die < ssd->parameter->plane_die; plane++)
+							for(plane = 0; plane < ssd->parameter->plane_die; plane++)
 							{
-								gc_direct_erase(ssd,chan,chip,die,plane);
+								if (ssd->channel_head[chan].chip_head[chip].die_head[die].plane_head[plane].free_page<(ssd->parameter->page_block*ssd->parameter->block_plane*ssd->parameter->gc_hard_threshold))
+								{
+									gc_direct_erase(ssd,chan,chip,die,plane);
+								}
 							}
 						}
 					}

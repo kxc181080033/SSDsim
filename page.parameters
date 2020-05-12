@@ -88,3 +88,5 @@ aged=0;                         #1 for making SSD aged, 0 for keeping SSD non-ag
 aged ratio=0.7;                #If we need to make SSD aged, set the aged ratio in advance
 queue_length=64;               #the length of request queue
 active_erase=0;                #0--no 1--yes o indicate whether adopt active block erase when channel idle
+interruptible=0;               #0--only hard gc    1--both hard and soft gc
+gc soft threshold=0.35;        # the threshold of soft gc
