@@ -189,6 +189,7 @@ struct ssd_info{
 	int64_t max_queue_time;              //KXC:to record the max time gap in the request queue
 
 	unsigned int distributed[12];        //KXC:to record the response time distribution
+	unsigned int *gc_buffer;             //KXC:the gc buffer used by soft gc
 
 	unsigned long gc_soft_count;         //KXC_2: to record the number of soft gc
 	unsigned long gc_hard_count;         //KXC_2: to record the number of hard gc
@@ -256,8 +257,11 @@ struct channel_info{
 	struct sub_request *subs_r_tail;     //channel上的读请求队列尾，新加进来的子请求加到队尾
 	struct sub_request *subs_w_head;     //channel上的写请求队列头，先服务处于队列头的子请求
 	struct sub_request *subs_w_tail;     //channel上的写请求队列，新加进来的子请求加到队尾
-	struct gc_operation *gc_command;     //记录需要产生gc的位置
-	struct chip_info *chip_head;        
+	struct gc_operation *gc_command;     //记录需要产生harc_gc的位置
+	struct chip_info *chip_head;
+	struct gc_operation *gc_soft;       //记录需要产生harc_soft的位置        
+	struct sub_request *gc_sub_queue; //KXC_2: the head sub-requests of interruptible gc
+	struct sub_request *gc_sub_tail; //KXC_2: the tail sub-requests of interruptible gc
 };
 
 
@@ -415,6 +419,31 @@ struct sub_request{
 	struct sub_request *update;       //因为在写操作中存在更新操作，因为在动态分配方式中无法使用copyback操作，需要将原来的页读出后才能进行写操作，所以，将因更新产生的读操作挂在这个指针上
 };
 
+//KXC_2:the struct of gc sub requests
+/*struct gc_sub_request{
+	unsigned int lpn;                  //这里表示该子请求的逻辑页号
+	unsigned int ppn;                  //分配那个物理子页给这个子请求。在multi_chip_page_mapping中，产生子页请求时可能就知道psn的值，其他时候psn的值由page_map_read,page_map_write等FTL最底层函数产生。 
+	unsigned int operation;            //表示该子请求的类型，除了读1 写0，还有擦除11
+	int size;
+
+	unsigned int current_state;        //表示该子请求所处的状态，见宏定义sub request
+	int64_t current_time;
+	unsigned int next_state;
+	int64_t next_state_predict_time;
+	 unsigned int state;              //使用state的最高位表示该子请求是否是一对多映射关系中的一个，是的话，需要读到buffer中。1表示是一对多，0表示不用写到buffer
+	                                  //读请求不需要这个成员，lsn加size就可以分辨出该页的状态;但是写请求需要这个成员，大部分写子请求来自于buffer写回操作，可能有类似子页不连续的情况，所以需要单独维持该成员
+
+	int64_t begin_time;               //子请求开始时间
+	int64_t complete_time;            //记录该子请求的处理时间,既真正写入或者读出数据的时间
+
+	struct local *location;           //在静态分配和混合分配方式中，已知lpn就知道该lpn该分配到那个channel，chip，die，plane，这个结构体用来保存计算得到的地址
+	struct sub_request *next_subs;    //指向属于同一个gc request的子请求
+	struct sub_request *next_node;    //KXC_2：这里应该是和next_subs指向同样的地方
+	struct gc_operation *mom;         //该GC子请求对应的GC请求
+	struct sub_request *update;
+	
+};*/
+
 
 /***********************************************************************
 *事件节点控制时间的增长，每次时间的增加是根据时间最近的一个事件来确定的
@@ -489,7 +518,7 @@ struct parameter_value{
 	int queue_length;               //请求队列的长度限制
 	int active_erase;				//KXC_2：to indicate whether adopt active block erase when channel idle
 	int interruptible;              //KXC_2: to indicate whether adopt soft gc(1--yes   0--not)
-	int gc_buffer;                  //KXC_2: the size of gc buffer
+	int gc_buffer_size;                  //KXC_2: the size of gc buffer
 
 	struct ac_time_characteristics time_characteristics;
 };

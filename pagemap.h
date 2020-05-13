@@ -45,7 +45,9 @@ int erase_planes(struct ssd_info * ssd, unsigned int channel, unsigned int chip,
 int move_page(struct ssd_info * ssd, struct local *location,unsigned int * transfer_size);
 int gc_for_channel(struct ssd_info *ssd, unsigned int channel);
 int delete_gc_node(struct ssd_info *ssd, unsigned int channel,struct gc_operation *gc_node);
-
+int find_victim_interrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,unsigned int die,unsigned int plane);
+struct ssd_info *soft_gc_distribute(struct ssd_info *ssd,unsigned int channel,unsigned int chip,unsigned int die,unsigned int plane);
+struct ssd_info * creat_sub_gc(struct ssd_info *ssd,struct gc_operation *gc_node,unsigned int channel, int page, int type);
 #endif
 
 

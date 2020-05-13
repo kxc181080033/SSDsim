@@ -436,6 +436,8 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 	struct local *location;
 	struct direct_erase *direct_erase_node,*new_direct_erase;
 	struct gc_operation *gc_node;
+	int victim_block = -1;
+	int free_page = 0, invalid_page = 0, valid_page = 0;
 
 	unsigned int i=0,j=0,k=0,l=0,m=0,n=0;
 
@@ -563,25 +565,274 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 		}//KXC_2: to produce interruptible gc suing soft gc threshold
 		else if(ssd->parameter->interruptible == 1 &&  ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].free_page<(ssd->parameter->page_block*ssd->parameter->block_plane*ssd->parameter->gc_soft_threshold))
 		{
-			gc_node=(struct gc_operation *)malloc(sizeof(struct gc_operation));
-			alloc_assert(gc_node,"gc_node");
-			memset(gc_node,0, sizeof(struct gc_operation));
+			if(ssd->channel_head[channel].gc_soft == NULL)
+			{
+				//find block
+				victim_block = find_victim_interrupt_gc(ssd,channel,chip,die,plane);
 
-			gc_node->next_node=NULL;
-			gc_node->chip=chip;
-			gc_node->die=die;
-			gc_node->plane=plane;
-			gc_node->block=0xffffffff;
-			gc_node->page=0;
-			gc_node->state=GC_WAIT;
-			gc_node->priority=GC_INTERRUPT;
-			gc_node->next_node=ssd->channel_head[channel].gc_command;
-			ssd->channel_head[channel].gc_command=gc_node;
-			ssd->gc_request++;
-			ssd->gc_soft_count++;
+				if(victim_block == -1) return ssd;
+
+				free_page = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[victim_block].free_page_num;
+				invalid_page = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[victim_block].invalid_page_num;
+				valid_page = ssd->parameter->page_block - free_page - invalid_page;
+				if(free_page > 0) printf("error in victim block selection in soft gc");
+				//KXC_2: gc buffer is enough to put the valid pages
+				if(valid_page <= ssd->parameter->gc_buffer_size - ssd->gc_buf_count)
+				{
+					gc_node=(struct gc_operation *)malloc(sizeof(struct gc_operation));
+					alloc_assert(gc_node,"gc_node");
+					memset(gc_node,0, sizeof(struct gc_operation));
+
+					gc_node->next_node=NULL;
+					gc_node->chip=chip;
+					gc_node->die=die;
+					gc_node->plane=plane;
+					gc_node->block= victim_block;
+					gc_node->page=0;
+					gc_node->state=GC_WAIT;
+					gc_node->priority=GC_INTERRUPT;
+					gc_node->next_node=ssd->channel_head[channel].gc_soft;
+					ssd->channel_head[channel].gc_soft=gc_node;
+					ssd->gc_request++;
+					ssd->gc_soft_count++;
+
+					soft_gc_distribute(ssd,channel,chip,die,plane);
+
+				}
+				else
+				{
+					return ssd;
+				}
+
+			}
 		}
 	} 
 
+	return ssd;
+}
+
+struct ssd_info *soft_gc_distribute(struct ssd_info *ssd,unsigned int channel,unsigned int chip,unsigned int die,unsigned int plane)
+{
+	unsigned int i,block,active_block,transfer_size,invalid_page=0;
+	struct local *location;
+	struct gc_operation *gc_node = ssd->channel_head[channel].gc_soft;
+	//struct  *gc_sub;
+
+
+	if (ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[gc_node->block].invalid_page_num!=ssd->parameter->page_block)     /*还需要执行copyback操作*/
+	{
+		for (i=0;i<ssd->parameter->page_block;i++)
+		{
+			if (ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[gc_node->block].page_head[i].valid_state>0)
+			{
+				creat_sub_gc(ssd,gc_node,channel,i,READ);
+			}
+		}
+		creat_sub_gc(ssd,gc_node,channel,-1,11);  //KXC_2: erase operation
+		for (i=0;i<ssd->parameter->page_block;i++)
+		{
+			if (ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[gc_node->block].page_head[i].valid_state>0)
+			{
+				creat_sub_gc(ssd,gc_node,channel,i,WRITE);
+			}
+		}
+	}
+	else
+	{
+		creat_sub_gc(ssd,gc_node,channel,-1,11);  //KXC_2: erase operation
+	}
+	return ssd;
+}
+
+struct ssd_info * creat_sub_gc(struct ssd_info *ssd,struct gc_operation *gc_node,unsigned int channel, int page, int type)
+{
+	struct sub_request* sub=NULL;
+	struct sub_request* sub_r=NULL;
+	struct local *location=NULL;
+	
+	struct channel_info * p_ch=NULL;
+	struct local * loc=NULL;
+	unsigned int flag=0;
+	unsigned int sub_size=0;
+	unsigned int sub_state=0;
+
+	sub = (struct sub_request*)malloc(sizeof(struct sub_request));                        /*申请一个子请求的结构*/
+	alloc_assert(sub,"sub_request");
+	memset(sub,0, sizeof(struct sub_request));
+
+	if(sub==NULL)
+	{
+		return NULL;
+	}
+	sub->location=NULL;
+	//sub->mom=gc_node;
+	sub->next_subs=NULL;
+	
+	//p_ch = &ssd->channel_head[loc->channel];
+	//sub_r=p_ch->subs_r_head;
+
+	if(ssd->channel_head[channel].gc_sub_queue ==NULL)
+	{
+		sub->next_subs = ssd->channel_head[channel].gc_sub_queue;
+		ssd->channel_head[channel].gc_sub_queue = sub;
+	}
+	else
+	{
+		free(sub);
+		return;
+	}
+	
+	
+	/*************************************************************************************
+	*在读操作的情况下，有一点非常重要就是要预先判断读子请求队列中是否有与这个子请求相同的，
+	*有的话，新子请求就不必再执行了，将新的子请求直接赋为完成
+	**************************************************************************************/
+	if (type == READ)
+	{	
+		//loc = find_location(ssd,ssd->dram->map->map_entry[lpn].pn);
+		//sub->location=loc;
+		location=(struct local *)malloc(sizeof(struct local));
+		alloc_assert(location,"location");
+		memset(location,0, sizeof(struct local));
+		location->channel = channel;
+		location->chip = gc_node->chip;
+		location->die = gc_node->die;
+		location->plane = gc_node->die;
+		location->block = gc_node->block;
+		location->page = page;
+		sub->location = location;
+
+
+
+		sub->begin_time = ssd->current_time;
+		sub->current_state = SR_WAIT;
+		sub->current_time=MAX_INT64;
+		sub->next_state = SR_R_C_A_TRANSFER;
+		sub->next_state_predict_time=MAX_INT64;
+		sub->lpn = ssd->channel_head[channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].page_head[page].lpn;
+		sub_state=(ssd->dram->map->map_entry[sub->lpn].state&0x7fffffff);
+		sub_size=size(sub_state);                                                             /*需要计算出该子请求的请求大小*/
+
+		p_ch = &ssd->channel_head[loc->channel];	
+		sub->ppn = ssd->dram->map->map_entry[sub->lpn].pn;
+		sub->operation = READ;
+		sub_r=p_ch->subs_r_head;                                                      /*一下几行包括flag用于判断该读子请求队列中是否有与这个子请求相同的，有的话，将新的子请求直接赋为完成*/
+		flag=0;
+		while (sub_r!=NULL)
+		{
+			if (sub_r->ppn==sub->ppn)
+			{
+				flag=1;
+				break;
+			}
+			sub_r=sub_r->next_node;
+		}
+		if (flag==0)
+		{
+			if (p_ch->gc_sub_queue!=NULL)
+			{
+				p_ch->gc_sub_tail->next_node=sub;
+				p_ch->gc_sub_tail=sub;
+			} 
+			else
+			{
+				p_ch->gc_sub_queue=sub;
+				p_ch->gc_sub_tail=sub;
+			}
+		}
+		else
+		{
+			sub->current_state = SR_R_DATA_TRANSFER;
+			sub->current_time=ssd->current_time;
+			sub->next_state = SR_COMPLETE;
+			sub->next_state_predict_time=ssd->current_time+1000;
+			sub->complete_time=ssd->current_time+1000;
+		}
+	}
+	/*************************************************************************************
+	*写请求的情况下，只用动态写
+	**************************************************************************************/
+	else if(type == WRITE)
+	{                                
+		sub->ppn=0;
+		sub->operation = WRITE;
+		sub->location=(struct local *)malloc(sizeof(struct local));
+		alloc_assert(sub->location,"sub->location");
+		memset(sub->location,0, sizeof(struct local));
+
+		sub->current_state=SR_WAIT;
+		sub->current_time=ssd->current_time;
+		sub->lpn = ssd->channel_head[channel].chip_head[gc_node->chip].die_head[gc_node->die].plane_head[gc_node->plane].blk_head[gc_node->block].page_head[page].lpn;
+		
+		sub_state=(ssd->dram->map->map_entry[sub->lpn].state&0x7fffffff);
+		sub_size=size(sub_state); 
+		sub->begin_time=ssd->current_time;
+
+		sub->location->channel=-1;
+		sub->location->chip=-1;
+		sub->location->die=-1;
+		sub->location->plane=-1;
+		sub->location->block=-1;
+		sub->location->page=-1;
+
+		if (ssd->channel_head[channel].gc_sub_tail!=NULL)
+		{
+			ssd->channel_head[channel].gc_sub_tail->next_node=sub;
+			ssd->channel_head[channel].gc_sub_tail=sub;
+		} 
+		else
+		{
+			ssd->channel_head[channel].gc_sub_queue=sub;
+			ssd->channel_head[channel].gc_sub_tail=sub;
+		}
+      
+			
+	}
+	else if(type == 11)
+	{
+		sub->ppn=0;
+		sub->operation = 11;
+		sub->location=(struct local *)malloc(sizeof(struct local));
+		alloc_assert(sub->location,"sub->location");
+		memset(sub->location,0, sizeof(struct local));
+
+		sub->current_state=GC_WAIT;
+		sub->current_time=ssd->current_time;
+		sub->lpn = -1;
+		
+		sub_state=(ssd->dram->map->map_entry[sub->lpn].state&0x7fffffff);
+		sub_size=size(sub_state); 
+
+		sub->begin_time=ssd->current_time;
+
+		sub->location->channel = channel;
+		sub->location->chip = gc_node->chip;
+		sub->location->die = gc_node->die;
+		sub->location->plane = gc_node->die;
+		sub->location->block = gc_node->block;
+		sub->location->page = page;
+
+		if (ssd->channel_head[channel].gc_sub_tail!=NULL)
+		{
+			ssd->channel_head[channel].gc_sub_tail->next_node=sub;
+			ssd->channel_head[channel].gc_sub_tail=sub;
+		} 
+		else
+		{
+			ssd->channel_head[channel].gc_sub_queue=sub;
+			ssd->channel_head[channel].gc_sub_tail=sub;
+		}
+	}
+	else
+	{
+		free(sub->location);
+		sub->location=NULL;
+		free(sub);
+		sub=NULL;
+		printf("\nERROR ! Unexpected command.\n");
+		return NULL;
+	}
+	
 	return ssd;
 }
 /*****************************************************************************************
@@ -1084,6 +1335,7 @@ int uninterrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,u
 
 			free(location);	
 			location=NULL;
+
 		}				
 	}
 	erase_operation(ssd,channel ,chip , die,plane ,block);	                                              /*执行完move_page操作后，就立即执行block的擦除操作*/
@@ -1211,6 +1463,31 @@ int interrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,uns
 	return 1;
 }
 
+//KXC_2: find victim block when soft gc
+int find_victim_interrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,unsigned int die,unsigned int plane)        
+{
+	unsigned int i,block,active_block,transfer_size,invalid_page=0;
+	struct local *location;
+	int victim_block = -1;
+
+	active_block=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].active_block;
+	transfer_size=0;
+	
+	//to search the block in the plane
+	for(i=0;i<ssd->parameter->block_plane;i++)
+	{			
+		if((active_block!=i)&&(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num>invalid_page))						
+		{				
+			invalid_page=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num;
+			block=i;						
+		}
+	}
+	victim_block=block;
+
+	return victim_block;
+	
+}
+
 /*************************************************************
 *函数的功能是当处理完一个gc操作时，需要把gc链上的gc_node删除掉
 **************************************************************/
@@ -1260,6 +1537,7 @@ Status gc_for_channel(struct ssd_info *ssd, unsigned int channel)
 	*查找每一个gc_node，获取gc_node所在的chip的当前状态，下个状态，下个状态的预计时间
 	*如果当前状态是空闲，或是下个状态是空闲而下个状态的预计时间小于当前时间，并且是不可中断的gc
 	*那么就flag_priority令为1，否则为0
+	*在这里全都是不可中断GC了，这里的判断多余，但是没有删掉
 	********************************************************************************************/
 	gc_node=ssd->channel_head[channel].gc_command;
 	while (gc_node!=NULL)
@@ -1326,7 +1604,7 @@ Status gc_for_channel(struct ssd_info *ssd, unsigned int channel)
 	*可中断的gc请求，需要首先确认该channel上没有子请求在这个时刻需要使用这个channel，
 	*没有的话，在执行gc操作，有的话，不执行gc操作
 	********************************************************************************/
-	/*KXC_2: the interruptible gc is not process here*/
+	/*KXC_2: the interruptible gc is not process here
 
 	else        
 	{
@@ -1353,7 +1631,7 @@ Status gc_for_channel(struct ssd_info *ssd, unsigned int channel)
 		{
 			return FAILURE;
 		}		
-	}
+	}*/
 }
 
 
@@ -1373,6 +1651,8 @@ unsigned int gc(struct ssd_info *ssd,unsigned int channel, unsigned int flag)
 	int flag_direct_erase=1,flag_gc=1,flag_invoke_gc=1;
 	unsigned int flag_priority=0;
 	struct gc_operation *gc_node=NULL,*gc_p=NULL;
+
+	//KXC_2: 这里没用到，每个通道单独判断
 
 	if (flag==1)                                                                       /*整个ssd都是IDEL的情况*/
 	{
@@ -1398,13 +1678,14 @@ unsigned int gc(struct ssd_info *ssd,unsigned int channel, unsigned int flag)
 	} 
 	else                                                                               /*只需针对某个特定的channel，chip，die进行gc请求的操作(只需对目标die进行判定，看是不是idle）*/
 	{
-		if ((ssd->parameter->allocation_scheme==1)||((ssd->parameter->allocation_scheme==0)&&(ssd->parameter->dynamic_allocation==1)))
+		//这里不可中断GC不必再判断有无子请求，直接进行GC
+		/*if ((ssd->parameter->allocation_scheme==1)||((ssd->parameter->allocation_scheme==0)&&(ssd->parameter->dynamic_allocation==1)))
 		{
-			if ((ssd->channel_head[channel].subs_r_head!=NULL)||(ssd->channel_head[channel].subs_w_head!=NULL))    /*队列上有请求，先服务请求*/
+			if ((ssd->channel_head[channel].subs_r_head!=NULL)||(ssd->channel_head[channel].subs_w_head!=NULL))    //队列上有请求，先服务请求
 			{
 				return 0;
 			}
-		}
+		}*/
 
 		gc_for_channel(ssd,channel);
 		return SUCCESS;

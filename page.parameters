@@ -90,3 +90,4 @@ queue_length=64;               #the length of request queue
 active_erase=0;                #0--no 1--yes o indicate whether adopt active block erase when channel idle
 interruptible=0;               #0--only hard gc    1--both hard and soft gc
 gc soft threshold=0.35;        # the threshold of soft gc
+gc buffer=64;

@@ -336,6 +336,9 @@ struct ssd_info * initialize_channels(struct ssd_info * ssd )
 		ssd->distributed[i] = 0;   //Initialize the array
 	}
 	
+	ssd->gc_buffer = (unsigned int *)malloc(ssd->parameter->gc_buffer_size*sizeof(unsigned int));
+	alloc_assert(ssd->gc_buffer,"ssd->gc_buffer");
+	memset(ssd->gc_buffer,0,ssd->parameter->gc_buffer_size*sizeof(unsigned int));
 
 	return ssd;
 }
@@ -565,7 +568,9 @@ struct parameter_value *load_parameters(char parameter_file[30])
 		}else if((res_eql=strcmp(buf,"interruptible")) ==0){
 			sscanf(buf + next_eql,"%d",&p->interruptible); 
 		}else if((res_eql=strcmp(buf,"gc soft threshold")) ==0){
-			sscanf(buf + next_eql,"%d",&p->gc_soft_threshold);  
+			sscanf(buf + next_eql,"%f",&p->gc_soft_threshold);
+		}else if((res_eql=strcmp(buf,"gc buffer")) ==0){
+			sscanf(buf + next_eql,"%d",&p->gc_buffer_size);   
 		}else if((res_eql=strncmp(buf,"chip number",11)) ==0)
 		{
 			sscanf(buf+12,"%d",&i);

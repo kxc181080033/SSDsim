@@ -872,6 +872,70 @@ struct sub_request * find_write_sub_request(struct ssd_info * ssd, unsigned int 
 }
 
 /*********************************************************************************************
+*专门为gc_sub_request 中的子请求服务
+**********************************************************************************************/
+Status services_2_gc_sub(struct ssd_info * ssd, int channel,unsigned int * channel_busy_flag, unsigned int * change_current_time_flag)
+{
+	unsigned int i=0;
+	struct sub_request * sub=NULL, * p=NULL;
+	sub = ssd->channel_head[channel].gc_sub_queue;
+	struct  gc_operation *gc_node;
+
+	
+	if(sub->operation == READ)
+	{
+		/*if there are read requests in queue, send one of them to target chip*/			
+		
+		if(sub->current_state==SR_WAIT && sub->operation == READ)									
+		{	                                                                       
+			if((ssd->channel_head[sub->location->channel].chip_head[sub->location->chip].current_state==CHIP_IDLE)||((ssd->channel_head[sub->location->channel].chip_head[sub->location->chip].next_state==CHIP_IDLE)&&
+				(ssd->channel_head[sub->location->channel].chip_head[sub->location->chip].next_state_predict_time<=ssd->current_time)))												
+			{	
+
+				go_one_step(ssd, sub,NULL, SR_R_DATA_TRANSFER,NORMAL);
+						
+				*change_current_time_flag=0;
+				*channel_busy_flag=1;                                              /*已经占用了这个周期的总线，不用执行die中数据的回传*/
+													
+			}	
+			else
+			{
+																					/*因为die的busy导致的阻塞*/
+			}
+		}						
+	}
+	else if(sub->operation == 11)     //KXC_2: ERASE
+	{
+		erase_operation(ssd,channel,sub->location->chip, sub->location->die,sub->location->plane,sub->location->block);	                                              /*执行完move_page操作后，就立即执行block的擦除操作*/
+
+		ssd->channel_head[channel].current_state=CHANNEL_GC;									
+		ssd->channel_head[channel].current_time=ssd->current_time;										
+		ssd->channel_head[channel].next_state=CHANNEL_IDLE;	
+		ssd->channel_head[channel].chip_head[sub->location->chip].current_state=CHIP_ERASE_BUSY;								
+		ssd->channel_head[channel].chip_head[sub->location->chip].current_time=ssd->current_time;						
+		ssd->channel_head[channel].chip_head[sub->location->chip].next_state=CHIP_IDLE;			
+	
+
+		ssd->channel_head[channel].next_state_predict_time=ssd->current_time+7*ssd->parameter->time_characteristics.tWC;;					
+		ssd->channel_head[channel].chip_head[sub->location->chip].next_state_predict_time=ssd->channel_head[channel].next_state_predict_time+ssd->parameter->time_characteristics.tBERS;
+
+
+		//KXC_2: delete erase sub-request while read and write requests of gc if deleted in  services_2_r_cmd_trans_and_complete  and  delete_from_channel
+		p = sub;
+		sub = sub->next_node;
+		free(sub);
+		p = NULL;
+		
+		gc_node = ssd->channel_head[channel].gc_soft;
+		free(gc_node);
+		gc_node = NULL;
+
+	}
+	
+	
+}
+
+/*********************************************************************************************
 *专门为读子请求服务的函数
 *1，只有当读子请求的当前状态是SR_R_C_A_TRANSFER
 *2，读子请求的当前状态是SR_COMPLETE或者下一状态是SR_COMPLETE并且下一状态到达的时间比当前时间小
@@ -912,6 +976,45 @@ Status services_2_r_cmd_trans_and_complete(struct ssd_info * ssd)
 						ssd->channel_head[i].subs_r_tail=NULL;
 					}							
 				}			
+			}
+			p=sub;
+			sub=sub->next_node;
+		}
+	}
+
+	//KXC_2: to finish the gc read subrequests
+	for(i=0;i<ssd->parameter->channel_number;i++)                                       /*这个循环处理不需要channel的时间(读命令已经到达chip，chip由ready变为busy)，当读请求完成时，将其从channel的队列中取出*/
+	{
+		sub=ssd->channel_head[i].gc_sub_queue;
+
+		while(sub!=NULL)
+		{
+
+			if(sub->operation == READ)
+			{
+				if((sub->current_state==SR_COMPLETE)||((sub->next_state==SR_COMPLETE)&&(sub->next_state_predict_time<=ssd->current_time)))					
+				{			
+					ssd->gc_buffer[ssd->gc_buf_count++] = sub->lpn;
+					
+					if(sub!=ssd->channel_head[i].gc_sub_queue)                             /*if the request is completed, we delete it from gc queue */							
+					{		
+						p = ssd->channel_head[i].gc_sub_queue;
+						sub = sub->next_node;						
+					}			
+					else					
+					{	
+						if (ssd->channel_head[i].gc_sub_queue!=ssd->channel_head[i].gc_sub_tail)
+						{
+							ssd->channel_head[i].gc_sub_queue=sub->next_node;
+						} 
+						else
+						{
+							ssd->channel_head[i].gc_sub_queue=NULL;
+							ssd->channel_head[i].gc_sub_tail=NULL;
+						}							
+					}
+							
+				}
 			}
 			p=sub;
 			sub=sub->next_node;
@@ -1353,15 +1456,17 @@ Status static_write(struct ssd_info * ssd, unsigned int channel,unsigned int chi
 *********************/
 Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int * channel_busy_flag, unsigned int * change_current_time_flag)
 {
-	int j=0,chip=0;
+	int j=0,chip=0,m=0;
 	unsigned int k=0;
 	unsigned int  old_ppn=0,new_ppn=0;
 	unsigned int chip_token=0,die_token=0,plane_token=0,address_ppn=0;
 	unsigned int  die=0,plane=0;
 	long long time=0;
-	struct sub_request * sub=NULL, * p=NULL;
+	struct sub_request * sub=NULL, * p=NULL, * sub1=NULL;
 	struct sub_request * sub_twoplane_one=NULL, * sub_twoplane_two=NULL;
 	struct sub_request * sub_interleave_one=NULL, * sub_interleave_two=NULL;
+	unsigned int lpn;
+	int w_flag = 0;
     
 	/************************************************************************************************************************
 	*写子请求挂在两个地方一个是channel_head[channel].subs_w_head，另外一个是ssd->subs_w_head，所以要保证至少有一个队列不为空
@@ -1373,10 +1478,10 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 		{
 			for(j=0;j<ssd->channel_head[channel].chip;j++)					
 			{		
-				if((ssd->channel_head[channel].subs_w_head==NULL)&&(ssd->subs_w_head==NULL)) 
+				/*if((ssd->channel_head[channel].subs_w_head==NULL)&&(ssd->subs_w_head==NULL)) 
 				{
 					break;
-				}
+				}*/
 				
 				chip_token=ssd->channel_head[channel].token;                            /*令牌*/
 				if (*channel_busy_flag==0)
@@ -1522,6 +1627,109 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 			}
 		}			
 	}
+	else      //no sub-write-request so to process gc_write_sub
+	{
+		for(j=0;j<ssd->channel_head[channel].chip;j++)					
+		{		
+			chip_token=ssd->channel_head[channel].token;                            /*令牌*/
+			if (*channel_busy_flag==0)
+			{
+				if((ssd->channel_head[channel].chip_head[chip_token].current_state==CHIP_IDLE)||((ssd->channel_head[channel].chip_head[chip_token].next_state==CHIP_IDLE)&&(ssd->channel_head[channel].chip_head[chip_token].next_state_predict_time<=ssd->current_time)))				
+				{
+					if(ssd->channel_head[channel].gc_sub_queue==NULL)
+					{
+						break;
+					}
+					die_token=ssd->channel_head[channel].chip_head[chip_token].token;	
+
+					sub=ssd->channel_head[channel].gc_sub_queue;
+					while (sub != NULL)
+					{
+						if(sub->operation == WRITE)
+						{
+							lpn = sub->lpn;
+							for(m = 0; m < ssd->parameter->gc_buffer_size; m++)
+							{
+								if(lpn == ssd->gc_buffer[m])
+								{
+									w_flag = 1;
+									break;
+								}
+							}
+
+							if(w_flag == 1) 
+							{
+								w_flag = 0;
+								break;
+							}
+							else
+							{
+								sub = sub->next_node;
+							}
+							
+						}
+						else
+						{
+							sub = sub->next_node;
+						}
+						
+					}
+				
+
+					if(sub==NULL)
+					{
+						break;
+					}
+					
+					if(sub->current_state==SR_WAIT)
+					{
+						plane_token=ssd->channel_head[channel].chip_head[chip_token].die_head[die_token].token;
+
+						get_ppn(ssd,channel,chip_token,die_token,plane_token,sub);
+
+						ssd->channel_head[channel].chip_head[chip_token].die_head[die_token].token=(ssd->channel_head[channel].chip_head[chip_token].die_head[die_token].token+1)%ssd->parameter->plane_die;
+
+						*change_current_time_flag=0;
+
+						if(ssd->parameter->ad_priority2==0)
+						{
+							ssd->real_time_subreq--;
+						}
+						go_one_step(ssd,sub,NULL,SR_W_TRANSFER,NORMAL);       /*执行普通的状态的转变。*/
+						//delete_w_sub_request(ssd,channel,sub);                /*删掉处理完后的写子请求*/
+						for(m = 0; m < ssd->parameter->gc_buffer_size; m++)
+						{
+							if(lpn == ssd->gc_buffer[m])
+							{
+								ssd->gc_buffer[m] = 0;
+							}
+						}
+						ssd->gc_buf_count--;
+						
+						sub1 = sub;
+						sub = sub->next_node;
+						free(sub1);
+						sub1 = NULL;
+
+
+			
+						*channel_busy_flag=1;
+						/**************************************************************************
+						*跳出for循环前，修改令牌
+						*这里的token的变化完全取决于在这个channel chip die plane下写是否成功 
+						*成功了就break 没成功token就要变化直到找到能写成功的channel chip die plane
+						***************************************************************************/
+						ssd->channel_head[channel].chip_head[chip_token].token=(ssd->channel_head[channel].chip_head[chip_token].token+1)%ssd->parameter->die_chip;
+						ssd->channel_head[channel].token=(ssd->channel_head[channel].token+1)%ssd->parameter->chip_channel[channel];
+						break;
+					}							
+					ssd->channel_head[channel].chip_head[chip_token].token=(ssd->channel_head[channel].chip_head[chip_token].token+1)%ssd->parameter->die_chip;
+				}
+			}			
+			ssd->channel_head[channel].token=(ssd->channel_head[channel].token+1)%ssd->parameter->chip_channel[channel];
+		}
+	}
+	
 	return SUCCESS;	
 }
 
@@ -1555,9 +1763,11 @@ struct ssd_info *process(struct ssd_info *ssd)
 	/*********************************************************
 	*判断是否有读写子请求，如果有那么flag令为0，没有flag就为1
 	*当flag为1时，若ssd中有gc操作这时就可以执行gc操作
-	*这里没有问题，不管有没有GC都先切换不影响通道状态的读子请求。若无读写请求再去所有通道GC
+	*这里没有问题，不管有没有GC都先切换不影响通道状态的读子请求。对于GC对每个通道进行，不可中断页迁移的时间没有统计在内，很奇怪，这里修改
 	**********************************************************/
-	for(i=0;i<ssd->parameter->channel_number;i++)
+
+
+	/*for(i=0;i<ssd->parameter->channel_number;i++)
 	{          
 		if((ssd->channel_head[i].subs_r_head==NULL)&&(ssd->channel_head[i].subs_w_head==NULL)&&(ssd->subs_w_head==NULL))
 		{
@@ -1572,19 +1782,29 @@ struct ssd_info *process(struct ssd_info *ssd)
 	if(flag==1)
 	{
 		ssd->flag=1;                                                                
-		if (ssd->gc_request>0)                                                            /*无读写请求，开始处理GC请求，SSD中有gc操作的请求*/
+		if (ssd->gc_request>0)      //无读写请求，开始处理可中断  soft_gc 其实应该是对每个通道单独判断，这里修改为不可中断GC在写入时触发就执行
 		{
-			gc(ssd,0,1);                                                                  /*这个gc要求所有channel都必须遍历到*/
+			gc(ssd,0,1);            //这个gc要求所有channel都必须遍历到
 		}
 		return ssd;
 	}
 	else
 	{
 		ssd->flag=0;
-	}
+	}*/
 		
 	time = ssd->current_time;
 	services_2_r_cmd_trans_and_complete(ssd);                                            /*处理当前状态是SR_R_C_A_TRANSFER或者当前状态是SR_COMPLETE，或者下一状态是SR_COMPLETE并且下一状态预计时间小于当前状态时间*/
+	
+	//KXC_2:处理不可中断GC hard GC
+	for(i=0;i<ssd->parameter->channel_number;i++)
+	{          
+		if((ssd->channel_head[i].gc_command!=NULL)&&((ssd->channel_head[i].current_state==CHANNEL_IDLE)||(ssd->channel_head[i].next_state==CHANNEL_IDLE&&ssd->channel_head[i].next_state_predict_time<=ssd->current_time)))
+		{
+			gc(ssd,i,0);			
+		}
+	}
+
 
 	random_num=ssd->program_count%ssd->parameter->channel_number;                        /*产生一个随机数，保证每次从不同的channel开始查询*/
 
@@ -1599,17 +1819,17 @@ struct ssd_info *process(struct ssd_info *ssd)
 		flag_gc=0;                                                                       /*每次进入channel时，将gc的标志位置为0，默认认为没有进行gc操作*/
 		if((ssd->channel_head[i].current_state==CHANNEL_IDLE)||(ssd->channel_head[i].next_state==CHANNEL_IDLE&&ssd->channel_head[i].next_state_predict_time<=ssd->current_time))		
 		{   
-			if (ssd->gc_request>0)                                                       /*有gc操作，需要进行一定的判断*/
+			/*if (ssd->gc_request>0)                                                       //有gc操作，需要进行一定的判断
 			{
 				if (ssd->channel_head[i].gc_command!=NULL)
 				{
-					flag_gc=gc(ssd,i,0);                                                 /*gc函数返回一个值，表示是否执行了gc操作，如果执行了gc操作flag_gc=1，这个channel在这个时刻不能服务其他的请求*/
+					flag_gc=gc(ssd,i,0);                                                 //gc函数返回一个值，表示是否执行了gc操作，如果执行了gc操作flag_gc=1，这个channel在这个时刻不能服务其他的请求
 				}
-				if (flag_gc==1)                                                          /*执行过gc操作，需要跳出此次循环*/
+				if (flag_gc==1)                                                          //执行过gc操作，需要跳出此次循环
 				{
 					continue;
 				}
-			}
+			}*/
 
 			sub=ssd->channel_head[i].subs_r_head;                                        /*先处理读请求*/
 			services_2_r_wait(ssd,i,&flag,&chg_cur_time_flag);                           /*处理处于等待状态的读子请求*/
@@ -1624,12 +1844,19 @@ struct ssd_info *process(struct ssd_info *ssd)
 				services_2_write(ssd,i,&flag,&chg_cur_time_flag);
 				
 			}	
+		}
 
-
+		//KXC_2:执行上述读写子请求后若通道依然处于空闲状态，则开始执行soft gc
+		if((ssd->channel_head[i].current_state==CHANNEL_IDLE)||(ssd->channel_head[i].next_state==CHANNEL_IDLE&&ssd->channel_head[i].next_state_predict_time<=ssd->current_time))		
+		{   
+			if(ssd->channel_head[i].gc_sub_queue != NULL)
+			{
+				services_2_gc_sub(ssd,i,&flag,&chg_cur_time_flag); 
+			}
 		}	
 
-		//KXC_2:to erase blocks that all pages are invalid when the plane is idel
-		if(ssd->parameter->active_erase == 1)
+		//KXC_2:to erase blocks that all pages are invalid when the plane is idel   not for use
+		/*if(ssd->parameter->active_erase == 1)
 		{
 			if((ssd->channel_head[i].current_state==CHANNEL_IDLE)||(ssd->channel_head[i].next_state==CHANNEL_IDLE&&ssd->channel_head[i].next_state_predict_time<=ssd->current_time))
 			{
@@ -1655,7 +1882,7 @@ struct ssd_info *process(struct ssd_info *ssd)
 				}
 			}
 			
-		}
+		}*/
 	}
 
 	return ssd;
