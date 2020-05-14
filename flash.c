@@ -921,14 +921,14 @@ Status services_2_gc_sub(struct ssd_info * ssd, int channel,unsigned int * chann
 
 
 		//KXC_2: delete erase sub-request while read and write requests of gc if deleted in  services_2_r_cmd_trans_and_complete  and  delete_from_channel
-		p = sub;
-		sub = sub->next_node;
+		ssd->channel_head[channel].gc_sub_queue = sub->next_node;
 		free(sub);
-		p = NULL;
+		sub = NULL;
 		
-		gc_node = ssd->channel_head[channel].gc_soft;
-		free(gc_node);
-		gc_node = NULL;
+		
+		free(ssd->channel_head[channel].gc_soft);
+		ssd->channel_head[channel].gc_soft = NULL;
+		
 
 	}
 	
@@ -942,7 +942,7 @@ Status services_2_gc_sub(struct ssd_info * ssd, int channel,unsigned int * chann
 **********************************************************************************************/
 Status services_2_r_cmd_trans_and_complete(struct ssd_info * ssd)
 {
-	unsigned int i=0;
+	unsigned int i=0, j = 0, flag = 0;
 	struct sub_request * sub=NULL, * p=NULL;
 	for(i=0;i<ssd->parameter->channel_number;i++)                                       /*这个循环处理不需要channel的时间(读命令已经到达chip，chip由ready变为busy)，当读请求完成时，将其从channel的队列中取出*/
 	{
@@ -994,7 +994,26 @@ Status services_2_r_cmd_trans_and_complete(struct ssd_info * ssd)
 			{
 				if((sub->current_state==SR_COMPLETE)||((sub->next_state==SR_COMPLETE)&&(sub->next_state_predict_time<=ssd->current_time)))					
 				{			
-					ssd->gc_buffer[ssd->gc_buf_count++] = sub->lpn;
+					//KXC_2:put the page into gc butter
+					for(j = 0; j < ssd->parameter->gc_buffer_size; j++)
+					{
+						if(ssd->gc_buffer[j] == -1)
+						{
+							ssd->gc_buffer[j] = sub->lpn;
+							flag = 1;
+							break;
+						}
+					}
+
+					if(flag == 0)
+					{
+						printf("Error in gc_valid page put in gc buffer \n");
+					}
+					else
+					{
+						ssd->gc_buf_count++;
+						flag = 0;
+					}					
 					
 					if(sub!=ssd->channel_head[i].gc_sub_queue)                             /*if the request is completed, we delete it from gc queue */							
 					{		
@@ -1664,12 +1683,14 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 							}
 							else
 							{
+								p = sub;
 								sub = sub->next_node;
 							}
 							
 						}
 						else
 						{
+							p = sub;
 							sub = sub->next_node;
 						}
 						
@@ -1701,17 +1722,31 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 						{
 							if(lpn == ssd->gc_buffer[m])
 							{
-								ssd->gc_buffer[m] = 0;
+								ssd->gc_buffer[m] = -1;
 							}
 						}
 						ssd->gc_buf_count--;
 						
-						sub1 = sub;
-						sub = sub->next_node;
-						free(sub1);
-						sub1 = NULL;
+						if(sub!=ssd->channel_head[channel].gc_sub_queue)                             /*if the request is completed, we delete it from read queue */							
+						{		
+							p->next_node=sub->next_node;
+					
+						}			
+						else					
+						{	
+							if (ssd->channel_head[channel].gc_sub_queue!=ssd->channel_head[channel].gc_sub_tail)
+							{
+								ssd->channel_head[channel].gc_sub_queue=sub->next_node;
+							} 
+							else
+							{
+								ssd->channel_head[channel].gc_sub_queue=NULL;
+								ssd->channel_head[channel].gc_sub_tail=NULL;
+							}							
+						}		
 
-
+						free(sub);
+						sub = NULL;	
 			
 						*channel_busy_flag=1;
 						/**************************************************************************

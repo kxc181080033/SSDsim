@@ -679,6 +679,7 @@ struct ssd_info * creat_sub_gc(struct ssd_info *ssd,struct gc_operation *gc_node
 	else
 	{
 		free(sub);
+		sub = NULL;
 		return;
 	}
 	
@@ -800,8 +801,8 @@ struct ssd_info * creat_sub_gc(struct ssd_info *ssd,struct gc_operation *gc_node
 		sub->current_time=ssd->current_time;
 		sub->lpn = -1;
 		
-		sub_state=(ssd->dram->map->map_entry[sub->lpn].state&0x7fffffff);
-		sub_size=size(sub_state); 
+		//sub_state=(ssd->dram->map->map_entry[sub->lpn].state&0x7fffffff);
+		//sub_size=size(sub_state); 
 
 		sub->begin_time=ssd->current_time;
 

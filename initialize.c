@@ -336,9 +336,13 @@ struct ssd_info * initialize_channels(struct ssd_info * ssd )
 		ssd->distributed[i] = 0;   //Initialize the array
 	}
 	
-	ssd->gc_buffer = (unsigned int *)malloc(ssd->parameter->gc_buffer_size*sizeof(unsigned int));
+	ssd->gc_buffer = (long long *)malloc(ssd->parameter->gc_buffer_size*sizeof(long long));
 	alloc_assert(ssd->gc_buffer,"ssd->gc_buffer");
-	memset(ssd->gc_buffer,0,ssd->parameter->gc_buffer_size*sizeof(unsigned int));
+	//memset(ssd->gc_buffer,0,ssd->parameter->gc_buffer_size*sizeof(long long));
+	for(i = 0; i < ssd->parameter->gc_buffer_size; i++)
+	{
+		ssd->gc_buffer[i] = -1;
+	}
 
 	return ssd;
 }
