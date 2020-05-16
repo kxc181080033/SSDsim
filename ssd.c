@@ -818,8 +818,8 @@ void statistic_output(struct ssd_info *ssd)
 						plane_erase+=ssd->channel_head[i].chip_head[ii].die_head[j].plane_head[k].blk_head[m].erase_count;
 					}
 				}
-				fprintf(ssd->outputfile,"the %d channel, %d chip, %d die, %d plane has : %13d erase operations\n",i,ii,j,k,plane_erase);
-				fprintf(ssd->statisticfile,"the %d channel, %d chip, %d die, %d plane has : %13d erase operations\n",i,ii,j,k,plane_erase);
+				//fprintf(ssd->outputfile,"the %d channel, %d chip, %d die, %d plane has : %13d erase operations\n",i,ii,j,k,plane_erase);
+				//fprintf(ssd->statisticfile,"the %d channel, %d chip, %d die, %d plane has : %13d erase operations\n",i,ii,j,k,plane_erase);
 			  }
 		    }
 	    }
@@ -940,6 +940,7 @@ void statistic_output(struct ssd_info *ssd)
 	fprintf(ssd->statisticfile,"direct erase count: %13d\n",ssd->direct_erase_count);
 	fprintf(ssd->statisticfile,"gc hard count: %13d\n",ssd->gc_hard_count);
 	fprintf(ssd->statisticfile,"gc soft count: %13d\n",ssd->gc_soft_count);
+	fprintf(ssd->statisticfile,"gc soft read count: %13d\n",ssd->soft_gc_read_count);
 	fprintf(ssd->statisticfile,"\n");
 	fprintf(ssd->statisticfile,"copy back count: %13d\n",ssd->copy_back_count);
 	fprintf(ssd->statisticfile,"multi-plane program count: %13d\n",ssd->m_plane_prog_count);

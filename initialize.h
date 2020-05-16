@@ -190,7 +190,7 @@ struct ssd_info{
 
 	unsigned int distributed[12];        //KXC:to record the response time distribution
 	long long *gc_buffer;                //KXC_2:the gc buffer used by soft gc
-	unsigned int soft_gc_read_count;     //KXC_2:
+	unsigned long soft_gc_read_count;     //KXC_2: the valid page number in soft gc
 
 	unsigned long gc_soft_count;         //KXC_2: to record the number of soft gc
 	unsigned long gc_hard_count;         //KXC_2: to record the number of hard gc

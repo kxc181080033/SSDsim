@@ -813,7 +813,7 @@ struct ssd_info * creat_sub_gc(struct ssd_info *ssd,struct gc_operation *gc_node
 		sub->location->channel = channel;
 		sub->location->chip = gc_node->chip;
 		sub->location->die = gc_node->die;
-		sub->location->plane = gc_node->die;
+		sub->location->plane = gc_node->plane;
 		sub->location->block = gc_node->block;
 		sub->location->page = page;
 
