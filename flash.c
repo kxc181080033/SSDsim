@@ -922,6 +922,7 @@ Status services_2_gc_sub(struct ssd_info * ssd, int channel,unsigned int * chann
 
 		//KXC_2: delete erase sub-request while read and write requests of gc if deleted in  services_2_r_cmd_trans_and_complete  and  delete_from_channel
 		ssd->channel_head[channel].gc_sub_queue = sub->next_node;
+		if(sub == ssd->channel_head[channel].gc_sub_tail) ssd->channel_head[channel].gc_sub_tail = NULL;
 		free(sub);
 		sub = NULL;
 		
@@ -1000,6 +1001,7 @@ Status services_2_r_cmd_trans_and_complete(struct ssd_info * ssd)
 						if(ssd->gc_buffer[j] == -1)
 						{
 							ssd->gc_buffer[j] = sub->lpn;
+							ssd->soft_gc_read_count++;
 							flag = 1;
 							break;
 						}

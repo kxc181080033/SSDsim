@@ -565,45 +565,48 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 		}//KXC_2: to produce interruptible gc suing soft gc threshold
 		else if(ssd->parameter->interruptible == 1 &&  ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].free_page<(ssd->parameter->page_block*ssd->parameter->block_plane*ssd->parameter->gc_soft_threshold))
 		{
-			if(ssd->channel_head[channel].gc_soft == NULL)
+			if(ssd->gc_soft_count < 100)	
 			{
-				//find block
-				victim_block = find_victim_interrupt_gc(ssd,channel,chip,die,plane);
-
-				if(victim_block == -1) return ssd;
-
-				free_page = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[victim_block].free_page_num;
-				invalid_page = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[victim_block].invalid_page_num;
-				valid_page = ssd->parameter->page_block - free_page - invalid_page;
-				if(free_page > 0) printf("error in victim block selection in soft gc");
-				//KXC_2: gc buffer is enough to put the valid pages
-				if(valid_page <= ssd->parameter->gc_buffer_size - ssd->gc_buf_count)
+				if(ssd->channel_head[channel].gc_soft == NULL)
 				{
-					gc_node=(struct gc_operation *)malloc(sizeof(struct gc_operation));
-					alloc_assert(gc_node,"gc_node");
-					memset(gc_node,0, sizeof(struct gc_operation));
+					//find block
+					victim_block = find_victim_interrupt_gc(ssd,channel,chip,die,plane);
 
-					gc_node->next_node=NULL;
-					gc_node->chip=chip;
-					gc_node->die=die;
-					gc_node->plane=plane;
-					gc_node->block= victim_block;
-					gc_node->page=0;
-					gc_node->state=GC_WAIT;
-					gc_node->priority=GC_INTERRUPT;
-					gc_node->next_node=ssd->channel_head[channel].gc_soft;
-					ssd->channel_head[channel].gc_soft=gc_node;
-					ssd->gc_request++;
-					ssd->gc_soft_count++;
+					if(victim_block == -1) return ssd;
 
-					soft_gc_distribute(ssd,channel,chip,die,plane);
+					free_page = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[victim_block].free_page_num;
+					invalid_page = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[victim_block].invalid_page_num;
+					valid_page = ssd->parameter->page_block - free_page - invalid_page;
+					if(free_page > 0) printf("error in victim block selection in soft gc");
+					//KXC_2: gc buffer is enough to put the valid pages
+					if(valid_page <= ssd->parameter->gc_buffer_size - ssd->gc_buf_count)
+					{
+						gc_node=(struct gc_operation *)malloc(sizeof(struct gc_operation));
+						alloc_assert(gc_node,"gc_node");
+						memset(gc_node,0, sizeof(struct gc_operation));
+
+						gc_node->next_node=NULL;
+						gc_node->chip=chip;
+						gc_node->die=die;
+						gc_node->plane=plane;
+						gc_node->block= victim_block;
+						gc_node->page=0;
+						gc_node->state=GC_WAIT;
+						gc_node->priority=GC_INTERRUPT;
+						gc_node->next_node=ssd->channel_head[channel].gc_soft;
+						ssd->channel_head[channel].gc_soft=gc_node;
+						ssd->gc_request++;
+						ssd->gc_soft_count++;
+
+						soft_gc_distribute(ssd,channel,chip,die,plane);
+
+					}
+					else
+					{
+						return ssd;
+					}
 
 				}
-				else
-				{
-					return ssd;
-				}
-
 			}
 		}
 	} 
@@ -675,13 +678,14 @@ struct ssd_info * creat_sub_gc(struct ssd_info *ssd,struct gc_operation *gc_node
 	{
 		sub->next_subs = ssd->channel_head[channel].gc_sub_queue;
 		ssd->channel_head[channel].gc_sub_queue = sub;
+		//ssd->channel_head[channel].gc_sub_tail = sub;
 	}
-	else
+	/*else
 	{
 		free(sub);
 		sub = NULL;
 		return;
-	}
+	}*/
 	
 	
 	/*************************************************************************************
@@ -714,7 +718,7 @@ struct ssd_info * creat_sub_gc(struct ssd_info *ssd,struct gc_operation *gc_node
 		sub_state=(ssd->dram->map->map_entry[sub->lpn].state&0x7fffffff);
 		sub_size=size(sub_state);                                                             /*需要计算出该子请求的请求大小*/
 
-		p_ch = &ssd->channel_head[loc->channel];	
+		p_ch = &ssd->channel_head[location->channel];	
 		sub->ppn = ssd->dram->map->map_entry[sub->lpn].pn;
 		sub->operation = READ;
 		sub_r=p_ch->subs_r_head;                                                      /*一下几行包括flag用于判断该读子请求队列中是否有与这个子请求相同的，有的话，将新的子请求直接赋为完成*/
@@ -730,7 +734,7 @@ struct ssd_info * creat_sub_gc(struct ssd_info *ssd,struct gc_operation *gc_node
 		}
 		if (flag==0)
 		{
-			if (p_ch->gc_sub_queue!=NULL)
+			if (p_ch->gc_sub_tail!=NULL)
 			{
 				p_ch->gc_sub_tail->next_node=sub;
 				p_ch->gc_sub_tail=sub;

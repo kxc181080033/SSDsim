@@ -189,7 +189,8 @@ struct ssd_info{
 	int64_t max_queue_time;              //KXC:to record the max time gap in the request queue
 
 	unsigned int distributed[12];        //KXC:to record the response time distribution
-	long long *gc_buffer;             //KXC:the gc buffer used by soft gc
+	long long *gc_buffer;                //KXC_2:the gc buffer used by soft gc
+	unsigned int soft_gc_read_count;     //KXC_2:
 
 	unsigned long gc_soft_count;         //KXC_2: to record the number of soft gc
 	unsigned long gc_hard_count;         //KXC_2: to record the number of hard gc
