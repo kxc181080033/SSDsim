@@ -565,7 +565,7 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 		}//KXC_2: to produce interruptible gc suing soft gc threshold
 		else if(ssd->parameter->interruptible == 1 &&  ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].free_page<(ssd->parameter->page_block*ssd->parameter->block_plane*ssd->parameter->gc_soft_threshold))
 		{
-			if(ssd->gc_soft_count < 100)	
+			if(1)	
 			{
 				if(ssd->channel_head[channel].gc_soft == NULL)
 				{

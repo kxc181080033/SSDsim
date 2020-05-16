@@ -908,7 +908,7 @@ Status services_2_gc_sub(struct ssd_info * ssd, int channel,unsigned int * chann
 	else if(sub->operation == 11)     //KXC_2: ERASE
 	{
 		next_state_time = ssd->channel_head[channel].next_state_predict_time+ssd->parameter->time_characteristics.tBERS;
-		if(ssd->next_request_time >= ssd->current_time + next_state_time)
+		if(ssd->next_request_time >= next_state_time)
 		{
 			erase_operation(ssd,channel,sub->location->chip, sub->location->die,sub->location->plane,sub->location->block);	                                              /*执行完move_page操作后，就立即执行block的擦除操作*/
 
@@ -1702,6 +1702,7 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 						}
 						
 					}
+					//if(p == ssd->channel_head[channel].gc_sub_queue)
 				
 
 					if(sub==NULL)
@@ -1750,6 +1751,11 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 								ssd->channel_head[channel].gc_sub_queue=NULL;
 								ssd->channel_head[channel].gc_sub_tail=NULL;
 							}							
+						}
+
+						if(sub->next_node == NULL)
+						{
+							ssd->channel_head[channel].gc_sub_tail = p;
 						}		
 
 						free(sub);
