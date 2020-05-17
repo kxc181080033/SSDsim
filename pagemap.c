@@ -1282,6 +1282,16 @@ int uninterrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,u
 	unsigned int block,active_block,transfer_size,free_page,page_move_count=0;                           /*记录失效页最多的块号*/
 	struct local *  location=NULL;
 	unsigned int total_invalid_page_num=0;
+	int block_soft_gc;
+	if(ssd->channel_head[channel].gc_soft == NULL)
+	{
+		block_soft_gc = -1;
+	}
+	else
+	{
+		block_soft_gc = ssd->channel_head[channel].gc_soft->block;
+	}
+	
 
 	if(find_active_block(ssd,channel,chip,die,plane)!=SUCCESS)                                           /*获取活跃块*/
 	{
@@ -1296,7 +1306,7 @@ int uninterrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,u
 	for(i=0;i<ssd->parameter->block_plane;i++)                                                           /*查找最多invalid_page的块号，以及最大的invalid_page_num*/
 	{	
 		total_invalid_page_num+=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num;
-		if((active_block!=i)&&(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num>invalid_page))						
+		if((active_block!=block_soft_gc)&&(active_block!=i)&&(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num>invalid_page))						
 		{				
 			invalid_page=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num;
 			block=i;						

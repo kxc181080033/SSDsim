@@ -908,33 +908,37 @@ Status services_2_gc_sub(struct ssd_info * ssd, int channel,unsigned int * chann
 	else if(sub->operation == 11)     //KXC_2: ERASE
 	{
 		next_state_time = ssd->channel_head[channel].next_state_predict_time+ssd->parameter->time_characteristics.tBERS;
-		if(ssd->next_request_time >= next_state_time)
-		{
-			erase_operation(ssd,channel,sub->location->chip, sub->location->die,sub->location->plane,sub->location->block);	                                              /*执行完move_page操作后，就立即执行block的擦除操作*/
-
-			ssd->channel_head[channel].current_state=CHANNEL_GC;									
-			ssd->channel_head[channel].current_time=ssd->current_time;										
-			ssd->channel_head[channel].next_state=CHANNEL_IDLE;	
-			ssd->channel_head[channel].chip_head[sub->location->chip].current_state=CHIP_ERASE_BUSY;								
-			ssd->channel_head[channel].chip_head[sub->location->chip].current_time=ssd->current_time;						
-			ssd->channel_head[channel].chip_head[sub->location->chip].next_state=CHIP_IDLE;			
 		
+		if((ssd->channel_head[sub->location->channel].chip_head[sub->location->chip].current_state==CHIP_IDLE)||((ssd->channel_head[sub->location->channel].chip_head[sub->location->chip].next_state==CHIP_IDLE)&&
+				(ssd->channel_head[sub->location->channel].chip_head[sub->location->chip].next_state_predict_time<=ssd->current_time)))
+		{	
+			if(ssd->next_request_time >= next_state_time)
+			{
+				erase_operation(ssd,channel,sub->location->chip, sub->location->die,sub->location->plane,sub->location->block);	                                              /*执行完move_page操作后，就立即执行block的擦除操作*/
 
-			ssd->channel_head[channel].next_state_predict_time=ssd->current_time+7*ssd->parameter->time_characteristics.tWC;;					
-			ssd->channel_head[channel].chip_head[sub->location->chip].next_state_predict_time=ssd->channel_head[channel].next_state_predict_time+ssd->parameter->time_characteristics.tBERS;
-
-
-			//KXC_2: delete erase sub-request while read and write requests of gc if deleted in  services_2_r_cmd_trans_and_complete  and  delete_from_channel
-			ssd->channel_head[channel].gc_sub_queue = sub->next_node;
-			if(sub == ssd->channel_head[channel].gc_sub_tail) ssd->channel_head[channel].gc_sub_tail = NULL;
-			free(sub);
-			sub = NULL;
+				ssd->channel_head[channel].current_state=CHANNEL_GC;									
+				ssd->channel_head[channel].current_time=ssd->current_time;										
+				ssd->channel_head[channel].next_state=CHANNEL_IDLE;	
+				ssd->channel_head[channel].chip_head[sub->location->chip].current_state=CHIP_ERASE_BUSY;								
+				ssd->channel_head[channel].chip_head[sub->location->chip].current_time=ssd->current_time;						
+				ssd->channel_head[channel].chip_head[sub->location->chip].next_state=CHIP_IDLE;			
 			
-			
-			free(ssd->channel_head[channel].gc_soft);
-			ssd->channel_head[channel].gc_soft = NULL;
+
+				ssd->channel_head[channel].next_state_predict_time=ssd->current_time+7*ssd->parameter->time_characteristics.tWC;;					
+				ssd->channel_head[channel].chip_head[sub->location->chip].next_state_predict_time=ssd->channel_head[channel].next_state_predict_time+ssd->parameter->time_characteristics.tBERS;
+
+
+				//KXC_2: delete erase sub-request while read and write requests of gc if deleted in  services_2_r_cmd_trans_and_complete  and  delete_from_channel
+				ssd->channel_head[channel].gc_sub_queue = sub->next_node;
+				if(sub == ssd->channel_head[channel].gc_sub_tail) ssd->channel_head[channel].gc_sub_tail = NULL;
+				free(sub);
+				sub = NULL;
+				
+				
+				free(ssd->channel_head[channel].gc_soft);
+				ssd->channel_head[channel].gc_soft = NULL;
+			}
 		}
-		
 
 	}
 	
