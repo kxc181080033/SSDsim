@@ -21,7 +21,7 @@ Hao Luo         2011/01/01        2.0           Change               luohao13568
 /**********************
 *这个函数只作用于写请求
 ***********************/
-Status allocate_location(struct ssd_info * ssd ,struct sub_request *sub_req)
+Status allocate_location(struct ssd_info * ssd ,struct sub_request *sub_req, int flag)
 {
 	struct sub_request * update=NULL;
 	unsigned int channel_num=0,chip_num=0,die_num=0,plane_num=0;
@@ -39,47 +39,58 @@ Status allocate_location(struct ssd_info * ssd ,struct sub_request *sub_req)
 		* 在动态分配中，因为页的更新操作使用不了copyback操作，
 		*需要产生一个读请求，并且只有这个读请求完成后才能进行这个页的写操作
 		*******************************************************************/
-		if (ssd->dram->map->map_entry[sub_req->lpn].state!=0)    //映射项中存在有效的扇区
+		if(flag == 1)
 		{
-			if ((sub_req->state&ssd->dram->map->map_entry[sub_req->lpn].state)!=ssd->dram->map->map_entry[sub_req->lpn].state)
+			sub_req->current_state = SR_W_TRANSFER;
+			sub_req->current_time=ssd->current_time;
+			sub_req->next_state = SR_COMPLETE;
+			sub_req->next_state_predict_time=ssd->current_time+1000;
+			sub_req->complete_time=ssd->current_time+1000;
+		}
+		else
+		{
+			if (ssd->dram->map->map_entry[sub_req->lpn].state!=0)    //映射项中存在有效的扇区
 			{
-				ssd->read_count++;             //产生读的原因是需要读出数据才能判断数据是否为写更新
-				ssd->update_read_count++;
-
-				update=(struct sub_request *)malloc(sizeof(struct sub_request));
-				alloc_assert(update,"update");
-				memset(update,0, sizeof(struct sub_request));
-
-				if(update==NULL)
+				if ((sub_req->state&ssd->dram->map->map_entry[sub_req->lpn].state)!=ssd->dram->map->map_entry[sub_req->lpn].state)
 				{
-					return ERROR;
-				}
-				update->location=NULL;
-				update->next_node=NULL;
-				update->next_subs=NULL;
-				update->update=NULL;						
-				location = find_location(ssd,ssd->dram->map->map_entry[sub_req->lpn].pn);
-				update->location=location;
-				update->begin_time = ssd->current_time;
-				update->current_state = SR_WAIT;
-				update->current_time=MAX_INT64;
-				update->next_state = SR_R_C_A_TRANSFER;
-				update->next_state_predict_time=MAX_INT64;
-				update->lpn = sub_req->lpn;
-				update->state=((ssd->dram->map->map_entry[sub_req->lpn].state^sub_req->state)&0x7fffffff);
-				update->size=size(update->state);
-				update->ppn = ssd->dram->map->map_entry[sub_req->lpn].pn;
-				update->operation = READ;
-				
-				if (ssd->channel_head[location->channel].subs_r_tail!=NULL)            /*产生新的读请求，并且挂到channel的subs_r_tail队列尾*/
-				{
-						ssd->channel_head[location->channel].subs_r_tail->next_node=update;
+					ssd->read_count++;             //产生读的原因是需要读出数据才能判断数据是否为写更新
+					ssd->update_read_count++;
+
+					update=(struct sub_request *)malloc(sizeof(struct sub_request));
+					alloc_assert(update,"update");
+					memset(update,0, sizeof(struct sub_request));
+
+					if(update==NULL)
+					{
+						return ERROR;
+					}
+					update->location=NULL;
+					update->next_node=NULL;
+					update->next_subs=NULL;
+					update->update=NULL;						
+					location = find_location(ssd,ssd->dram->map->map_entry[sub_req->lpn].pn);
+					update->location=location;
+					update->begin_time = ssd->current_time;
+					update->current_state = SR_WAIT;
+					update->current_time=MAX_INT64;
+					update->next_state = SR_R_C_A_TRANSFER;
+					update->next_state_predict_time=MAX_INT64;
+					update->lpn = sub_req->lpn;
+					update->state=((ssd->dram->map->map_entry[sub_req->lpn].state^sub_req->state)&0x7fffffff);
+					update->size=size(update->state);
+					update->ppn = ssd->dram->map->map_entry[sub_req->lpn].pn;
+					update->operation = READ;
+					
+					if (ssd->channel_head[location->channel].subs_r_tail!=NULL)            /*产生新的读请求，并且挂到channel的subs_r_tail队列尾*/
+					{
+							ssd->channel_head[location->channel].subs_r_tail->next_node=update;
+							ssd->channel_head[location->channel].subs_r_tail=update;
+					} 
+					else
+					{
 						ssd->channel_head[location->channel].subs_r_tail=update;
-				} 
-				else
-				{
-					ssd->channel_head[location->channel].subs_r_tail=update;
-					ssd->channel_head[location->channel].subs_r_head=update;
+						ssd->channel_head[location->channel].subs_r_head=update;
+					}
 				}
 			}
 		}
@@ -206,58 +217,69 @@ Status allocate_location(struct ssd_info * ssd ,struct sub_request *sub_req)
 			default : return ERROR;
 		
 		}
-		if (ssd->dram->map->map_entry[sub_req->lpn].state!=0)
-		{                                                                              /*这个写回的子请求的逻辑页不可以覆盖之前被写回的数据 需要产生读请求*/ 
-			if ((sub_req->state&ssd->dram->map->map_entry[sub_req->lpn].state)!=ssd->dram->map->map_entry[sub_req->lpn].state)  
-			{
-				ssd->read_count++;
-				ssd->update_read_count++;
-				update=(struct sub_request *)malloc(sizeof(struct sub_request));
-				alloc_assert(update,"update");
-				memset(update,0, sizeof(struct sub_request));
-				
-				if(update==NULL)
+		if(flag == 1)
+		{
+			sub_req->current_state = SR_W_TRANSFER;
+			sub_req->current_time=ssd->current_time;
+			sub_req->next_state = SR_COMPLETE;
+			sub_req->next_state_predict_time=ssd->current_time+1000;
+			sub_req->complete_time=ssd->current_time+1000;
+		}
+		else
+		{
+			if (ssd->dram->map->map_entry[sub_req->lpn].state!=0)
+			{                                                                              /*这个写回的子请求的逻辑页不可以覆盖之前被写回的数据 需要产生读请求*/ 
+				if ((sub_req->state&ssd->dram->map->map_entry[sub_req->lpn].state)!=ssd->dram->map->map_entry[sub_req->lpn].state)  
 				{
-					return ERROR;
+					ssd->read_count++;
+					ssd->update_read_count++;
+					update=(struct sub_request *)malloc(sizeof(struct sub_request));
+					alloc_assert(update,"update");
+					memset(update,0, sizeof(struct sub_request));
+					
+					if(update==NULL)
+					{
+						return ERROR;
+					}
+					update->location=NULL;
+					update->next_node=NULL;
+					update->next_subs=NULL;
+					update->update=NULL;						
+					location = find_location(ssd,ssd->dram->map->map_entry[sub_req->lpn].pn);
+					update->location=location;
+					update->begin_time = ssd->current_time;
+					update->current_state = SR_WAIT;
+					update->current_time=MAX_INT64;
+					update->next_state = SR_R_C_A_TRANSFER;
+					update->next_state_predict_time=MAX_INT64;
+					update->lpn = sub_req->lpn;
+					update->state=((ssd->dram->map->map_entry[sub_req->lpn].state^sub_req->state)&0x7fffffff);
+					update->size=size(update->state);
+					update->ppn = ssd->dram->map->map_entry[sub_req->lpn].pn;
+					update->operation = READ;
+					
+					if (ssd->channel_head[location->channel].subs_r_tail!=NULL)
+					{
+						ssd->channel_head[location->channel].subs_r_tail->next_node=update;
+						ssd->channel_head[location->channel].subs_r_tail=update;
+					} 
+					else
+					{
+						ssd->channel_head[location->channel].subs_r_tail=update;
+						ssd->channel_head[location->channel].subs_r_head=update;
+					}
 				}
-				update->location=NULL;
-				update->next_node=NULL;
-				update->next_subs=NULL;
-				update->update=NULL;						
-				location = find_location(ssd,ssd->dram->map->map_entry[sub_req->lpn].pn);
-				update->location=location;
-				update->begin_time = ssd->current_time;
-				update->current_state = SR_WAIT;
-				update->current_time=MAX_INT64;
-				update->next_state = SR_R_C_A_TRANSFER;
-				update->next_state_predict_time=MAX_INT64;
-				update->lpn = sub_req->lpn;
-				update->state=((ssd->dram->map->map_entry[sub_req->lpn].state^sub_req->state)&0x7fffffff);
-				update->size=size(update->state);
-				update->ppn = ssd->dram->map->map_entry[sub_req->lpn].pn;
-				update->operation = READ;
-				
-				if (ssd->channel_head[location->channel].subs_r_tail!=NULL)
+
+				if (update!=NULL)
 				{
-					ssd->channel_head[location->channel].subs_r_tail->next_node=update;
-					ssd->channel_head[location->channel].subs_r_tail=update;
-				} 
-				else
-				{
-					ssd->channel_head[location->channel].subs_r_tail=update;
-					ssd->channel_head[location->channel].subs_r_head=update;
+					sub_req->update=update;
+
+					sub_req->state=(sub_req->state|update->state);
+					sub_req->size=size(sub_req->state);
 				}
+
 			}
-
-			if (update!=NULL)
-			{
-				sub_req->update=update;
-
-				sub_req->state=(sub_req->state|update->state);
-				sub_req->size=size(sub_req->state);
-			}
-
- 		}
+		}
 	}
 	if ((ssd->parameter->allocation_scheme!=0)||(ssd->parameter->dynamic_allocation!=0))
 	{
@@ -591,6 +613,7 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 	struct channel_info * p_ch=NULL;
 	struct local * loc=NULL;
 	unsigned int flag=0;
+	int i;
 
 	sub = (struct sub_request*)malloc(sizeof(struct sub_request));                        /*申请一个子请求的结构*/
 	alloc_assert(sub,"sub_request");
@@ -642,6 +665,16 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 			}
 			sub_r=sub_r->next_node;
 		}
+		//to check whether the LPN is in the buffer
+		for(i = 0; i < ssd->parameter->gc_buffer_size; i++)
+		{
+			if(sub->lpn == ssd->gc_buffer[i])
+			{
+				flag = 1;
+				break;
+			}
+		}
+
 		if (flag==0)
 		{
 			if (p_ch->subs_r_tail!=NULL)
@@ -681,8 +714,19 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 		sub->size=size;
 		sub->state=state;
 		sub->begin_time=ssd->current_time;
+
+		flag = 0;
+
+		for(i = 0; i < ssd->parameter->gc_buffer_size; i++)
+		{
+			if(sub->lpn == ssd->gc_buffer[i])
+			{
+				flag = 1;
+				break;
+			}
+		}
       
-		if (allocate_location(ssd ,sub)==ERROR)
+		if (allocate_location(ssd ,sub,flag)==ERROR)
 		{
 			free(sub->location);
 			sub->location=NULL;
@@ -690,6 +734,8 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 			sub=NULL;
 			return NULL;
 		}
+
+		
 			
 	}
 	else
@@ -893,7 +939,7 @@ Status services_2_gc_sub(struct ssd_info * ssd, int channel,unsigned int * chann
 				(ssd->channel_head[sub->location->channel].chip_head[sub->location->chip].next_state_predict_time<=ssd->current_time)))												
 			{	
 
-				go_one_step(ssd, sub,NULL, SR_R_DATA_TRANSFER,NORMAL);
+				go_one_step(ssd, sub,NULL, SR_R_GC_SUB,NORMAL);
 						
 				*change_current_time_flag=0;
 				*channel_busy_flag=1;                                              /*已经占用了这个周期的总线，不用执行die中数据的回传*/
@@ -3848,6 +3894,35 @@ Status go_one_step(struct ssd_info * ssd, struct sub_request * sub1,struct sub_r
 				sub->current_state=SR_R_DATA_TRANSFER;		
 				sub->next_state=SR_COMPLETE;				
 				sub->next_state_predict_time=ssd->current_time+(sub->size*ssd->parameter->subpage_capacity)*ssd->parameter->time_characteristics.tRC;			
+				sub->complete_time=sub->next_state_predict_time;
+
+				ssd->channel_head[location->channel].current_state=CHANNEL_DATA_TRANSFER;		
+				ssd->channel_head[location->channel].current_time=ssd->current_time;		
+				ssd->channel_head[location->channel].next_state=CHANNEL_IDLE;	
+				ssd->channel_head[location->channel].next_state_predict_time=sub->next_state_predict_time;
+
+				ssd->channel_head[location->channel].chip_head[location->chip].current_state=CHIP_DATA_TRANSFER;				
+				ssd->channel_head[location->channel].chip_head[location->chip].current_time=ssd->current_time;			
+				ssd->channel_head[location->channel].chip_head[location->chip].next_state=CHIP_IDLE;			
+				ssd->channel_head[location->channel].chip_head[location->chip].next_state_predict_time=sub->next_state_predict_time;
+
+				ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].add_reg_ppn=-1;  //清空寄存器
+
+				break;
+			}
+			case SR_R_GC_SUB:
+			{   
+				/**************************************************************************************************************
+				*目标状态是数据传输时，sub的下一个状态就是完成状态SR_COMPLETE
+				*这里处理 soft_gc的读请求，与正常读的 SR_R_DATA_TRANSFER 一致，不过时间不同
+				*这个状态的处理也与channel，chip有关，所以channel，chip的当前状态变为CHANNEL_DATA_TRANSFER，CHIP_DATA_TRANSFER
+				*下一个状态分别为CHANNEL_IDLE，CHIP_IDLE。
+				***************************************************************************************************************/
+				sub->current_time=ssd->current_time;					
+				sub->current_state=SR_R_DATA_TRANSFER;		
+				sub->next_state=SR_COMPLETE;				
+				//sub->next_state_predict_time=ssd->current_time+(sub->size*ssd->parameter->subpage_capacity)*ssd->parameter->time_characteristics.tRC;
+				sub->next_state_predict_time=ssd->current_time+(sub->size*ssd->parameter->subpage_capacity)*ssd->parameter->time_characteristics.tRC+7*ssd->parameter->time_characteristics.tWC+ssd->parameter->time_characteristics.tR;			
 				sub->complete_time=sub->next_state_predict_time;
 
 				ssd->channel_head[location->channel].current_state=CHANNEL_DATA_TRANSFER;		

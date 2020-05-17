@@ -747,6 +747,7 @@ struct ssd_info * creat_sub_gc(struct ssd_info *ssd,struct gc_operation *gc_node
 		}
 		else
 		{
+			
 			sub->current_state = SR_R_DATA_TRANSFER;
 			sub->current_time=ssd->current_time;
 			sub->next_state = SR_COMPLETE;

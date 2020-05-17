@@ -78,6 +78,7 @@ Hao Luo         2011/01/01        2.0           Change               luohao13568
 #define SR_W_C_A_TRANSFER 204
 #define SR_W_DATA_TRANSFER 205
 #define SR_W_TRANSFER 206
+#define SR_R_GC_SUB 207
 #define SR_COMPLETE 299
 
 #define REQUEST_IN 300         //下一条请求到达的时间
