@@ -1543,6 +1543,7 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 	struct sub_request * sub_interleave_one=NULL, * sub_interleave_two=NULL;
 	unsigned int lpn;
 	int w_flag = 0;
+	int flag , i;
     
 	/************************************************************************************************************************
 	*写子请求挂在两个地方一个是channel_head[channel].subs_w_head，另外一个是ssd->subs_w_head，所以要保证至少有一个队列不为空
@@ -1581,27 +1582,51 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 								{
 									plane_token=ssd->channel_head[channel].chip_head[chip_token].die_head[die_token].token;
 
-									get_ppn(ssd,channel,chip_token,die_token,plane_token,sub);
-
-									ssd->channel_head[channel].chip_head[chip_token].die_head[die_token].token=(ssd->channel_head[channel].chip_head[chip_token].die_head[die_token].token+1)%ssd->parameter->plane_die;
-
-									*change_current_time_flag=0;
-
-									if(ssd->parameter->ad_priority2==0)
+									
+									//KXC_2: if the write lpn hit in the gc buffer
+									flag = 0;
+									for(i = 0; i < ssd->parameter->gc_buffer_size; i++)
 									{
-										ssd->real_time_subreq--;
+										if(sub->lpn == ssd->gc_buffer[i])
+										{
+											flag = 1;
+											break;
+										}
 									}
-									go_one_step(ssd,sub,NULL,SR_W_TRANSFER,NORMAL);       /*执行普通的状态的转变。*/
-									delete_w_sub_request(ssd,channel,sub);                /*删掉处理完后的写子请求*/
-						
-									*channel_busy_flag=1;
-									/**************************************************************************
-									*跳出for循环前，修改令牌
-									*这里的token的变化完全取决于在这个channel chip die plane下写是否成功 
-									*成功了就break 没成功token就要变化直到找到能写成功的channel chip die plane
-									***************************************************************************/
-									ssd->channel_head[channel].chip_head[chip_token].token=(ssd->channel_head[channel].chip_head[chip_token].token+1)%ssd->parameter->die_chip;
-									ssd->channel_head[channel].token=(ssd->channel_head[channel].token+1)%ssd->parameter->chip_channel[channel];
+									
+									if(flag == 1)
+									{
+										sub->current_state = SR_W_TRANSFER;
+										sub->current_time=ssd->current_time;
+										sub->next_state = SR_COMPLETE;
+										sub->next_state_predict_time=ssd->current_time+1000;
+										sub->complete_time=ssd->current_time+1000;
+									}
+									else
+									{
+
+										get_ppn(ssd,channel,chip_token,die_token,plane_token,sub);
+
+										ssd->channel_head[channel].chip_head[chip_token].die_head[die_token].token=(ssd->channel_head[channel].chip_head[chip_token].die_head[die_token].token+1)%ssd->parameter->plane_die;
+
+										*change_current_time_flag=0;
+
+										if(ssd->parameter->ad_priority2==0)
+										{
+											ssd->real_time_subreq--;
+										}
+										go_one_step(ssd,sub,NULL,SR_W_TRANSFER,NORMAL);       /*执行普通的状态的转变。*/
+										delete_w_sub_request(ssd,channel,sub);                /*删掉处理完后的写子请求*/
+							
+										*channel_busy_flag=1;
+										/**************************************************************************
+										*跳出for循环前，修改令牌
+										*这里的token的变化完全取决于在这个channel chip die plane下写是否成功 
+										*成功了就break 没成功token就要变化直到找到能写成功的channel chip die plane
+										***************************************************************************/
+										ssd->channel_head[channel].chip_head[chip_token].token=(ssd->channel_head[channel].chip_head[chip_token].token+1)%ssd->parameter->die_chip;
+										ssd->channel_head[channel].token=(ssd->channel_head[channel].token+1)%ssd->parameter->chip_channel[channel];
+									}
 									break;
 								}
 							} 
