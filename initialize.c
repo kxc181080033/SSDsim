@@ -100,6 +100,9 @@ struct ssd_info *initiation(struct ssd_info *ssd)
 	strncpy(ssd->outputfilename,"ex.out",7);
 	strncpy(ssd->statisticfilename,"statistic10.dat",16);
 	strncpy(ssd->statisticfilename2,"statistic2.dat",15);
+	//KXC:using the follwing code to set the parameter file, trace file and output file when batch running
+	//printf("\ninput parv trace output statistic file name:");
+	//scanf("%s %s %s %s",ssd->parameterfilename,ssd->tracefilename,ssd->outputfilename,ssd->statisticfilename);
 
 	//导入ssd的配置文件
 	parameters=load_parameters(ssd->parameterfilename);
