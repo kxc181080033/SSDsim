@@ -1322,6 +1322,7 @@ int services_2_r_wait(struct ssd_info * ssd,unsigned int channel,unsigned int * 
 		{		
 			if(sub->current_state==SR_WAIT)									
 			{	                                                                       
+				
 				if((ssd->channel_head[sub->location->channel].chip_head[sub->location->chip].current_state==CHIP_IDLE)||((ssd->channel_head[sub->location->channel].chip_head[sub->location->chip].next_state==CHIP_IDLE)&&
 					(ssd->channel_head[sub->location->channel].chip_head[sub->location->chip].next_state_predict_time<=ssd->current_time)))												
 				{	
@@ -1593,7 +1594,7 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 											break;
 										}
 									}
-									
+
 									if(flag == 1)
 									{
 										sub->current_state = SR_W_TRANSFER;
