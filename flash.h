@@ -62,7 +62,7 @@ int services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int * c
 int delete_w_sub_request(struct ssd_info * ssd, unsigned int channel, struct sub_request * sub );
 int copy_back(struct ssd_info * ssd, unsigned int channel, unsigned int chip, unsigned int die,struct sub_request * sub);
 int static_write(struct ssd_info * ssd, unsigned int channel,unsigned int chip, unsigned int die,struct sub_request * sub);
-struct ssd_info *delete_gc_sub_when_hit(struct ssd_info *ssd,unsigned int lpn);
+struct ssd_info *delete_gc_write_when_hit(struct ssd_info *ssd,unsigned int lpn);
 
 #endif
 

@@ -941,6 +941,8 @@ void statistic_output(struct ssd_info *ssd)
 	fprintf(ssd->statisticfile,"gc hard count: %13d\n",ssd->gc_hard_count);
 	fprintf(ssd->statisticfile,"gc soft count: %13d\n",ssd->gc_soft_count);
 	fprintf(ssd->statisticfile,"gc soft read count: %13d\n",ssd->soft_gc_read_count);
+	fprintf(ssd->statisticfile,"gc read hit count: %13d\n",ssd->gc_read_hit_count);
+	fprintf(ssd->statisticfile,"gc write hit count: %13d\n",ssd->gc_write_hit_count);
 	fprintf(ssd->statisticfile,"\n");
 	fprintf(ssd->statisticfile,"copy back count: %13d\n",ssd->copy_back_count);
 	fprintf(ssd->statisticfile,"multi-plane program count: %13d\n",ssd->m_plane_prog_count);

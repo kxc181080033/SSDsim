@@ -192,6 +192,8 @@ struct ssd_info{
 	unsigned int distributed[12];        //KXC:to record the response time distribution
 	long long *gc_buffer;                //KXC_2:the gc buffer used by soft gc
 	unsigned long soft_gc_read_count;     //KXC_2: the valid page number in soft gc
+	unsigned long gc_read_hit_count;      //KXC_2: the number of io read sub hit in the gc sub read
+	unsigned long gc_write_hit_count;      //KXC_2: the number of io write sub hit in the gc write read
 
 	unsigned long gc_soft_count;         //KXC_2: to record the number of soft gc
 	unsigned long gc_hard_count;         //KXC_2: to record the number of hard gc
@@ -404,6 +406,7 @@ struct sub_request{
 	unsigned int ppn;                  //分配那个物理子页给这个子请求。在multi_chip_page_mapping中，产生子页请求时可能就知道psn的值，其他时候psn的值由page_map_read,page_map_write等FTL最底层函数产生。 
 	unsigned int operation;            //表示该子请求的类型，除了读1 写0，还有擦除，two plane等操作 
 	int size;
+	int buf_flag;                      //KXC_2: to indicate the read sub should put in gc_buffer of not
 
 	unsigned int current_state;        //表示该子请求所处的状态，见宏定义sub request
 	int64_t current_time;

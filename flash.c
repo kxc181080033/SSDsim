@@ -609,11 +609,12 @@ Status write_page(struct ssd_info *ssd,unsigned int channel,unsigned int chip,un
 **********************************************/
 struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,int size,unsigned int state,struct request * req,unsigned int operation)
 {
-	struct sub_request* sub=NULL,* sub_r=NULL;
+	struct sub_request* sub=NULL,* sub_r=NULL, *sub_gc=NULL;
 	struct channel_info * p_ch=NULL;
 	struct local * loc=NULL;
 	unsigned int flag=0;
-	int i;
+	int i,channel;
+	int buf_flag = 0;
 
 	sub = (struct sub_request*)malloc(sizeof(struct sub_request));                        /*申请一个子请求的结构*/
 	alloc_assert(sub,"sub_request");
@@ -648,7 +649,8 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 		sub->next_state = SR_R_C_A_TRANSFER;
 		sub->next_state_predict_time=MAX_INT64;
 		sub->lpn = lpn;
-		sub->size=size;                                                               /*需要计算出该子请求的请求大小*/
+		sub->size=size;
+		sub->buf_flag = buf_flag;                                                               /*需要计算出该子请求的请求大小*/
 
 		p_ch = &ssd->channel_head[loc->channel];	
 		sub->ppn = ssd->dram->map->map_entry[lpn].pn;
@@ -677,6 +679,28 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 
 		if (flag==0)
 		{
+			//to judge whether the gc sub queue has the same lpn operation
+			for(channel = 0; channel < ssd->parameter->channel_number; channel++)
+			{
+				if(ssd->channel_head[channel].gc_sub_queue == NULL)
+				{
+					continue;
+				}
+				else
+				{
+					sub_gc = ssd->channel_head[channel].gc_sub_queue;
+					while (sub_gc)
+					{
+						if(sub->lpn == sub_gc->lpn && sub_gc->operation == READ)
+						{
+							buf_flag = 1;
+							sub->buf_flag = 1;
+						}
+					}
+				}
+				
+			}
+
 			if (p_ch->subs_r_tail!=NULL)
 			{
 				p_ch->subs_r_tail->next_node=sub;
@@ -715,7 +739,7 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 		sub->state=state;
 		sub->begin_time=ssd->current_time;
 
-		flag = 0;
+		/*flag = 0;
 
 		for(i = 0; i < ssd->parameter->gc_buffer_size; i++)
 		{
@@ -725,8 +749,9 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 				break;
 			}
 		}
+		*/
 		//KXC_2:如果gc_sub_queue中有对应LPN的读写操作，应当将gc_sub的同一个LPN的读写子请求删除
-		delete_gc_sub_when_hit(ssd,lpn);
+		delete_gc_write_when_hit(ssd,lpn);
 		if (allocate_location(ssd ,sub,flag)==ERROR)
 		{
 			free(sub->location);
@@ -751,17 +776,20 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 	
 	return sub;
 }
+
+
 /******************************************************
 *函数的功能是如果gc_sub_queue有同样LPN的读写子请求，将其删除
-*这个子请求的ppn要与相应的plane的寄存器里面的ppn相符
+*针对IO的写子请求，此时gc不用将该页读出来，也不用再通过gc写入
 *******************************************************/
-struct ssd_info *delete_gc_sub_when_hit(struct ssd_info *ssd,unsigned int lpn)
+struct ssd_info *delete_gc_write_when_hit(struct ssd_info *ssd,unsigned int lpn)
 {
 	int channel = 0;
 	struct sub_request* sub=NULL,* p=NULL;
 	struct channel_info * p_ch=NULL;
 	struct local * loc=NULL;
 	unsigned int flag=0;
+	int i = 0;
 
 	for(channel = 0; channel < ssd->parameter->channel_number; channel++)
 	{
@@ -776,6 +804,7 @@ struct ssd_info *delete_gc_sub_when_hit(struct ssd_info *ssd,unsigned int lpn)
 			{
 				if(sub->lpn == lpn)
 				{
+					ssd->gc_write_hit_count++;
 					if(sub!=ssd->channel_head[channel].gc_sub_queue)                             /*if the request is completed, we delete it from gc queue */							
 					{		
 						//p = ssd->channel_head[channel].gc_sub_queue;
@@ -805,6 +834,15 @@ struct ssd_info *delete_gc_sub_when_hit(struct ssd_info *ssd,unsigned int lpn)
 		}
 		
 	}
+	for(i = 0; i < ssd->parameter->gc_buffer_size; i++)
+	{
+		if(sub->lpn == ssd->gc_buffer[i])
+		{
+			ssd->gc_buffer[i] = -1;
+			ssd->gc_buf_count--;
+		}
+	}
+	return ssd;
 }
 /******************************************************
 *函数的功能是在给出的channel，chip，die上面寻找读子请求
@@ -1071,6 +1109,20 @@ Status services_2_r_cmd_trans_and_complete(struct ssd_info * ssd)
 			}
 			else if((sub->current_state==SR_COMPLETE)||((sub->next_state==SR_COMPLETE)&&(sub->next_state_predict_time<=ssd->current_time)))					
 			{			
+				if(sub->buf_flag == 1)
+				{
+					for(j = 0; j < ssd->parameter->gc_buffer_size; j++)
+					{
+						if(ssd->gc_buffer[j] == -1)
+						{
+							ssd->gc_buffer[j] = sub->lpn;
+							ssd->gc_read_hit_count++;
+							ssd->gc_buf_count++;
+							break;
+						}
+					}
+				}
+				
 				if(sub!=ssd->channel_head[i].subs_r_head)                             /*if the request is completed, we delete it from read queue */							
 				{		
 					p->next_node=sub->next_node;						
