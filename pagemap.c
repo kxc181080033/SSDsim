@@ -1334,7 +1334,7 @@ int uninterrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,u
 		}
 		if(free_page!=0)
 		{
-			printf("\ntoo much free page. \t %d\t .%d\t%d\t%d\t%d\t\n",free_page,channel,chip,die,plane);
+			//printf("\ntoo much free page. \t %d\t .%d\t%d\t%d\t%d\t\n",free_page,channel,chip,die,plane);
 		}
 		if(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[block].page_head[i].valid_state>0) /*该页是有效页，需要copyback操作*/		
 		{	
@@ -1488,6 +1488,11 @@ int find_victim_interrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned 
 	struct local *location;
 	int victim_block = -1;
 
+	if(find_active_block(ssd,channel,chip,die,plane)!=SUCCESS)                                           /*获取活跃块*/
+	{
+		printf("\n\n Error in uninterrupt_gc().\n");
+		return ERROR;
+	}
 	active_block=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].active_block;
 	transfer_size=0;
 	
