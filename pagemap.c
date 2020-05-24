@@ -498,7 +498,7 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 		/*******************************************************************************************
 		*该block中全是invalid的页，可以直接删除，就在创建一个可擦除的节点，挂在location下的plane下面
 		********************************************************************************************/
-		if (ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].invalid_page_num==ssd->parameter->page_block)    
+		if ( 0&& ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].invalid_page_num==ssd->parameter->page_block)    
 		{
 			new_direct_erase=(struct direct_erase *)malloc(sizeof(struct direct_erase));
             alloc_assert(new_direct_erase,"new_direct_erase");
@@ -695,6 +695,7 @@ struct ssd_info * creat_sub_gc(struct ssd_info *ssd,struct gc_operation *gc_node
 	**************************************************************************************/
 	if (type == READ)
 	{	
+		ssd->gc_buf_count++; //KXC_2:the number of gc buffer that should use
 		//loc = find_location(ssd,ssd->dram->map->map_entry[lpn].pn);
 		//sub->location=loc;
 		location=(struct local *)malloc(sizeof(struct local));

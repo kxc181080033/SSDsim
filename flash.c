@@ -806,6 +806,19 @@ struct ssd_info *delete_gc_write_when_hit(struct ssd_info *ssd,unsigned int lpn)
 				if(sub->lpn == lpn)
 				{
 					ssd->gc_write_hit_count++;
+					if(sub->operation == READ) ssd->gc_buf_count--;  //no need use gc buffer to store the page
+					else
+					{
+						for(i = 0; i < ssd->parameter->gc_buffer_size; i++)
+						{
+							if(lpn == ssd->gc_buffer[i])
+							{
+								ssd->gc_buffer[i] = -1;
+								ssd->gc_buf_count--;
+							}
+						}
+					}
+					
 					if(sub!=ssd->channel_head[channel].gc_sub_queue)                             /*if the request is completed, we delete it from gc queue */							
 					{		
 						//p = ssd->channel_head[channel].gc_sub_queue;
@@ -835,17 +848,7 @@ struct ssd_info *delete_gc_write_when_hit(struct ssd_info *ssd,unsigned int lpn)
 		}
 		
 	}
-	if(ssd->gc_buf_count != 0)
-	{
-		for(i = 0; i < ssd->parameter->gc_buffer_size; i++)
-		{
-			if(lpn == ssd->gc_buffer[i])
-			{
-				ssd->gc_buffer[i] = -1;
-				ssd->gc_buf_count--;
-			}
-		}
-	}
+
 	return ssd;
 }
 /******************************************************
@@ -1121,7 +1124,7 @@ Status services_2_r_cmd_trans_and_complete(struct ssd_info * ssd)
 						{
 							ssd->gc_buffer[j] = sub->lpn;
 							ssd->gc_read_hit_count++;
-							ssd->gc_buf_count++;
+							//ssd->gc_buf_count++;
 							break;
 						}
 					}
@@ -1179,7 +1182,7 @@ Status services_2_r_cmd_trans_and_complete(struct ssd_info * ssd)
 					}
 					else
 					{
-						ssd->gc_buf_count++;
+						//ssd->gc_buf_count++;
 						flag = 0;
 					}					
 					
