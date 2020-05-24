@@ -696,6 +696,7 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 							buf_flag = 1;
 							sub->buf_flag = 1;
 						}
+						sub_gc = sub_gc->next_node;
 					}
 				}
 				
@@ -834,12 +835,15 @@ struct ssd_info *delete_gc_write_when_hit(struct ssd_info *ssd,unsigned int lpn)
 		}
 		
 	}
-	for(i = 0; i < ssd->parameter->gc_buffer_size; i++)
+	if(ssd->gc_buf_count != 0)
 	{
-		if(sub->lpn == ssd->gc_buffer[i])
+		for(i = 0; i < ssd->parameter->gc_buffer_size; i++)
 		{
-			ssd->gc_buffer[i] = -1;
-			ssd->gc_buf_count--;
+			if(lpn == ssd->gc_buffer[i])
+			{
+				ssd->gc_buffer[i] = -1;
+				ssd->gc_buf_count--;
+			}
 		}
 	}
 	return ssd;
