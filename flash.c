@@ -725,7 +725,8 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 				break;
 			}
 		}
-      
+		//KXC_2:如果gc_sub_queue中有对应LPN的读写操作，应当将gc_sub的同一个LPN的读写子请求删除
+		delete_gc_sub_when_hit(ssd,lpn);
 		if (allocate_location(ssd ,sub,flag)==ERROR)
 		{
 			free(sub->location);
@@ -750,7 +751,61 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 	
 	return sub;
 }
+/******************************************************
+*函数的功能是如果gc_sub_queue有同样LPN的读写子请求，将其删除
+*这个子请求的ppn要与相应的plane的寄存器里面的ppn相符
+*******************************************************/
+struct ssd_info *delete_gc_sub_when_hit(struct ssd_info *ssd,unsigned int lpn)
+{
+	int channel = 0;
+	struct sub_request* sub=NULL,* p=NULL;
+	struct channel_info * p_ch=NULL;
+	struct local * loc=NULL;
+	unsigned int flag=0;
 
+	for(channel = 0; channel < ssd->parameter->channel_number; channel++)
+	{
+		if(ssd->channel_head[channel].gc_sub_queue == NULL)
+		{
+			continue;
+		}
+		else
+		{
+			sub = ssd->channel_head[channel].gc_sub_queue;
+			while (sub)
+			{
+				if(sub->lpn == lpn)
+				{
+					if(sub!=ssd->channel_head[channel].gc_sub_queue)                             /*if the request is completed, we delete it from gc queue */							
+					{		
+						//p = ssd->channel_head[channel].gc_sub_queue;
+						if(sub == ssd->channel_head[channel].gc_sub_tail)
+						{
+							ssd->channel_head[channel].gc_sub_tail = p;
+						}
+						p->next_node = sub->next_node;						
+					}			
+					else					
+					{	
+						if (ssd->channel_head[channel].gc_sub_queue!=ssd->channel_head[channel].gc_sub_tail)
+						{
+							ssd->channel_head[channel].gc_sub_queue=sub->next_node;
+						} 
+						else
+						{
+							ssd->channel_head[channel].gc_sub_queue=NULL;
+							ssd->channel_head[channel].gc_sub_tail=NULL;
+						}							
+					}
+					//if(sub == NULL)
+				}
+				p = sub;
+				sub = sub->next_node;
+			}
+		}
+		
+	}
+}
 /******************************************************
 *函数的功能是在给出的channel，chip，die上面寻找读子请求
 *这个子请求的ppn要与相应的plane的寄存器里面的ppn相符
@@ -1790,7 +1845,7 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 					{
 						plane_token=ssd->channel_head[channel].chip_head[chip_token].die_head[die_token].token;
 
-						get_ppn(ssd,channel,chip_token,die_token,plane_token,sub);
+						get_ppn(ssd,channel,chip_token,die_token,plane_token,sub);  
 
 						ssd->channel_head[channel].chip_head[chip_token].die_head[die_token].token=(ssd->channel_head[channel].chip_head[chip_token].die_head[die_token].token+1)%ssd->parameter->plane_die;
 
