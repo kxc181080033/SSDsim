@@ -559,6 +559,8 @@ Status  find_active_block(struct ssd_info *ssd,unsigned int channel,unsigned int
 	unsigned int active_block;
 	unsigned int free_page_num=0;
 	unsigned int count=0;
+	int i;
+	unsigned int last = 0;
 	
 	active_block=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].active_block;
 	free_page_num=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].free_page_num;
@@ -569,6 +571,7 @@ Status  find_active_block(struct ssd_info *ssd,unsigned int channel,unsigned int
 		free_page_num=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].free_page_num;
 		count++;
 	}
+	
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].active_block=active_block;
 	if(count<ssd->parameter->block_plane)
 	{
@@ -742,7 +745,7 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 		sub->state=state;
 		sub->begin_time=ssd->current_time;
 
-		/*flag = 0;
+		flag = 0;
 
 		for(i = 0; i < ssd->parameter->gc_buffer_size; i++)
 		{
