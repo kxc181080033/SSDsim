@@ -441,6 +441,15 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 
 	unsigned int i=0,j=0,k=0,l=0,m=0,n=0;
 
+	if(ssd->dram->map->map_entry[2112977].pn==545638)
+	{
+		printf("hit 2112977");
+	}
+	if(ssd->dram->map->map_entry[2695963].pn==545638)
+	{
+		printf("hit 2695963");
+	}
+
 #ifdef DEBUG
 	printf("enter get_ppn,channel:%d, chip:%d, die:%d, plane:%d\n",channel,chip,die,plane);
 #endif
@@ -542,6 +551,15 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].page_head[page].free_state=((~(sub->state))&full_page);
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].page_head[page].written_count++;
 	ssd->write_flash_count++;
+
+	if(ssd->dram->map->map_entry[2112977].pn==545638)
+	{
+		printf("hit 2112977");
+	}
+	if(ssd->dram->map->map_entry[2695963].pn==545638)
+	{
+		printf("hit 2695963");
+	}
    //在实际运行中暂时还并没有考虑主动垃圾回收
 	if (ssd->parameter->active_write==0)                                            /*如果没有主动策略，只采用gc_hard_threshold，并且无法中断GC过程*/
 	{                                                                               /*如果plane中的free_page的数目少于gc_hard_threshold所设定的阈值就产生gc操作*/
@@ -573,7 +591,7 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 					//find block
 					victim_block = find_victim_interrupt_gc(ssd,channel,chip,die,plane);
 
-					if(victim_block == -1) return ssd;
+					if(victim_block == 500000) return ssd;
 
 					free_page = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[victim_block].free_page_num;
 					invalid_page = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[victim_block].invalid_page_num;
@@ -1530,11 +1548,11 @@ int interrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,uns
 }
 
 //KXC_2: find victim block when soft gc
-int find_victim_interrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,unsigned int die,unsigned int plane)        
+unsigned int find_victim_interrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,unsigned int die,unsigned int plane)        
 {
-	unsigned int i,block = -1,active_block,transfer_size,invalid_page=0;
+	unsigned int i,block = 500000,active_block,transfer_size,invalid_page=0;
 	struct local *location;
-	int victim_block = -1;
+	unsigned int victim_block = 500000;
 
 	if(find_active_block(ssd,channel,chip,die,plane)!=SUCCESS)                                           /*获取活跃块*/
 	{
