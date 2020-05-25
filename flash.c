@@ -1653,17 +1653,18 @@ Status static_write(struct ssd_info * ssd, unsigned int channel,unsigned int chi
 Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int * channel_busy_flag, unsigned int * change_current_time_flag)
 {
 	int j=0,chip=0,m=0;
-	unsigned int k=0;
+	unsigned int k=0, random_num = 0;
 	unsigned int  old_ppn=0,new_ppn=0;
 	unsigned int chip_token=0,die_token=0,plane_token=0,address_ppn=0;
 	unsigned int  die=0,plane=0;
 	long long time=0;
-	struct sub_request * sub=NULL, * p=NULL, * sub1=NULL;
+	struct sub_request * sub=NULL, * p=NULL, * sub1=NULL, *sub_gc = NULL;
 	struct sub_request * sub_twoplane_one=NULL, * sub_twoplane_two=NULL;
 	struct sub_request * sub_interleave_one=NULL, * sub_interleave_two=NULL;
 	unsigned int lpn;
 	int w_flag = 0;
 	int flag , i;
+	int channel_gc = 0, channel_gc_num = 0, find_flag = 0;
     
 	/************************************************************************************************************************
 	*写子请求挂在两个地方一个是channel_head[channel].subs_w_head，另外一个是ssd->subs_w_head，所以要保证至少有一个队列不为空
@@ -1850,6 +1851,7 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 	}
 	else      //no sub-write-request so to process gc_write_sub
 	{
+		sub = NULL;
 		for(j=0;j<ssd->channel_head[channel].chip;j++)					
 		{		
 			chip_token=ssd->channel_head[channel].token;                            /*令牌*/
@@ -1857,31 +1859,44 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 			{
 				if((ssd->channel_head[channel].chip_head[chip_token].current_state==CHIP_IDLE)||((ssd->channel_head[channel].chip_head[chip_token].next_state==CHIP_IDLE)&&(ssd->channel_head[channel].chip_head[chip_token].next_state_predict_time<=ssd->current_time)))				
 				{
-					if(ssd->channel_head[channel].gc_sub_queue==NULL)
-					{
-						break;
-					}
-					die_token=ssd->channel_head[channel].chip_head[chip_token].token;	
+					random_num=ssd->program_count%ssd->parameter->channel_number; 
+					for(channel_gc = 0; channel_gc < ssd->channel_head[channel].chip; channel_gc++)
+					{	
+						channel_gc_num=(random_num+channel_gc)%ssd->parameter->channel_number;
 
-					sub=ssd->channel_head[channel].gc_sub_queue;
-					while (sub != NULL)
-					{
-						if(sub->operation == WRITE)
+						if(ssd->channel_head[channel_gc_num].gc_sub_queue==NULL)
 						{
-							lpn = sub->lpn;
-							for(m = 0; m < ssd->parameter->gc_buffer_size; m++)
+							continue;
+						}
+
+
+						sub=ssd->channel_head[channel_gc_num].gc_sub_queue;
+						while (sub != NULL)
+						{
+							if(sub->operation == WRITE)
 							{
-								if(lpn == ssd->gc_buffer[m])
+								lpn = sub->lpn;
+								for(m = 0; m < ssd->parameter->gc_buffer_size; m++)
 								{
-									w_flag = 1;
+									if(lpn == ssd->gc_buffer[m])
+									{
+										w_flag = 1;
+										break;
+									}
+								}
+
+								if(w_flag == 1) 
+								{
+									w_flag = 0;
+									find_flag = 1;
 									break;
 								}
-							}
-
-							if(w_flag == 1) 
-							{
-								w_flag = 0;
-								break;
+								else
+								{
+									p = sub;
+									sub = sub->next_node;
+								}
+								
 							}
 							else
 							{
@@ -1890,21 +1905,19 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 							}
 							
 						}
-						else
+						if(find_flag == 1)
 						{
-							p = sub;
-							sub = sub->next_node;
+							find_flag = 0;
+							break;
 						}
-						
-					}
-					//if(p == ssd->channel_head[channel].gc_sub_queue)
 				
-
+					}
 					if(sub==NULL)
 					{
 						break;
 					}
-					
+
+					die_token=ssd->channel_head[channel].chip_head[chip_token].token;	
 					if(sub->current_state==SR_WAIT)
 					{
 						plane_token=ssd->channel_head[channel].chip_head[chip_token].die_head[die_token].token;
@@ -1930,27 +1943,27 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 						}
 						ssd->gc_buf_count--;
 						
-						if(sub!=ssd->channel_head[channel].gc_sub_queue)                             /*if the request is completed, we delete it from read queue */							
+						if(sub!=ssd->channel_head[channel_gc_num].gc_sub_queue)                             /*if the request is completed, we delete it from read queue */							
 						{		
 							p->next_node=sub->next_node;
 					
 						}			
 						else					
 						{	
-							if (ssd->channel_head[channel].gc_sub_queue!=ssd->channel_head[channel].gc_sub_tail)
+							if (ssd->channel_head[channel_gc_num].gc_sub_queue!=ssd->channel_head[channel_gc_num].gc_sub_tail)
 							{
-								ssd->channel_head[channel].gc_sub_queue=sub->next_node;
+								ssd->channel_head[channel_gc_num].gc_sub_queue=sub->next_node;
 							} 
 							else
 							{
-								ssd->channel_head[channel].gc_sub_queue=NULL;
-								ssd->channel_head[channel].gc_sub_tail=NULL;
+								ssd->channel_head[channel_gc_num].gc_sub_queue=NULL;
+								ssd->channel_head[channel_gc_num].gc_sub_tail=NULL;
 							}							
 						}
 
 						if(sub->next_node == NULL)
 						{
-							ssd->channel_head[channel].gc_sub_tail = p;
+							ssd->channel_head[channel_gc_num].gc_sub_tail = p;
 						}		
 
 						free(sub);

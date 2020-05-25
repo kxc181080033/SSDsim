@@ -442,6 +442,7 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 	unsigned int i=0,j=0,k=0,l=0,m=0,n=0;
 
 
+
 #ifdef DEBUG
 	printf("enter get_ppn,channel:%d, chip:%d, die:%d, plane:%d\n",channel,chip,die,plane);
 #endif
@@ -626,28 +627,23 @@ struct ssd_info *soft_gc_distribute(struct ssd_info *ssd,unsigned int channel,un
 	//struct  *gc_sub;
 
 
-	if (ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[gc_node->block].invalid_page_num!=ssd->parameter->page_block)     /*还需要执行copyback操作*/
+	for (i=0;i<ssd->parameter->page_block;i++)
 	{
-		for (i=0;i<ssd->parameter->page_block;i++)
+		if (ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[gc_node->block].page_head[i].valid_state>0)
 		{
-			if (ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[gc_node->block].page_head[i].valid_state>0)
-			{
-				creat_sub_gc(ssd,gc_node,channel,i,READ);
-			}
-		}
-		creat_sub_gc(ssd,gc_node,channel,-1,11);  //KXC_2: erase operation
-		for (i=0;i<ssd->parameter->page_block;i++)
-		{
-			if (ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[gc_node->block].page_head[i].valid_state>0)
-			{
-				creat_sub_gc(ssd,gc_node,channel,i,WRITE);
-			}
+			creat_sub_gc(ssd,gc_node,channel,i,READ);
 		}
 	}
-	else
+	creat_sub_gc(ssd,gc_node,channel,-1,11);  //KXC_2: erase operation
+	for (i=0;i<ssd->parameter->page_block;i++)
 	{
-		creat_sub_gc(ssd,gc_node,channel,-1,11);  //KXC_2: erase operation
+		if (ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[gc_node->block].page_head[i].valid_state>0)
+		{
+			creat_sub_gc(ssd,gc_node,channel,i,WRITE);
+		}
 	}
+
+
 	return ssd;
 }
 
