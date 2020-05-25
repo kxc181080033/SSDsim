@@ -441,14 +441,6 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 
 	unsigned int i=0,j=0,k=0,l=0,m=0,n=0;
 
-	/*if(ssd->dram->map->map_entry[2112977].pn==545638)
-	{
-		printf("hit 2112977");
-	}
-	if(ssd->dram->map->map_entry[2695963].pn==545638)
-	{
-		printf("hit 2695963");
-	}*/
 
 #ifdef DEBUG
 	printf("enter get_ppn,channel:%d, chip:%d, die:%d, plane:%d\n",channel,chip,die,plane);
@@ -552,14 +544,7 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].page_head[page].written_count++;
 	ssd->write_flash_count++;
 
-	/*if(ssd->dram->map->map_entry[2112977].pn==545638)
-	{
-		printf("hit 2112977");
-	}
-	if(ssd->dram->map->map_entry[2695963].pn==545638)
-	{
-		printf("hit 2695963");
-	}*/
+
    //在实际运行中暂时还并没有考虑主动垃圾回收
 	if (ssd->parameter->active_write==0)                                            /*如果没有主动策略，只采用gc_hard_threshold，并且无法中断GC过程*/
 	{                                                                               /*如果plane中的free_page的数目少于gc_hard_threshold所设定的阈值就产生gc操作*/
