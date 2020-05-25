@@ -580,7 +580,7 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 					valid_page = ssd->parameter->page_block - free_page - invalid_page;
 					if(free_page > 0) printf("error in victim block selection in soft gc");
 					//KXC_2: gc buffer is enough to put the valid pages
-					if(valid_page <= ssd->parameter->gc_buffer_size - ssd->gc_buf_count)
+					if(valid_page>= 0 && valid_page <= ssd->parameter->gc_buffer_size - ssd->gc_buf_count)
 					{
 						gc_node=(struct gc_operation *)malloc(sizeof(struct gc_operation));
 						alloc_assert(gc_node,"gc_node");
@@ -651,7 +651,7 @@ struct ssd_info *soft_gc_distribute(struct ssd_info *ssd,unsigned int channel,un
 struct ssd_info * creat_sub_gc(struct ssd_info *ssd,struct gc_operation *gc_node,unsigned int channel, int page, int type)
 {
 	struct sub_request* sub=NULL;
-	struct sub_request* sub_r=NULL;
+	struct sub_request* sub_r=NULL, *sub_w=NULL;
 	struct local *location=NULL;
 	
 	struct channel_info * p_ch=NULL;
@@ -659,6 +659,9 @@ struct ssd_info * creat_sub_gc(struct ssd_info *ssd,struct gc_operation *gc_node
 	unsigned int flag=0;
 	unsigned int sub_size=0;
 	unsigned int sub_state=0;
+	unsigned int lpn;
+	int read_hit = 0;
+	int write_hit = 0;
 
 	sub = (struct sub_request*)malloc(sizeof(struct sub_request));                        /*申请一个子请求的结构*/
 	alloc_assert(sub,"sub_request");
@@ -681,13 +684,58 @@ struct ssd_info * creat_sub_gc(struct ssd_info *ssd,struct gc_operation *gc_node
 		ssd->channel_head[channel].gc_sub_queue = sub;
 		//ssd->channel_head[channel].gc_sub_tail = sub;
 	}
-	/*else
+
+	//KXC_2: 若通道有相应LPN的读请求，将其放在gc_buffer中即可，此时不用产生gc_sub_read
+	lpn = ssd->channel_head[channel].chip_head[gc_node->chip].die_head[gc_node->die].plane_head[gc_node->plane].blk_head[gc_node->block].page_head[page].lpn;
+	sub_r = ssd->channel_head[channel].subs_r_head;
+	if(ssd->parameter->allocation_scheme == 0 && ssd->parameter->dynamic_allocation == 0)
 	{
-		free(sub);
-		sub = NULL;
-		return;
-	}*/
+		sub_w = ssd->subs_w_head;
+	}
+	else
+	{
+		sub_w = ssd->channel_head[channel].subs_w_head;
+	}
 	
+	
+	while (sub_r)
+	{
+		if(lpn == sub_r->lpn)
+		{
+			read_hit = 1;
+			break;
+		}
+		sub_r = sub_r->next_node;
+	}
+	while (sub_w)
+	{
+		if(lpn == sub_w->lpn)
+		{
+			write_hit = 1;
+			break;
+		}
+		sub_w = sub_w->next_node;
+	}
+	if(read_hit == 1 && write_hit == 1)
+	{
+		ssd->gc_write_hit_count++;
+		ssd->gc_read_hit_count++;	
+		return;    //if io read and write are both in io queue, the gc sub no need for read and write
+	}
+	else if(read_hit ==1 && write_hit == 0)
+	{
+		if(type == READ)    //gc write if also need to write back
+		{	
+			ssd->gc_read_hit_count++;
+			sub_r->buf_flag = 1;
+			return;
+		}
+	}
+	else if(read_hit == 0 && write_hit ==1)
+	{
+		ssd->gc_write_hit_count++;
+		return; 	
+	}
 	
 	/*************************************************************************************
 	*在读操作的情况下，有一点非常重要就是要预先判断读子请求队列中是否有与这个子请求相同的，
@@ -704,7 +752,7 @@ struct ssd_info * creat_sub_gc(struct ssd_info *ssd,struct gc_operation *gc_node
 		location->channel = channel;
 		location->chip = gc_node->chip;
 		location->die = gc_node->die;
-		location->plane = gc_node->die;
+		location->plane = gc_node->plane;
 		location->block = gc_node->block;
 		location->page = page;
 		sub->location = location;
@@ -1484,13 +1532,13 @@ int interrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,uns
 //KXC_2: find victim block when soft gc
 int find_victim_interrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,unsigned int die,unsigned int plane)        
 {
-	unsigned int i,block,active_block,transfer_size,invalid_page=0;
+	unsigned int i,block = -1,active_block,transfer_size,invalid_page=0;
 	struct local *location;
 	int victim_block = -1;
 
 	if(find_active_block(ssd,channel,chip,die,plane)!=SUCCESS)                                           /*获取活跃块*/
 	{
-		printf("\n\n Error in uninterrupt_gc().\n");
+		printf("\n\n Error in find_victim_interrupt_gc.\n");
 		return ERROR;
 	}
 	active_block=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].active_block;

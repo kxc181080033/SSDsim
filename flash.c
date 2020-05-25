@@ -673,6 +673,7 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 			if(sub->lpn == ssd->gc_buffer[i])
 			{
 				flag = 1;
+				ssd->gc_read_hit_count++;
 				break;
 			}
 		}
@@ -695,6 +696,7 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 						{
 							buf_flag = 1;
 							sub->buf_flag = 1;
+							ssd->gc_read_hit_count++;
 						}
 						sub_gc = sub_gc->next_node;
 					}
@@ -1123,7 +1125,7 @@ Status services_2_r_cmd_trans_and_complete(struct ssd_info * ssd)
 						if(ssd->gc_buffer[j] == -1)
 						{
 							ssd->gc_buffer[j] = sub->lpn;
-							ssd->gc_read_hit_count++;
+							//ssd->gc_read_hit_count++;
 							//ssd->gc_buf_count++;
 							break;
 						}
