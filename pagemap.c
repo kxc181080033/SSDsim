@@ -572,7 +572,7 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 		{
 			if(1)	
 			{
-				if(ssd->channel_head[channel].gc_soft == NULL)
+				if(ssd->channel_head[channel].gc_soft == NULL && ssd->channel_head[channel].gc_sub_queue == NULL)
 				{
 					//find block
 					victim_block = find_victim_interrupt_gc(ssd,channel,chip,die,plane);
