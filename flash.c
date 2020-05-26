@@ -676,7 +676,7 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 			if(sub->lpn == ssd->gc_buffer[i])
 			{
 				flag = 1;
-				ssd->gc_read_hit_count++;
+				//ssd->gc_read_hit_count++;
 				break;
 			}
 		}
@@ -720,6 +720,7 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 		}
 		else
 		{
+			ssd->gc_read_hit_count++;
 			sub->current_state = SR_R_DATA_TRANSFER;
 			sub->current_time=ssd->current_time;
 			sub->next_state = SR_COMPLETE;
