@@ -1860,7 +1860,7 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 				if((ssd->channel_head[channel].chip_head[chip_token].current_state==CHIP_IDLE)||((ssd->channel_head[channel].chip_head[chip_token].next_state==CHIP_IDLE)&&(ssd->channel_head[channel].chip_head[chip_token].next_state_predict_time<=ssd->current_time)))				
 				{
 					random_num=ssd->program_count%ssd->parameter->channel_number; 
-					for(channel_gc = 0; channel_gc < ssd->channel_head[channel].chip; channel_gc++)
+					for(channel_gc = 0; channel_gc < ssd->parameter->channel_number; channel_gc++)
 					{	
 						channel_gc_num=(random_num+channel_gc)%ssd->parameter->channel_number;
 

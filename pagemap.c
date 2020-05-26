@@ -627,23 +627,28 @@ struct ssd_info *soft_gc_distribute(struct ssd_info *ssd,unsigned int channel,un
 	//struct  *gc_sub;
 
 
-	for (i=0;i<ssd->parameter->page_block;i++)
+	if (ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[gc_node->block].invalid_page_num!=ssd->parameter->page_block)     /*还需要执行copyback操作*/
 	{
-		if (ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[gc_node->block].page_head[i].valid_state>0)
+		for (i=0;i<ssd->parameter->page_block;i++)
 		{
-			creat_sub_gc(ssd,gc_node,channel,i,READ);
+			if (ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[gc_node->block].page_head[i].valid_state>0)
+			{
+				creat_sub_gc(ssd,gc_node,channel,i,READ);
+			}
+		}
+		creat_sub_gc(ssd,gc_node,channel,-1,11);  //KXC_2: erase operation
+		for (i=0;i<ssd->parameter->page_block;i++)
+		{
+			if (ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[gc_node->block].page_head[i].valid_state>0)
+			{
+				creat_sub_gc(ssd,gc_node,channel,i,WRITE);
+			}
 		}
 	}
-	creat_sub_gc(ssd,gc_node,channel,-1,11);  //KXC_2: erase operation
-	for (i=0;i<ssd->parameter->page_block;i++)
+	else
 	{
-		if (ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[gc_node->block].page_head[i].valid_state>0)
-		{
-			creat_sub_gc(ssd,gc_node,channel,i,WRITE);
-		}
+		creat_sub_gc(ssd,gc_node,channel,-1,11);  //KXC_2: erase operation
 	}
-
-
 	return ssd;
 }
 
@@ -718,7 +723,9 @@ struct ssd_info * creat_sub_gc(struct ssd_info *ssd,struct gc_operation *gc_node
 	if(read_hit == 1 && write_hit == 1)
 	{
 		ssd->gc_write_hit_count++;
-		ssd->gc_read_hit_count++;	
+		ssd->gc_read_hit_count++;
+		free(sub);
+		sub = NULL;	
 		return;    //if io read and write are both in io queue, the gc sub no need for read and write
 	}
 	else if(read_hit ==1 && write_hit == 0)
@@ -727,12 +734,16 @@ struct ssd_info * creat_sub_gc(struct ssd_info *ssd,struct gc_operation *gc_node
 		{	
 			ssd->gc_read_hit_count++;
 			sub_r->buf_flag = 1;
+			free(sub);
+			sub = NULL;
 			return;
 		}
 	}
 	else if(read_hit == 0 && write_hit ==1)
 	{
 		ssd->gc_write_hit_count++;
+		free(sub);
+		sub = NULL;
 		return; 	
 	}
 	
