@@ -619,10 +619,10 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 	int i,channel;
 	int buf_flag = 0;
 
-	if(ssd->channel_head[channel].gc_sub_tail->next_node != NULL)
+	/*if(ssd->channel_head[channel].gc_sub_tail->next_node != NULL)
 	{
 		i = 0;
-	}
+	}*/
 	sub = (struct sub_request*)malloc(sizeof(struct sub_request));                        /*申请一个子请求的结构*/
 	alloc_assert(sub,"sub_request");
 	memset(sub,0, sizeof(struct sub_request));
@@ -795,10 +795,10 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 		}
 		test = test->next_node;
 	}*/
-	if(ssd->channel_head[channel].gc_sub_tail->next_node != NULL)
+	/*if(ssd->channel_head[channel].gc_sub_tail->next_node != NULL)
 	{
 		i = 0;
-	}
+	}*/
 	
 	return sub;
 }
@@ -832,7 +832,7 @@ struct ssd_info *delete_gc_write_when_hit(struct ssd_info *ssd,unsigned int lpn)
 				{
 					ssd->gc_write_hit_count++;
 					if(sub->operation == READ) ssd->gc_buf_count--;  //no need use gc buffer to store the page
-					else
+					else if(sub->operation == WRITE)
 					{
 						for(i = 0; i < ssd->parameter->gc_buffer_size; i++)
 						{
@@ -1181,7 +1181,7 @@ Status services_2_r_cmd_trans_and_complete(struct ssd_info * ssd)
 	for(i=0;i<ssd->parameter->channel_number;i++)                                       /*这个循环处理不需要channel的时间(读命令已经到达chip，chip由ready变为busy)，当读请求完成时，将其从channel的队列中取出*/
 	{
 		sub=ssd->channel_head[i].gc_sub_queue;
-
+		p = NULL;
 		while(sub!=NULL)
 		{
 
@@ -1213,8 +1213,12 @@ Status services_2_r_cmd_trans_and_complete(struct ssd_info * ssd)
 					
 					if(sub!=ssd->channel_head[i].gc_sub_queue)                             /*if the request is completed, we delete it from gc queue */							
 					{		
-						p = ssd->channel_head[i].gc_sub_queue;
-						sub = sub->next_node;						
+						//p = ssd->channel_head[i].gc_sub_queue;
+						p->next_node = sub->next_node;
+						if(sub == ssd->channel_head[i].gc_sub_tail)	
+						{
+							ssd->channel_head[i].gc_sub_tail = p;
+						}					
 					}			
 					else					
 					{	
@@ -1966,7 +1970,10 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 						if(sub!=ssd->channel_head[channel_gc_num].gc_sub_queue)                             /*if the request is completed, we delete it from read queue */							
 						{		
 							p->next_node=sub->next_node;
-					
+							if(sub == ssd->channel_head[channel_gc_num].gc_sub_tail)
+							{
+								ssd->channel_head[channel_gc_num].gc_sub_tail = p;
+							}	
 						}			
 						else					
 						{	
@@ -1980,11 +1987,6 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 								ssd->channel_head[channel_gc_num].gc_sub_tail=NULL;
 							}							
 						}
-
-						if(sub->next_node == NULL)
-						{
-							ssd->channel_head[channel_gc_num].gc_sub_tail = p;
-						}		
 
 						free(sub);
 						sub = NULL;	

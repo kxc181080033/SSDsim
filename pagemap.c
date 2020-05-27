@@ -676,10 +676,10 @@ struct ssd_info * creat_sub_gc(struct ssd_info *ssd,struct gc_operation *gc_node
 		}
 		test = test->next_node;
 	}*/
-	if(ssd->channel_head[channel].gc_sub_tail->next_node != NULL)
+	/*if(ssd->channel_head[channel].gc_sub_tail->next_node != NULL)
 	{
 		write_hit = 0;
-	}
+	}*/
 
 	sub = (struct sub_request*)malloc(sizeof(struct sub_request));                        /*申请一个子请求的结构*/
 	alloc_assert(sub,"sub_request");
@@ -922,10 +922,10 @@ struct ssd_info * creat_sub_gc(struct ssd_info *ssd,struct gc_operation *gc_node
 		}
 		test = test->next_node;
 	}*/
-	if(ssd->channel_head[channel].gc_sub_tail->next_node != NULL)
+	/*if(ssd->channel_head[channel].gc_sub_tail->next_node != NULL)
 	{
 		write_hit = 0;
-	}
+	}*/
 	
 	return ssd;
 }
