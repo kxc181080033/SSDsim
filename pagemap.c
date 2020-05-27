@@ -626,30 +626,22 @@ struct ssd_info *soft_gc_distribute(struct ssd_info *ssd,unsigned int channel,un
 	struct gc_operation *gc_node = ssd->channel_head[channel].gc_soft;
 	//struct  *gc_sub;
 
+	for (i=0;i<ssd->parameter->page_block;i++)
+	{
+		if (ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[gc_node->block].page_head[i].valid_state>0)
+		{
+			creat_sub_gc(ssd,gc_node,channel,i,READ);
+		}
+	}
+	creat_sub_gc(ssd,gc_node,channel,-1,11);  //KXC_2: erase operation
+	for (i=0;i<ssd->parameter->page_block;i++)
+	{
+		if (ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[gc_node->block].page_head[i].valid_state>0)
+		{
+			creat_sub_gc(ssd,gc_node,channel,i,WRITE);
+		}
+	}
 
-	if (ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[gc_node->block].invalid_page_num!=ssd->parameter->page_block)     /*还需要执行copyback操作*/
-	{
-		for (i=0;i<ssd->parameter->page_block;i++)
-		{
-			if (ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[gc_node->block].page_head[i].valid_state>0)
-			{
-				creat_sub_gc(ssd,gc_node,channel,i,READ);
-			}
-		}
-		creat_sub_gc(ssd,gc_node,channel,-1,11);  //KXC_2: erase operation
-		for (i=0;i<ssd->parameter->page_block;i++)
-		{
-			if (ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[gc_node->block].page_head[i].valid_state>0)
-			{
-				creat_sub_gc(ssd,gc_node,channel,i,WRITE);
-			}
-		}
-	}
-	else
-	{
-		creat_sub_gc(ssd,gc_node,channel,-1,11);  //KXC_2: erase operation
-	}
-	return ssd;
 }
 
 struct ssd_info * creat_sub_gc(struct ssd_info *ssd,struct gc_operation *gc_node,unsigned int channel, int page, int type)
