@@ -1224,11 +1224,10 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 	unsigned int lsn,lpn,last_lpn,first_lpn,complete_flag=0, state;
 	unsigned int flag=0,flag1=1,active_region_flag=0;           //to indicate the lsn is hitted or not
 	struct request *req=NULL;
-	struct sub_request *sub=NULL,*sub_r=NULL,*update=NULL;
+	struct sub_request *sub=NULL,*sub_r=NULL,*update=NULL,*test = NULL;
 	struct local *loc=NULL;
 	struct channel_info *p_ch=NULL;
 
-	
 	unsigned int mask=0; 
 	unsigned int offset1=0, offset2=0;
 	unsigned int sub_size=0;
@@ -1272,6 +1271,17 @@ struct ssd_info *no_buffer_distribute(struct ssd_info *ssd)
 			sub=creat_sub_request(ssd,lpn,sub_size,state,req,req->operation);
 			lpn++;
 		}
+	}
+
+	//test error int the ssd->subs_w_queue
+	test = ssd->subs_w_head;
+	while(test)
+	{
+		if(test->operation == READ || test->operation == 11)
+		{
+			printf("error in no buffer dis");
+		}
+		test = test->next_node;
 	}
 
 	return ssd;

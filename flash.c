@@ -612,7 +612,7 @@ Status write_page(struct ssd_info *ssd,unsigned int channel,unsigned int chip,un
 **********************************************/
 struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,int size,unsigned int state,struct request * req,unsigned int operation)
 {
-	struct sub_request* sub=NULL,* sub_r=NULL, *sub_gc=NULL;
+	struct sub_request* sub=NULL,* sub_r=NULL, *sub_gc=NULL, *test = NULL;
 	struct channel_info * p_ch=NULL;
 	struct local * loc=NULL;
 	unsigned int flag=0;
@@ -676,7 +676,7 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 			if(sub->lpn == ssd->gc_buffer[i])
 			{
 				flag = 1;
-				//ssd->gc_read_hit_count++;
+				ssd->gc_read_hit_count++;
 				break;
 			}
 		}
@@ -720,7 +720,7 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 		}
 		else
 		{
-			ssd->gc_read_hit_count++;
+			//ssd->gc_read_hit_count++;
 			sub->current_state = SR_R_DATA_TRANSFER;
 			sub->current_time=ssd->current_time;
 			sub->next_state = SR_COMPLETE;
@@ -779,6 +779,17 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 		sub=NULL;
 		printf("\nERROR ! Unexpected command.\n");
 		return NULL;
+	}
+
+	//test error
+	test = ssd->subs_w_head;
+	while(test)
+	{
+		if(test->operation == READ || test->operation == 11)
+		{
+			printf("error in io sub creat");
+		}
+		test = test->next_node;
 	}
 	
 	return sub;

@@ -655,7 +655,7 @@ struct ssd_info *soft_gc_distribute(struct ssd_info *ssd,unsigned int channel,un
 struct ssd_info * creat_sub_gc(struct ssd_info *ssd,struct gc_operation *gc_node,unsigned int channel, int page, int type)
 {
 	struct sub_request* sub=NULL;
-	struct sub_request* sub_r=NULL, *sub_w=NULL;
+	struct sub_request* sub_r=NULL, *sub_w=NULL, *test=NULL;
 	struct local *location=NULL;
 	
 	struct channel_info * p_ch=NULL;
@@ -666,6 +666,16 @@ struct ssd_info * creat_sub_gc(struct ssd_info *ssd,struct gc_operation *gc_node
 	unsigned int lpn;
 	int read_hit = 0;
 	int write_hit = 0;
+
+	test = ssd->subs_w_head;
+	while(test)
+	{
+		if(test->operation == READ || test->operation == 11)
+		{
+			printf("error in gc sub creat before");
+		}
+		test = test->next_node;
+	}
 
 	sub = (struct sub_request*)malloc(sizeof(struct sub_request));                        /*申请一个子请求的结构*/
 	alloc_assert(sub,"sub_request");
@@ -897,6 +907,16 @@ struct ssd_info * creat_sub_gc(struct ssd_info *ssd,struct gc_operation *gc_node
 		sub=NULL;
 		printf("\nERROR ! Unexpected command.\n");
 		return NULL;
+	}
+
+	test = ssd->subs_w_head;
+	while(test)
+	{
+		if(test->operation == READ || test->operation == 11)
+		{
+			printf("error in gc sub creat after");
+		}
+		test = test->next_node;
 	}
 	
 	return ssd;
