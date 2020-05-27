@@ -619,6 +619,10 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 	int i,channel;
 	int buf_flag = 0;
 
+	if(ssd->channel_head[channel].gc_sub_tail->next_node != NULL)
+	{
+		i = 0;
+	}
 	sub = (struct sub_request*)malloc(sizeof(struct sub_request));                        /*申请一个子请求的结构*/
 	alloc_assert(sub,"sub_request");
 	memset(sub,0, sizeof(struct sub_request));
@@ -782,7 +786,7 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 	}
 
 	//test error
-	test = ssd->subs_w_head;
+	/*test = ssd->subs_w_head;
 	while(test)
 	{
 		if(test->operation == READ || test->operation == 11)
@@ -790,6 +794,10 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 			printf("error in io sub creat");
 		}
 		test = test->next_node;
+	}*/
+	if(ssd->channel_head[channel].gc_sub_tail->next_node != NULL)
+	{
+		i = 0;
 	}
 	
 	return sub;

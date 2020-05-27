@@ -667,7 +667,7 @@ struct ssd_info * creat_sub_gc(struct ssd_info *ssd,struct gc_operation *gc_node
 	int read_hit = 0;
 	int write_hit = 0;
 
-	test = ssd->subs_w_head;
+	/*test = ssd->subs_w_head;
 	while(test)
 	{
 		if(test->operation == READ || test->operation == 11)
@@ -675,6 +675,10 @@ struct ssd_info * creat_sub_gc(struct ssd_info *ssd,struct gc_operation *gc_node
 			printf("error in gc sub creat before");
 		}
 		test = test->next_node;
+	}*/
+	if(ssd->channel_head[channel].gc_sub_tail->next_node != NULL)
+	{
+		write_hit = 0;
 	}
 
 	sub = (struct sub_request*)malloc(sizeof(struct sub_request));                        /*申请一个子请求的结构*/
@@ -909,7 +913,7 @@ struct ssd_info * creat_sub_gc(struct ssd_info *ssd,struct gc_operation *gc_node
 		return NULL;
 	}
 
-	test = ssd->subs_w_head;
+	/*test = ssd->subs_w_head;
 	while(test)
 	{
 		if(test->operation == READ || test->operation == 11)
@@ -917,6 +921,10 @@ struct ssd_info * creat_sub_gc(struct ssd_info *ssd,struct gc_operation *gc_node
 			printf("error in gc sub creat after");
 		}
 		test = test->next_node;
+	}*/
+	if(ssd->channel_head[channel].gc_sub_tail->next_node != NULL)
+	{
+		write_hit = 0;
 	}
 	
 	return ssd;
