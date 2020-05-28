@@ -571,7 +571,7 @@ struct parameter_value *load_parameters(char parameter_file[30])
 		}else if((res_eql=strcmp(buf,"queue_length")) ==0){
 			sscanf(buf + next_eql,"%d",&p->queue_length);
 		}else if((res_eql=strcmp(buf,"active_erase")) ==0){
-			sscanf(buf + next_eql,"%d",&p->active_erase);
+			sscanf(buf + next_eql,"%d",&p->time_control);
 		}else if((res_eql=strcmp(buf,"interruptible")) ==0){
 			sscanf(buf + next_eql,"%d",&p->interruptible); 
 		}else if((res_eql=strcmp(buf,"gc soft threshold")) ==0){

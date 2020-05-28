@@ -578,10 +578,15 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 					victim_block = find_victim_interrupt_gc(ssd,channel,chip,die,plane);
 
 					if(victim_block == 500000) return ssd;
-
+					valid_page = 0;
+					for(i = 0; i < ssd->parameter->page_block; i++)
+					{
+						ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[victim_block].page_head[i].valid_state > 0;
+						valid_page++;
+					}
 					free_page = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[victim_block].free_page_num;
-					invalid_page = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[victim_block].invalid_page_num;
-					valid_page = ssd->parameter->page_block - free_page - invalid_page;
+					//invalid_page = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[victim_block].invalid_page_num;
+					//valid_page = ssd->parameter->page_block - free_page - invalid_page;
 					if(free_page > 0) printf("error in victim block selection in soft gc");
 					//KXC_2: gc buffer is enough to put the valid pages
 					if(valid_page>= 0 && valid_page <= ssd->parameter->gc_buffer_size - ssd->gc_buf_count)

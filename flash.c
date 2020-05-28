@@ -1010,7 +1010,12 @@ Status services_2_gc_sub(struct ssd_info * ssd, int channel,unsigned int * chann
 	
 	if(sub->operation == READ)
 	{
-		/*if there are read requests in queue, send one of them to target chip*/			
+		/*if there are read requests in queue, send one of them to target chip*/
+		next_state_time = ssd->channel_head[channel].next_state_predict_time+ssd->parameter->time_characteristics.tR;
+		if(ssd->parameter->time_control == 1 && ssd->next_request_time < next_state_time)
+		{
+			return;
+		}			
 		
 		if(sub->current_state==SR_WAIT && sub->operation == READ)									
 		{	                                                                       
@@ -1643,7 +1648,7 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 	int w_flag = 0;
 	int flag , i;
 	int channel_gc = 0, channel_gc_num = 0, find_flag = 0;
-    
+    int64_t next_state_time = 0;
 	/************************************************************************************************************************
 	*写子请求挂在两个地方一个是channel_head[channel].subs_w_head，另外一个是ssd->subs_w_head，所以要保证至少有一个队列不为空
 	*同时子请求的处理还分为动态分配和静态分配。
@@ -1845,6 +1850,11 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 			chip_token=ssd->channel_head[channel].token;                            /*令牌*/
 			if (*channel_busy_flag==0)
 			{
+				next_state_time = ssd->channel_head[channel].next_state_predict_time+ssd->parameter->time_characteristics.tPROG;
+				if(ssd->parameter->time_control == 1 && ssd->next_request_time < next_state_time)
+				{
+					return;
+				}
 				if((ssd->channel_head[channel].chip_head[chip_token].current_state==CHIP_IDLE)||((ssd->channel_head[channel].chip_head[chip_token].next_state==CHIP_IDLE)&&(ssd->channel_head[channel].chip_head[chip_token].next_state_predict_time<=ssd->current_time)))				
 				{
 					random_num=ssd->program_count%ssd->parameter->channel_number; 
