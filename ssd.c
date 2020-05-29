@@ -939,6 +939,7 @@ void statistic_output(struct ssd_info *ssd)
 	fprintf(ssd->statisticfile,"erase count: %13d\n",ssd->erase_count);	  
 	fprintf(ssd->statisticfile,"direct erase count: %13d\n",ssd->direct_erase_count);
 	fprintf(ssd->statisticfile,"gc hard count: %13d\n",ssd->gc_hard_count);
+	fprintf(ssd->statisticfile,"gc hard page move: %13d\n",ssd->page_move_count);
 	fprintf(ssd->statisticfile,"gc soft count: %13d\n",ssd->gc_soft_count);
 	fprintf(ssd->statisticfile,"gc soft read count: %13d\n",ssd->soft_gc_read_count);
 	fprintf(ssd->statisticfile,"gc read hit count: %13d\n",ssd->gc_read_hit_count);

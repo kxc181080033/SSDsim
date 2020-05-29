@@ -195,6 +195,7 @@ struct ssd_info{
 	unsigned long gc_read_hit_count;      //KXC_2: the number of io read sub hit in the gc sub read
 	unsigned long gc_write_hit_count;      //KXC_2: the number of io write sub hit in the gc write read
 
+	unsigned long page_move_count;       // KXC_2£ºto record the number of valid page move count in hard gc
 	unsigned long gc_soft_count;         //KXC_2: to record the number of soft gc
 	unsigned long gc_hard_count;         //KXC_2: to record the number of hard gc
 	int gc_buf_count;					 //KXC_2: to record the number of gc buffer
