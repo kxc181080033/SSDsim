@@ -575,7 +575,7 @@ struct parameter_value *load_parameters(char parameter_file[30])
 		}else if((res_eql=strcmp(buf,"interruptible")) ==0){
 			sscanf(buf + next_eql,"%d",&p->interruptible); 
 		}else if((res_eql=strcmp(buf,"gc soft threshold")) ==0){
-			sscanf(buf + next_eql,"%f",&p->gc_soft_threshold);s
+			sscanf(buf + next_eql,"%f",&p->gc_soft_threshold);
 		}else if((res_eql=strcmp(buf,"gc buffer")) ==0){
 			sscanf(buf + next_eql,"%d",&p->gc_buffer_size);   
 		}else if((res_eql=strncmp(buf,"chip number",11)) ==0)
