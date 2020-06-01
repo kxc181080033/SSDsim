@@ -581,8 +581,8 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 					valid_page = 0;
 					for(i = 0; i < ssd->parameter->page_block; i++)
 					{
-						ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[victim_block].page_head[i].valid_state > 0;
-						valid_page++;
+						if(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[victim_block].page_head[i].valid_state > 0)
+							valid_page++;
 					}
 					free_page = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[victim_block].free_page_num;
 					//invalid_page = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[victim_block].invalid_page_num;
