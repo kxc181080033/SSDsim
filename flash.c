@@ -1006,17 +1006,19 @@ Status services_2_gc_sub(struct ssd_info * ssd, int channel,unsigned int * chann
 	sub = ssd->channel_head[channel].gc_sub_queue;
 	struct  gc_operation *gc_node;
 	int64_t next_state_time = 0;
-
+	double random_num=rand()/(RAND_MAX+1.0);
+	double erase_p=(double)ssd->interval[4]/(ssd->write_request_count + ssd->read_request_count);
 	
 	if(sub->operation == READ)
 	{
 		/*if there are read requests in queue, send one of them to target chip*/
-		next_state_time = ssd->channel_head[channel].next_state_predict_time+ssd->parameter->time_characteristics.tR;
-		if(ssd->parameter->time_control == 1 && ssd->next_request_time < next_state_time)
+		//next_state_time = ssd->channel_head[channel].next_state_predict_time+ssd->parameter->time_characteristics.tR;
+		/*if(ssd->parameter->time_control == 1 && ssd->next_request_time < next_state_time)
 		{
 			return;
-		}			
-		
+		}*/	
+
+
 		if(sub->current_state==SR_WAIT && sub->operation == READ)									
 		{	                                                                       
 			if((ssd->channel_head[sub->location->channel].chip_head[sub->location->chip].current_state==CHIP_IDLE)||((ssd->channel_head[sub->location->channel].chip_head[sub->location->chip].next_state==CHIP_IDLE)&&
@@ -1037,15 +1039,20 @@ Status services_2_gc_sub(struct ssd_info * ssd, int channel,unsigned int * chann
 	}
 	else if(sub->operation == 11)     //KXC_2: ERASE
 	{
-		next_state_time = ssd->channel_head[channel].next_state_predict_time+ssd->parameter->time_characteristics.tBERS;
+		//next_state_time = ssd->channel_head[channel].next_state_predict_time+ssd->parameter->time_characteristics.tBERS;
 		
 		if((ssd->channel_head[sub->location->channel].chip_head[sub->location->chip].current_state==CHIP_IDLE)||((ssd->channel_head[sub->location->channel].chip_head[sub->location->chip].next_state==CHIP_IDLE)&&
 				(ssd->channel_head[sub->location->channel].chip_head[sub->location->chip].next_state_predict_time<=ssd->current_time)))
 		{	
-			if(ssd->parameter->time_control == 1 && ssd->next_request_time < next_state_time)
+			/*if(ssd->parameter->time_control == 1 && ssd->next_request_time < next_state_time)
 			{
 				return;
-			}
+			}*/
+			if(ssd->parameter->time_control == 1 && random_num > erase_p)
+			{
+				return;
+			}		
+
 			
 			erase_operation(ssd,channel,sub->location->chip, sub->location->die,sub->location->plane,sub->location->block);	                                              /*执行完move_page操作后，就立即执行block的擦除操作*/
 
@@ -1854,10 +1861,10 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 			if (*channel_busy_flag==0)
 			{
 				next_state_time = ssd->channel_head[channel].next_state_predict_time+ssd->parameter->time_characteristics.tPROG;
-				if(ssd->parameter->time_control == 1 && ssd->next_request_time < next_state_time)
+				/*if(ssd->parameter->time_control == 1 && ssd->next_request_time < next_state_time)
 				{
 					return;
-				}
+				}*/
 				if((ssd->channel_head[channel].chip_head[chip_token].current_state==CHIP_IDLE)||((ssd->channel_head[channel].chip_head[chip_token].next_state==CHIP_IDLE)&&(ssd->channel_head[channel].chip_head[chip_token].next_state_predict_time<=ssd->current_time)))				
 				{
 					random_num=ssd->program_count%ssd->parameter->channel_number; 

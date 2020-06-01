@@ -180,6 +180,24 @@ int get_requests(struct ssd_info *ssd)
 		ssd->min_lsn=lsn;
 	if (lsn>ssd->max_lsn)
 		ssd->max_lsn=lsn;
+
+	if(time_t - ssd->previous_request_time < 20000)
+	{
+		ssd->interval[0]++;
+	}
+	else if(time_t - ssd->previous_request_time < 200000)
+	{
+		ssd->interval[1]++;
+	}
+	else if(time_t - ssd->previous_request_time < 1500000)
+	{
+		ssd->interval[2]++;
+	}
+	else
+	{
+		ssd->interval[3]++;
+	}
+	
 	/******************************************************************************************************
 	*�ϲ��ļ�ϵͳ���͸�SSD���κζ�д��������������֣�LSN��size�� LSN���߼������ţ������ļ�ϵͳ���ԣ����������Ĵ�
 	*���ռ���һ�����Ե������ռ䡣���磬������260��6����ʾ������Ҫ��ȡ��������Ϊ260���߼�������ʼ���ܹ�6��������

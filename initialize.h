@@ -158,6 +158,7 @@ struct ssd_info{
 	int64_t next_request_time;
 	int64_t current_request_time;        //KXC:to record the current request's arriving time
 	int64_t previous_response_time;      //KXC:to calculate the wait time
+	int64_t previous_request_time;       //KXC_2: to record the arriving time of previous request time
 	unsigned int real_time_subreq;       //记录实时的写请求个数，用在全动态分配时，channel优先的情况
 	int flag;
 	int active_flag;                     //记录主动写是否阻塞，如果发现柱塞，需要将时间向前推进,0表示没有阻塞，1表示被阻塞，需要向前推进时间
@@ -194,6 +195,7 @@ struct ssd_info{
 	unsigned long soft_gc_read_count;     //KXC_2: the valid page number in soft gc
 	unsigned long gc_read_hit_count;      //KXC_2: the number of io read sub hit in the gc sub read
 	unsigned long gc_write_hit_count;      //KXC_2: the number of io write sub hit in the gc write read
+	unsigned long interval[4];             //KXC_2: to record the arrival counts of requests arriving
 
 	unsigned long page_move_count;       // KXC_2：to record the number of valid page move count in hard gc
 	unsigned long gc_soft_count;         //KXC_2: to record the number of soft gc
