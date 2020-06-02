@@ -487,6 +487,8 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 		ppn=ssd->dram->map->map_entry[lpn].pn;
 		location=find_location(ssd,ppn);
 		lpn_page = ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].page_head[location->page].lpn;
+		//KXC_2:to update the last update time of the block
+		ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].last_update_time = ssd->current_time;
 		if(	ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].page_head[location->page].lpn!=lpn && ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].page_head[location->page].lpn != -1)
 		{
 			printf("\nError in get_ppn()22222\n");
@@ -954,10 +956,14 @@ struct ssd_info * creat_sub_gc(struct ssd_info *ssd,struct gc_operation *gc_node
 Status erase_operation(struct ssd_info * ssd,unsigned int channel ,unsigned int chip ,unsigned int die ,unsigned int plane ,unsigned int block)
 {
 	unsigned int i=0;
+	unsigned int erase_block;
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[block].free_page_num=ssd->parameter->page_block;
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[block].invalid_page_num=0;
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[block].last_write_page=-1;
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[block].erase_count++;
+	erase_block = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[block].erase_count;
+	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].max_erase = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].max_erase > erase_block? ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].max_erase : erase_block;
+	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].min_erase = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].min_erase < erase_block? ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].min_erase : erase_block;
 	for (i=0;i<ssd->parameter->page_block;i++)
 	{
 		ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[block].page_head[i].free_state=PG_SUB;
@@ -1540,9 +1546,14 @@ int interrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,uns
 //KXC_2: find victim block when soft gc
 unsigned int find_victim_interrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,unsigned int die,unsigned int plane)        
 {
-	unsigned int i,block = 500000,active_block,transfer_size,invalid_page=0;
+	unsigned int i,j,block = 500000,active_block,transfer_size,invalid_page=0;
 	struct local *location;
-	unsigned int victim_block = 500000;
+	unsigned int victim_block = 500000,erase = 0;
+	unsigned long max_erase = 0, min_erase = 0;
+	double lamda = 0.0;
+	unsigned int invalid_block = 0, free_block = 0, valid_block = 0;
+	double score = 10000000.0, score_tmp = 0.0, benifit_future = 0.0;
+	int flag = 0;
 
 	if(find_active_block(ssd,channel,chip,die,plane)!=SUCCESS)                                           /*»ñÈ¡»îÔ¾¿é*/
 	{
@@ -1553,14 +1564,120 @@ unsigned int find_victim_interrupt_gc(struct ssd_info *ssd,unsigned int channel,
 	transfer_size=0;
 	
 	//to search the block in the plane
-	for(i=0;i<ssd->parameter->block_plane;i++)
-	{			
-		if((active_block!=i)&&(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num>invalid_page))						
-		{				
-			invalid_page=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num;
-			block=i;						
+	if(ssd->parameter->wear_leveling == 0)
+	{
+		for(i=0;i<ssd->parameter->block_plane;i++)
+		{			
+			if((active_block!=i)&&(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num>invalid_page))						
+			{				
+				invalid_page=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num;
+				block=i;						
+			}
 		}
 	}
+	
+	//KXC:the 2012 meeting's WL  
+	if (ssd->parameter->wear_leveling==1)
+	{
+		max_erase = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].max_erase;
+		min_erase = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].min_erase;
+
+
+		if ((max_erase - min_erase) ==0)
+		{
+			lamda = 0.0;
+		}
+		else
+		{
+			lamda = 2.0/(1+exp(10/(max_erase - min_erase)));
+		}
+
+		//score = (double)((1-lamda)*(valid_block/(valid_block+invalid_block+1))+lamda*(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count/(1+max_erase)));	
+		for (i=0;i<ssd->parameter->block_plane;i++)
+		{
+			invalid_block = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num;
+			free_block = ssd->parameter->page_block - invalid_block-ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].free_page_num;
+			valid_block = ssd->parameter->page_block - invalid_block - free_block;
+			score_tmp = (double)((1-lamda)*(valid_block/(valid_block+invalid_block+1))+lamda*(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count/(1+max_erase)));
+			if((active_block!=i)&&(score > score_tmp))
+			{
+				score = score_tmp;
+				block = i;
+
+			}
+		}
+	}
+		
+	//KXC:the WL of 2017 paper
+	if (ssd->parameter->wear_leveling==2)
+	{
+
+		max_erase = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].max_erase;
+		min_erase = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].min_erase;
+		if (max_erase - min_erase >2)   //wl
+		{
+			flag = 0;
+		}
+		else
+		{
+			flag = 1;                   //ferformace
+		}
+
+		if (flag == 0)
+		{	
+			for (i=0;i<ssd->parameter->block_plane;i++)
+			{
+				//invalid_block = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num;
+				//valid_block = ssd->parameter->page_block - invalid_block-ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].free_page_num;
+				score_tmp =(double)(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count/(max_erase+1)+ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].last_update_time/ssd->current_time);
+				if((active_block!=i)&&(score > score_tmp))
+				{
+					score =score_tmp;
+					block = i;
+				}
+			}
+						
+		}
+		else 
+		{
+			for(i=0;i<ssd->parameter->block_plane;i++)
+			{			
+				if((active_block!=i)&&(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num>invalid_page))						
+				{				
+					invalid_page=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num;
+					block=i;						
+				}
+			}
+		}	
+		
+	}
+
+	if(ssd->parameter->wear_leveling == 3)
+	{
+		score = 0.0;
+		for (i=0;i<ssd->parameter->block_plane;i++)
+		{
+			invalid_block = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num;
+			free_block = ssd->parameter->page_block - invalid_block-ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].free_page_num;
+			valid_block = ssd->parameter->page_block - invalid_block - free_block;
+			erase = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count;
+
+			for(j = 1; j < ssd->parameter->ers_limit - erase +1;j++)
+			{
+				benifit_future += ssd->parameter->page_block/(pow(1+0.5,j));
+			}
+			
+			score_tmp = (double) invalid_block/ssd->parameter->page_block + benifit_future/ssd->parameter->ers_limit - (double) valid_block/ssd->parameter->page_block;
+			
+			if((active_block!=i)&&(score < score_tmp))
+			{
+				score = score_tmp;
+				block = i;
+
+			}
+		}
+	}
+
 	victim_block=block;
 
 	return victim_block;
