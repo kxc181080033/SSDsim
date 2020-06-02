@@ -1596,7 +1596,7 @@ unsigned int find_victim_interrupt_gc(struct ssd_info *ssd,unsigned int channel,
 		for (i=0;i<ssd->parameter->block_plane;i++)
 		{
 			invalid_block = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num;
-			free_block = ssd->parameter->page_block - invalid_block-ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].free_page_num;
+			free_block = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].free_page_num;
 			if(free_block != 0) continue;
 			valid_block = ssd->parameter->page_block - invalid_block - free_block;
 			score_tmp = (double)((1-lamda)*(valid_block/(valid_block+invalid_block+1))+lamda*(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count/(1+max_erase)));
@@ -1628,7 +1628,7 @@ unsigned int find_victim_interrupt_gc(struct ssd_info *ssd,unsigned int channel,
 		{	
 			for (i=0;i<ssd->parameter->block_plane;i++)
 			{
-				free_block = ssd->parameter->page_block - invalid_block-ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].free_page_num;
+				free_block = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].free_page_num;
 				if(free_block != 0) continue;
 				score_tmp =(double)(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count/(max_erase+1)+ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].last_update_time/ssd->current_time);
 				if((active_block!=i)&&(score > score_tmp))
@@ -1643,6 +1643,8 @@ unsigned int find_victim_interrupt_gc(struct ssd_info *ssd,unsigned int channel,
 		{
 			for(i=0;i<ssd->parameter->block_plane;i++)
 			{			
+				free_block = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].free_page_num;
+				if(free_block != 0) continue;
 				if((active_block!=i)&&(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num>invalid_page))						
 				{				
 					invalid_page=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num;
@@ -1659,7 +1661,7 @@ unsigned int find_victim_interrupt_gc(struct ssd_info *ssd,unsigned int channel,
 		for (i=0;i<ssd->parameter->block_plane;i++)
 		{
 			invalid_block = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num;
-			free_block = ssd->parameter->page_block - invalid_block-ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].free_page_num;
+			free_block = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].free_page_num;
 			if(free_block != 0) continue;
 			valid_block = ssd->parameter->page_block - invalid_block - free_block;
 			erase = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count;
