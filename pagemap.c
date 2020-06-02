@@ -969,7 +969,7 @@ Status erase_operation(struct ssd_info * ssd,unsigned int channel ,unsigned int 
 	ssd->channel_head[channel].chip_head[chip].erase_count++;
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].free_page+=ssd->parameter->page_block;
 
-	if(ssd->iops_time == 0) ssd->iops_time = ssd->current_time;
+	if(ssd->iops_time == 0 ) ssd->iops_time = 500000000000000;
 	return SUCCESS;
 
 }
