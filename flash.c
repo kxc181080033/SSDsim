@@ -1007,7 +1007,7 @@ Status services_2_gc_sub(struct ssd_info * ssd, int channel,unsigned int * chann
 	struct  gc_operation *gc_node;
 	int64_t next_state_time = 0;
 	double random_num=rand()/(RAND_MAX+1.0);
-	double erase_p=(double)ssd->interval[3]/(ssd->write_request_count + ssd->read_request_count);
+	double erase_p=(double)ssd->interval[3]/(ssd->interval[3]+ssd->interval[2]);
 	
 	if(sub->operation == READ)
 	{
