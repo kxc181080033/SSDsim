@@ -189,6 +189,11 @@ struct ssd_info{
 	double channel_utilization;          //KXC:to record the channel utilization
 	int64_t max_wait_time;               //KXC:to record the max wait time
 	int64_t max_queue_time;              //KXC:to record the max time gap in the request queue
+	int64_t iops_time;                   //KXC_2: once erase occurs, begin to count the wrtie delay and iops
+	long iops[60];
+	int64_t write_delay[60];
+	int iops_count;
+	int write_delay_count;
 
 	unsigned int distributed[12];        //KXC:to record the response time distribution
 	long long *gc_buffer;                //KXC_2:the gc buffer used by soft gc

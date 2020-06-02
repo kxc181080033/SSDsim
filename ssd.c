@@ -727,6 +727,29 @@ void trace_output(struct ssd_info* ssd){
 					ssd->write_avg_wait=ssd->write_avg_wait+(end_time-req->time);
 				}
 
+				while(ssd->iops_count< 60)
+				{
+					if(end_time > ssd->iops_time + ssd->iops_count * 1000000000 && end_time < ssd->iops_time + (ssd->iops_count + 1) * 1000000000)
+					{
+						break;
+					}
+					ssd->iops_count++;
+					if(ssd->write_delay_count != 0)
+					{
+						ssd->write_delay[i] /= ssd->write_delay_count;
+					}
+					ssd->write_delay_count = 0;
+				}
+
+				ssd->iops[i] += req->size;
+				if(req->operation == WRITE)
+				{
+					ssd->write_delay[i] += wait_time;
+					ssd->write_delay_count++;
+				}
+				
+
+
 				while(req->subs!=NULL)
 				{
 					tmp = req->subs;
@@ -1021,6 +1044,15 @@ void statistic_output(struct ssd_info *ssd)
 	fprintf(ssd->statisticfile,"10: %.3f\n",((double)ssd->distributed[11])/(double)(ssd->read_request_count+ssd->write_request_count));
 	
 	fprintf(ssd->statisticfile,"\n");
+	for(i = 0; i < 60; i++)
+	{
+		fprintf(ssd->statisticfile,"iops%d: %lld\n",i,ssd->iops[i]);
+	}
+	fprintf(ssd->statisticfile,"\n");
+	for(i = 0; i < 60; i++)
+	{
+		fprintf(ssd->statisticfile,"write_delay%d: %lld\n",i,ssd->write_delay[i]);
+	}
 
 	fprintf(ssd->statisticfile,"channel erase standard deviation: %.3f\n",sqrt(std_channel));
 	fflush(ssd->statisticfile);
