@@ -1599,7 +1599,7 @@ unsigned int find_victim_interrupt_gc(struct ssd_info *ssd,unsigned int channel,
 			free_block = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].free_page_num;
 			if(free_block != 0) continue;
 			valid_block = ssd->parameter->page_block - invalid_block - free_block;
-			score_tmp = (double)((1-lamda)*(valid_block/(valid_block+invalid_block+1))+lamda*(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count/(1+max_erase)));
+			score_tmp = (double)((1-lamda)*((double)valid_block/((double)valid_block+invalid_block+1))+lamda*(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count/(1+(double)max_erase)));
 			if((active_block!=i)&&(score > score_tmp))
 			{
 				score = score_tmp;
@@ -1630,7 +1630,7 @@ unsigned int find_victim_interrupt_gc(struct ssd_info *ssd,unsigned int channel,
 			{
 				free_block = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].free_page_num;
 				if(free_block != 0) continue;
-				score_tmp =(double)(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count/(max_erase+1)+ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].last_update_time/ssd->current_time);
+				score_tmp =(double)((double)ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count/((double)max_erase+1)+ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].last_update_time/(double)ssd->current_time);
 				if((active_block!=i)&&(score > score_tmp))
 				{
 					score =score_tmp;
@@ -1668,7 +1668,7 @@ unsigned int find_victim_interrupt_gc(struct ssd_info *ssd,unsigned int channel,
 
 			for(j = 1; j < ssd->parameter->ers_limit - erase +1;j++)
 			{
-				benifit_future += ssd->parameter->page_block/(pow(1+0.5,j));
+				benifit_future += (double)ssd->parameter->page_block/(pow(1+0.5,j));
 			}
 			
 			score_tmp = (double) invalid_block/ssd->parameter->page_block + benifit_future/ssd->parameter->ers_limit - (double) valid_block/ssd->parameter->page_block;
