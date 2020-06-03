@@ -1599,7 +1599,7 @@ unsigned int find_victim_interrupt_gc(struct ssd_info *ssd,unsigned int channel,
 			free_block = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].free_page_num;
 			if(free_block != 0) continue;
 			valid_block = ssd->parameter->page_block - invalid_block - free_block;
-			score_tmp = (double)((1-lamda)*((double)valid_block/((double)valid_block+invalid_block+1))+lamda*(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count/(1+(double)max_erase)));
+			score_tmp = (double)((1-lamda)*((double)valid_block/((double)valid_block+invalid_block+1))+lamda*((double)ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count/(1+(double)max_erase)));
 			if((active_block!=i)&&(score > score_tmp))
 			{
 				score = score_tmp;

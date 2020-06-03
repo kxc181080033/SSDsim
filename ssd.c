@@ -1032,7 +1032,7 @@ void statistic_output(struct ssd_info *ssd)
 	//fprintf(ssd->statisticfile,"channel utilization: %.3f\n",ssd->channel_utilization/(ssd->parameter->channel_number*ssd->process_count));
 	//fprintf(ssd->statisticfile,"chip utilization: %.3f\n",ssd->chip_utilization/(ssd->parameter->channel_number*ssd->parameter->chip_channel[0]*ssd->process_count1));
 	fprintf(ssd->statisticfile,"\n");
-
+	fprintf(ssd->statisticfile,"prediction accuracy %.3f\n", (double)ssd->predict_yes/(double)ssd->predict_count );
 	fprintf(ssd->statisticfile,"0-0.02: %.3f\n",((double)ssd->distributed[0])/(double)(ssd->read_request_count+ssd->write_request_count));
 	fprintf(ssd->statisticfile,"0.02-0.04: %.3f\n",((double)ssd->distributed[1])/(double)(ssd->read_request_count+ssd->write_request_count));
 	fprintf(ssd->statisticfile,"0.04-0.1: %.3f\n",((double)ssd->distributed[2])/(double)(ssd->read_request_count+ssd->write_request_count));

@@ -206,6 +206,8 @@ struct ssd_info{
 	unsigned long gc_soft_count;         //KXC_2: to record the number of soft gc
 	unsigned long gc_hard_count;         //KXC_2: to record the number of hard gc
 	int gc_buf_count;					 //KXC_2: to record the number of gc buffer
+	unsigned long predict_count;         //KXC_2£ºto record the predict times
+	unsigned long predict_yes;           //KXC_2£ºto record the predict yes times
 	unsigned int min_lsn;
 	unsigned int max_lsn;
 	unsigned long read_count;

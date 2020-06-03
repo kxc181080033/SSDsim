@@ -1048,12 +1048,17 @@ Status services_2_gc_sub(struct ssd_info * ssd, int channel,unsigned int * chann
 			{
 				return;
 			}*/
+			
 			if(ssd->parameter->time_control == 1 && random_num > erase_p)
 			{
 				return;
-			}		
+			}
+			ssd->predict_count++;
+			if(ssd->next_request_time >= ssd->current_time + ssd->parameter->time_characteristics.tBERS)		
+			{
+				ssd->predict_yes++;
+			}
 
-			
 			erase_operation(ssd,channel,sub->location->chip, sub->location->die,sub->location->plane,sub->location->block);	                                              /*执行完move_page操作后，就立即执行block的擦除操作*/
 
 			ssd->channel_head[channel].current_state=CHANNEL_GC;									
