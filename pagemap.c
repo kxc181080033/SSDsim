@@ -1666,10 +1666,11 @@ unsigned int find_victim_interrupt_gc(struct ssd_info *ssd,unsigned int channel,
 			valid_block = ssd->parameter->page_block - invalid_block - free_block;
 			erase = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count;
 
-			for(j = 1; j < ssd->parameter->ers_limit - erase +1;j++)
+			/*for(j = 1; j < ssd->parameter->ers_limit - erase +1;j++)
 			{
 				benifit_future += (double)ssd->parameter->page_block/(pow(1+0.5,j));
-			}
+			}*/
+			benifit_future = ssd->mi[ssd->parameter->ers_limit - erase +1];
 			
 			score_tmp = (double) invalid_block/ssd->parameter->page_block + benifit_future/ssd->parameter->ers_limit - (double) valid_block/ssd->parameter->page_block;
 			

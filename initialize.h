@@ -201,6 +201,7 @@ struct ssd_info{
 	unsigned long gc_read_hit_count;      //KXC_2: the number of io read sub hit in the gc sub read
 	unsigned long gc_write_hit_count;      //KXC_2: the number of io write sub hit in the gc write read
 	unsigned long interval[4];             //KXC_2: to record the arrival counts of requests arriving
+	double *mi;                            //KXC_2: Teacher yao's idea in the wear-leveling
 
 	unsigned long page_move_count;       // KXC_2£ºto record the number of valid page move count in hard gc
 	unsigned long gc_soft_count;         //KXC_2: to record the number of soft gc

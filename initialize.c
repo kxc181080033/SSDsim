@@ -346,6 +346,13 @@ struct ssd_info * initialize_channels(struct ssd_info * ssd )
 	{
 		ssd->gc_buffer[i] = -1;
 	}
+	//KXC_2: to calc the mi according to the erase limit
+	ssd->mi = (double *)malloc((ssd->parameter->ers_limit+1) * sizeof(double));
+	ssd->mi[0] = 0;
+	for(i = 1; i < ssd->parameter->ers_limit; i++)
+	{
+		ssd->mi[i] = ssd->mi[i-1] + (double)ssd->parameter->page_block/(pow(1+0.5,i));
+	}
 
 	return ssd;
 }

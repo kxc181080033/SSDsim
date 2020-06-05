@@ -897,6 +897,7 @@ void statistic_output(struct ssd_info *ssd)
 					std_block=std_block+(ssd->channel_head[i].chip_head[ii].die_head[j].plane_head[k].blk_head[m].erase_count-erase_block_avg)*(ssd->channel_head[i].chip_head[ii].die_head[j].plane_head[k].blk_head[m].erase_count-erase_block_avg);	
 				}
 				std_plane=std_plane+(plane_erase-erase_plane_avg)*(plane_erase-erase_plane_avg);
+				chip_erase = chip_erase + plane_erase;
 				channel_erase = channel_erase + plane_erase;
 			  }
 		    }
