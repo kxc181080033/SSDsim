@@ -1670,7 +1670,7 @@ unsigned int find_victim_interrupt_gc(struct ssd_info *ssd,unsigned int channel,
 			{
 				benifit_future += (double)ssd->parameter->page_block/(pow(1+0.5,j));
 			}*/
-			benifit_future = ssd->mi[ssd->parameter->ers_limit - erase +1];
+			benifit_future = ssd->mi[ssd->parameter->ers_limit - erase];
 			
 			score_tmp = (double) invalid_block/ssd->parameter->page_block + benifit_future/ssd->parameter->ers_limit - (double) valid_block/ssd->parameter->page_block;
 			
