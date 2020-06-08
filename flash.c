@@ -1582,7 +1582,17 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 									{
 										if ((sub->current_state==SR_WAIT)&&(sub->location->channel==channel)&&(sub->location->chip==chip)&&(sub->location->die==die))      /*该子请求就是当前die的请求*/
 										{
-											break;
+											if (sub->update!=NULL)                                                      /*如果有需要提前读出的页*/
+											{
+												if ((sub->update->current_state==SR_COMPLETE)||((sub->update->next_state==SR_COMPLETE)&&(sub->update->next_state_predict_time<=ssd->current_time)))   //被更新的页已经被读出
+												{
+													break;
+												}
+											}
+											else
+											{
+												break;
+											}	 
 										}
 										sub=sub->next_node;
 									}
@@ -1810,7 +1820,7 @@ struct ssd_info *process(struct ssd_info *ssd)
 				}
 				else if(ssd->channel_head[i].subs_r_head == NULL && ssd->channel_head[i].subs_w_head != NULL)
 				{
-					services_2_r_wait(ssd,i,&flag,&chg_cur_time_flag);  
+					services_2_write(ssd,i,&flag,&chg_cur_time_flag);  
 				}
 				else
 				{
