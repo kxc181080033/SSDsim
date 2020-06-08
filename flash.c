@@ -1410,7 +1410,7 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 	*写子请求挂在两个地方一个是channel_head[channel].subs_w_head，另外一个是ssd->subs_w_head，所以要保证至少有一个队列不为空
 	*同时子请求的处理还分为动态分配和静态分配。
 	*************************************************************************************************************************/
-		if((ssd->channel_head[channel].subs_w_head!=NULL)||(ssd->subs_w_head!=NULL))      
+	if((ssd->channel_head[channel].subs_w_head!=NULL)||(ssd->subs_w_head!=NULL))      
 	{
 		if (ssd->parameter->allocation_scheme==0)                                       /*动态分配*/
 		{
@@ -1753,41 +1753,116 @@ struct ssd_info *process(struct ssd_info *ssd)
 	*循环处理所有channel上的读写子请求
 	*发读请求命令，传读写数据，都需要占用总线，
 	******************************************/
-	for(chan=0;chan<ssd->parameter->channel_number;chan++)	     
+	//PAQ no read first
+	if(ssd->parameter->scheduling_algorithm == 2)
 	{
-		i=(random_num+chan)%ssd->parameter->channel_number;
-		flag=0;
-		flag_gc=0;                                                                       /*每次进入channel时，将gc的标志位置为0，默认认为没有进行gc操作*/
-		if((ssd->channel_head[i].current_state==CHANNEL_IDLE)||(ssd->channel_head[i].next_state==CHANNEL_IDLE&&ssd->channel_head[i].next_state_predict_time<=ssd->current_time))		
-		{   
-			if (ssd->gc_request>0)                                                       /*有gc操作，需要进行一定的判断*/
-			{
-				if (ssd->channel_head[i].gc_command!=NULL)
+		for(chan=0;chan<ssd->parameter->channel_number;chan++)	     
+		{
+			i=(random_num+chan)%ssd->parameter->channel_number;
+			flag=0;
+			flag_gc=0;                                                                       /*每次进入channel时，将gc的标志位置为0，默认认为没有进行gc操作*/
+			if((ssd->channel_head[i].current_state==CHANNEL_IDLE)||(ssd->channel_head[i].next_state==CHANNEL_IDLE&&ssd->channel_head[i].next_state_predict_time<=ssd->current_time))		
+			{   
+				if (ssd->gc_request>0)                                                       /*有gc操作，需要进行一定的判断*/
 				{
-					flag_gc=gc(ssd,i,0);                                                 /*gc函数返回一个值，表示是否执行了gc操作，如果执行了gc操作flag_gc=1，这个channel在这个时刻不能服务其他的请求*/
+					if (ssd->channel_head[i].gc_command!=NULL)
+					{
+						flag_gc=gc(ssd,i,0);                                                 /*gc函数返回一个值，表示是否执行了gc操作，如果执行了gc操作flag_gc=1，这个channel在这个时刻不能服务其他的请求*/
+					}
+					if (flag_gc==1)                                                          /*执行过gc操作，需要跳出此次循环*/
+					{
+						continue;
+					}
 				}
-				if (flag_gc==1)                                                          /*执行过gc操作，需要跳出此次循环*/
-				{
-					continue;
-				}
-			}
 
-			sub=ssd->channel_head[i].subs_r_head;                                        /*先处理读请求*/
-			services_2_r_wait(ssd,i,&flag,&chg_cur_time_flag);                           /*处理处于等待状态的读子请求*/
-		
-			if((flag==0)&&(ssd->channel_head[i].subs_r_head!=NULL))                      /*if there are no new read request and data is ready in some dies, send these data to controller and response this request*/		
-			{		     
-				services_2_r_data_trans(ssd,i,&flag,&chg_cur_time_flag);                    
+				sub=ssd->channel_head[i].subs_r_head;                                        /*先处理读请求*/
+				if(ssd->channel_head[i].subs_r_head != NULL && ssd->channel_head[i].subs_w_head != NULL)
+				{
+					if(ssd->channel_head[i].subs_r_head->begin_time < ssd->channel_head[i].subs_w_head->begin_time)
+					{
+						services_2_r_wait(ssd,i,&flag,&chg_cur_time_flag);                           /*处理处于等待状态的读子请求*/
+					
+						if((flag==0)&&(ssd->channel_head[i].subs_r_head!=NULL))                      /*if there are no new read request and data is ready in some dies, send these data to controller and response this request*/		
+						{		     
+							services_2_r_data_trans(ssd,i,&flag,&chg_cur_time_flag);                    
+									
+						}
+						if(flag==0)                                                                  /*if there are no read request to take channel, we can serve write requests*/ 		
+						{	
+							services_2_write(ssd,i,&flag,&chg_cur_time_flag);
+							
+						}	
+					}
+					else
+					{
+						services_2_write(ssd,i,&flag,&chg_cur_time_flag);
 						
-			}
-			if(flag==0)                                                                  /*if there are no read request to take channel, we can serve write requests*/ 		
-			{	
-				services_2_write(ssd,i,&flag,&chg_cur_time_flag);
+						if((flag==0)&&(ssd->channel_head[i].subs_r_head!=NULL))                      /*if there are no new read request and data is ready in some dies, send these data to controller and response this request*/		
+						{		     
+							services_2_r_data_trans(ssd,i,&flag,&chg_cur_time_flag);                    
+						}
+						if(flag==0)                                                                  /*if there are no read request to take channel, we can serve write requests*/ 		
+						{	
+							services_2_r_wait(ssd,i,&flag,&chg_cur_time_flag);                           /*处理处于等待状态的读子请求*/
+						}	
+					}
+					
+				}
+				else if(ssd->channel_head[i].subs_r_head == NULL && ssd->channel_head[i].subs_w_head != NULL)
+				{
+					services_2_r_wait(ssd,i,&flag,&chg_cur_time_flag);  
+				}
+				else
+				{
+					services_2_r_wait(ssd,i,&flag,&chg_cur_time_flag);                           /*处理处于等待状态的读子请求*/
 				
+					if((flag==0)&&(ssd->channel_head[i].subs_r_head!=NULL))                      /*if there are no new read request and data is ready in some dies, send these data to controller and response this request*/		
+					{		     
+						services_2_r_data_trans(ssd,i,&flag,&chg_cur_time_flag);                    
+								
+					}
+				}
 			}	
-		}	
+		}
 	}
+	else
+	{
+		for(chan=0;chan<ssd->parameter->channel_number;chan++)	     
+		{
+			i=(random_num+chan)%ssd->parameter->channel_number;
+			flag=0;
+			flag_gc=0;                                                                       /*每次进入channel时，将gc的标志位置为0，默认认为没有进行gc操作*/
+			if((ssd->channel_head[i].current_state==CHANNEL_IDLE)||(ssd->channel_head[i].next_state==CHANNEL_IDLE&&ssd->channel_head[i].next_state_predict_time<=ssd->current_time))		
+			{   
+				if (ssd->gc_request>0)                                                       /*有gc操作，需要进行一定的判断*/
+				{
+					if (ssd->channel_head[i].gc_command!=NULL)
+					{
+						flag_gc=gc(ssd,i,0);                                                 /*gc函数返回一个值，表示是否执行了gc操作，如果执行了gc操作flag_gc=1，这个channel在这个时刻不能服务其他的请求*/
+					}
+					if (flag_gc==1)                                                          /*执行过gc操作，需要跳出此次循环*/
+					{
+						continue;
+					}
+				}
 
+				sub=ssd->channel_head[i].subs_r_head;                                        /*先处理读请求*/
+				services_2_r_wait(ssd,i,&flag,&chg_cur_time_flag);                           /*处理处于等待状态的读子请求*/
+			
+				if((flag==0)&&(ssd->channel_head[i].subs_r_head!=NULL))                      /*if there are no new read request and data is ready in some dies, send these data to controller and response this request*/		
+				{		     
+					services_2_r_data_trans(ssd,i,&flag,&chg_cur_time_flag);                    
+							
+				}
+				if(flag==0)                                                                  /*if there are no read request to take channel, we can serve write requests*/ 		
+				{	
+					services_2_write(ssd,i,&flag,&chg_cur_time_flag);
+					
+				}	
+			}	
+		}
+	}
+	
 	return ssd;
 }
 

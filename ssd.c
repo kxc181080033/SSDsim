@@ -115,7 +115,7 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 		{
 			flag=get_requests(ssd);
 
-			if(flag==0 || ssd->parameter->scheduling_algorithm == 9)
+			if(flag==0)
 			{
 				break;
 			}
@@ -138,7 +138,7 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 			
 		}
 		//KXC:AMPHIBIAN
-		if(ssd->parameter->scheduling_algorithm==2)
+		if(0)
 		{
 			if(ssd->parameter->allocation_scheme==1&&ssd->parameter->static_allocation==1)
 			{
@@ -171,7 +171,7 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 		}
 		
 		//to count the dependence
-		dependency(ssd);
+		//dependency(ssd);
 		
 		//KXC:here just modify the function no_buffer_distribute so there is no buffer
 		if(ssd->parameter->dram_capacity==0)
@@ -2421,8 +2421,11 @@ void statistic_output(struct ssd_info *ssd)
 	fprintf(ssd->statisticfile,"erase: %13d\n",ssd->erase_count);
 	fprintf(ssd->statisticfile,"block erase standard deviation: %.3f\n",sqrt(std_block));
 	fprintf(ssd->statisticfile,"plane erase standard deviation: %.3f\n",sqrt(std_plane));
-	fprintf(ssd->statisticfile,"raw count: %13d\n",ssd->raw);
-	fprintf(ssd->statisticfile,"waw count: %13d\n",ssd->waw);		
+	fprintf(ssd->statisticfile,"die erase standard deviation: %.3f\n",sqrt(std_die));
+	fprintf(ssd->statisticfile,"chip erase standard deviation: %.3f\n",sqrt(std_chip));
+	fprintf(ssd->statisticfile,"channel erase standard deviation: %.3f\n",sqrt(std_channel));
+	//fprintf(ssd->statisticfile,"raw count: %13d\n",ssd->raw);
+	//fprintf(ssd->statisticfile,"waw count: %13d\n",ssd->waw);		
 	fprintf(ssd->statisticfile,"read request count: %13d\n",ssd->read_request_count);
 	fprintf(ssd->statisticfile,"write request count: %13d\n",ssd->write_request_count);
 	fprintf(ssd->statisticfile,"read request average size: %13f\n",ssd->ave_read_size);
@@ -2461,9 +2464,7 @@ void statistic_output(struct ssd_info *ssd)
 		
 	fprintf(ssd->statisticfile,"\n");
 
-	fprintf(ssd->statisticfile,"die erase standard deviation: %.3f\n",sqrt(std_die));
-	fprintf(ssd->statisticfile,"chip erase standard deviation: %.3f\n",sqrt(std_chip));
-	fprintf(ssd->statisticfile,"channel erase standard deviation: %.3f\n",sqrt(std_channel));
+
 
 	fflush(ssd->statisticfile);
 
