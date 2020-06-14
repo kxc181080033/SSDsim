@@ -122,10 +122,10 @@ struct ssd_info *initiation(struct ssd_info *ssd)
 	memset(ssd->channel_head,0,ssd->parameter->channel_number * sizeof(struct channel_info));
 	initialize_channels(ssd );
 	
-	if (ssd->parameter->wear_leveling == 1)
+	/*if (ssd->parameter->wear_leveling == 1)
 	{
 		set_erase(ssd);
-	}
+	}*/
 	
 
 	printf("\n");

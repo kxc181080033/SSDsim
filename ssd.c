@@ -85,7 +85,7 @@ int  main()
 *3�������¼����Ⱥ���������Щ��д������
 *4�����ÿ������������󶼴�������������?��outputfile�ļ���
 **************************************************************************************************/
-struct ssd_info *simulate(struct ssd_info *ssd)
+struct ssd_info * simulate(struct ssd_info *ssd)
 {
 	int flag=1,flag1=0;
 	double output_step=0;
@@ -146,7 +146,7 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 			}
 			else
 			{
-				printf("error in allocation scheme");
+				//printf("error in allocation scheme");
 			}
 		}
 		//KXC:OUR
