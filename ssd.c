@@ -133,7 +133,7 @@ struct ssd_info * simulate(struct ssd_info *ssd)
 			}
 			else
 			{
-				printf("error in allocation scheme");
+				//printf("error in allocation scheme");
 			}
 			
 		}
@@ -166,7 +166,7 @@ struct ssd_info * simulate(struct ssd_info *ssd)
 			}
 			else
 			{
-				printf("error in allocation scheme");
+				//printf("error in allocation scheme");
 			}
 		}
 		
