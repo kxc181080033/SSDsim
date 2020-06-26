@@ -1258,6 +1258,7 @@ struct ssd_info *make_aged(struct ssd_info *ssd)
 								ssd->channel_head[i].chip_head[j].die_head[k].plane_head[l].blk_head[m].page_head[n].lpn=0;  //��valid_state free_state lpn����Ϊ0��ʾҳʧЧ������ʱ��������?����lpn=0��������Чҳ
 								ssd->channel_head[i].chip_head[j].die_head[k].plane_head[l].blk_head[m].free_page_num--;
 								ssd->channel_head[i].chip_head[j].die_head[k].plane_head[l].blk_head[m].invalid_page_num++;
+								ssd->channel_head[i].chip_head[j].die_head[k].plane_head[l].invalid_page++;
 								ssd->channel_head[i].chip_head[j].die_head[k].plane_head[l].blk_head[m].last_write_page++;
 								ssd->channel_head[i].chip_head[j].die_head[k].plane_head[l].free_page--;
 								flag++;

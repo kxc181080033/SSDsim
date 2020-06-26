@@ -252,6 +252,7 @@ struct plane_info * initialize_plane(struct plane_info * p_plane,struct paramete
 		p_block = &(p_plane->blk_head[i]);
 		initialize_block( p_block ,parameter);			
 	}
+	p_plane->counter_th = 0.2 * parameter->page_block;
 	return p_plane;
 }
 

@@ -314,6 +314,7 @@ struct die_info{
 struct plane_info{
 	int add_reg_ppn;                    //read，write时把地址传送到该变量，该变量代表地址寄存器。die由busy变为idle时，清除地址 //有可能因为一对多的映射，在一个读请求时，有多个相同的lpn，所以需要用ppn来区分  
 	unsigned int free_page;             //该plane中有多少free page
+	unsigned int invalid_page;          //the invalid page number of the plane
 	unsigned int ers_invalid;           //记录该plane中擦除失效的块数
 	unsigned int active_block;          //if a die has a active block, 该项表示其物理块号
 	int can_erase_block;                //记录在一个plane中准备在gc操作中被擦除操作的块,-1表示还没有找到合适的块
@@ -321,6 +322,12 @@ struct plane_info{
 	struct blk_info *blk_head;
 	unsigned long max_erase;
 	unsigned long min_erase;
+	struct gc_operation *gc_soft_head;       //KXC_2: DTGC
+	struct gc_operation *gc_soft_tail;
+	struct gc_operation *gc_hard_head;       //KXC_2: DTGC
+	struct gc_operation *gc_hard_tail;
+	unsigned int counter_th;
+	unsigned int counter;
 };
 
 
