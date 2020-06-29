@@ -108,7 +108,6 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 	{
         
 		flag=get_requests(ssd);
-
 		if(flag == 1)
 		{   
 			//printf("once\n");

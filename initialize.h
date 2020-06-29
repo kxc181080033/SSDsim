@@ -194,6 +194,7 @@ struct ssd_info{
 	int64_t write_delay[60];
 	int iops_count;
 	int write_delay_count;
+	int gc_type;
 
 	unsigned int distributed[12];        //KXC:to record the response time distribution
 	long long *gc_buffer;                //KXC_2:the gc buffer used by soft gc

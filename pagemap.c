@@ -547,6 +547,18 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].page_head[page].written_count++;
 	ssd->write_flash_count++;
 
+	int count_in = 0;
+	for(int cnt = 0; cnt < ssd->parameter->page_block; cnt++)
+	{
+		if(ssd->channel_head[3].chip_head[3].die_head[0].plane_head[0].blk_head[66].page_head[cnt].valid_state == 0 && ssd->channel_head[3].chip_head[3].die_head[0].plane_head[0].blk_head[66].page_head[cnt].free_state == 0)
+		{
+			count_in++;
+		}
+	}
+	if(count_in != ssd->channel_head[3].chip_head[3].die_head[0].plane_head[0].blk_head[66].invalid_page_num)
+	{
+		//printf("123");
+	}
 	//KXC_2:the algorithm of 14's meeting DT-GC
 	if(ssd->parameter->interruptible == 2)
 	{
@@ -628,7 +640,6 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 			}
 		}
 	} 
-
 	return ssd;
 }
 struct ssd_info *dtgc_judge(struct ssd_info *ssd,unsigned int channel,unsigned int chip,unsigned int die,unsigned int plane)
@@ -669,9 +680,10 @@ struct ssd_info *dtgc_judge(struct ssd_info *ssd,unsigned int channel,unsigned i
 				ssd->gc_request++;
 				ssd->gc_hard_count++;
 			}
-			/*else
+			else
 			{
-				if(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].gc_soft_head == NULL)
+				//if(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].gc_soft_head == NULL)
+				if(1)
 				{
 					gc_node=(struct gc_operation *)malloc(sizeof(struct gc_operation));
 					alloc_assert(gc_node,"gc_node");
@@ -690,7 +702,7 @@ struct ssd_info *dtgc_judge(struct ssd_info *ssd,unsigned int channel,unsigned i
 					ssd->gc_request++;
 					ssd->gc_soft_count++;
 				}
-			}*/
+			}
 		}
 	}
 
@@ -1402,7 +1414,6 @@ Status move_page(struct ssd_info * ssd, struct local *location, unsigned int * t
 	{
 		ssd->dram->map->map_entry[lpn].pn=ppn;
 	}
-
 	free(new_location);
 	new_location=NULL;
 
@@ -1575,9 +1586,9 @@ int interrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,uns
 		gc_node->block=block;
 	}
 	if(block == -1) return;
-	if (ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[gc_node->block].invalid_page_num < ssd->parameter->page_block)     /*还需要执行copyback操作*/
-	{
-		for (i=gc_node->page;i<ssd->parameter->page_block;i++)
+	//if (ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[gc_node->block].invalid_page_num < ssd->parameter->page_block)     /*还需要执行copyback操作*/
+	//{
+		for (i=0;i<ssd->parameter->page_block;i++)
 		{
 			if (ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[gc_node->block].page_head[i].valid_state>0)
 			{
@@ -1589,12 +1600,24 @@ int interrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,uns
 				location->chip=chip;
 				location->die=die;
 				location->plane=plane;
-				location->block=gc_node->block;
+				location->block=block;
 				location->page=i;
 				transfer_size=0;
 
-				move_page( ssd, location, &transfer_size);
+				move_page(ssd, location, &transfer_size);
 
+				int count_in = 0;
+				for(int cnt = 0; cnt < ssd->parameter->page_block; cnt++)
+				{
+					if(ssd->channel_head[3].chip_head[3].die_head[0].plane_head[0].blk_head[66].page_head[cnt].valid_state == 0 && ssd->channel_head[3].chip_head[3].die_head[0].plane_head[0].blk_head[66].page_head[cnt].free_state == 0)
+					{
+						count_in++;
+					}
+				}
+				if(count_in != ssd->channel_head[3].chip_head[3].die_head[0].plane_head[0].blk_head[66].invalid_page_num)
+				{
+					//printf("123");
+				}
 				free(location);
 				location=NULL;
 
@@ -1615,15 +1638,15 @@ int interrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,uns
 				} 
 				else
 				{	
-					ssd->channel_head[channel].next_state_predict_time=ssd->current_time+(7+transfer_size*SECTOR)*ssd->parameter->time_characteristics.tWC+ssd->parameter->time_characteristics.tR+(7+transfer_size*SECTOR)*ssd->parameter->time_characteristics.tWC;					
-					ssd->channel_head[channel].chip_head[chip].next_state_predict_time=ssd->channel_head[channel].next_state_predict_time+ssd->parameter->time_characteristics.tPROG;
+					//ssd->channel_head[channel].next_state_predict_time=ssd->current_time+(7+transfer_size*SECTOR)*ssd->parameter->time_characteristics.tWC+ssd->parameter->time_characteristics.tR+(7+transfer_size*SECTOR)*ssd->parameter->time_characteristics.tWC;					
+					//ssd->channel_head[channel].chip_head[chip].next_state_predict_time=ssd->channel_head[channel].next_state_predict_time+ssd->parameter->time_characteristics.tPROG;
 				}
 				return 0;    
 			}
 		}
-	}
-	else
-	{
+	//}
+	//else
+	//{
 		erase_operation(ssd,channel ,chip, die,plane,gc_node->block);	
 
 		ssd->channel_head[channel].current_state=CHANNEL_C_A_TRANSFER;									
@@ -1637,7 +1660,7 @@ int interrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,uns
 		ssd->channel_head[channel].chip_head[chip].next_state_predict_time=ssd->channel_head[channel].next_state_predict_time+ssd->parameter->time_characteristics.tBERS;
 
 		return 1;                                                                      /*该gc操作完成，返回1，可以将channel上的gc请求节点删除*/
-	}
+	//}
 
 	printf("there is a problem in interrupt_gc\n");
 	return 1;
@@ -1886,15 +1909,25 @@ Status gc_for_channel(struct ssd_info *ssd, unsigned int channel)
 	*那么就flag_priority令为1，否则为0
 	*在这里全都是不可中断GC了，这里的判断多余，但是没有删掉
 	********************************************************************************************/
-	if(ssd->parameter->interruptible == 2)
+	if(ssd->parameter->interruptible == 2 && ssd->gc_type == 1)
 	{
 		for(j=0;j<ssd->parameter->chip_channel[0];j++)
 		{
-			for(m=0;m<ssd->parameter->die_chip;m++)
+			current_state=ssd->channel_head[channel].chip_head[j].current_state;
+			next_state=ssd->channel_head[channel].chip_head[j].next_state;
+			next_state_predict_time=ssd->channel_head[channel].chip_head[j].next_state_predict_time;
+			if((current_state==CHIP_IDLE)||((next_state==CHIP_IDLE)&&(next_state_predict_time<=ssd->current_time)))
 			{
-				for (n=0;n<ssd->parameter->plane_die; n++)
+				for(m=0;m<ssd->parameter->die_chip;m++)
 				{
-					gc_node=ssd->channel_head[channel].chip_head[j].die_head[m].plane_head[n].gc_hard_head;
+					for (n=0;n<ssd->parameter->plane_die; n++)
+					{
+						gc_node=ssd->channel_head[channel].chip_head[j].die_head[m].plane_head[n].gc_hard_head;
+						if(gc_node != NULL)
+						{
+							break;
+						}
+					}
 					if(gc_node != NULL)
 					{
 						break;
@@ -1905,56 +1938,16 @@ Status gc_for_channel(struct ssd_info *ssd, unsigned int channel)
 					break;
 				}
 			}
-			if(gc_node != NULL)
-			{
-				break;
-			}
 		}	
 	}
-	else
+	else if(ssd->parameter->interruptible == 2 && ssd->gc_type == 0)
 	{
-		gc_node=ssd->channel_head[channel].gc_command;
-	}
-	
-	while (gc_node!=NULL)
-	{
-		current_state=ssd->channel_head[channel].chip_head[gc_node->chip].current_state;
-		next_state=ssd->channel_head[channel].chip_head[gc_node->chip].next_state;
-		next_state_predict_time=ssd->channel_head[channel].chip_head[gc_node->chip].next_state_predict_time;
-		if((current_state==CHIP_IDLE)||((next_state==CHIP_IDLE)&&(next_state_predict_time<=ssd->current_time)))
+		for(j=0;j<ssd->parameter->chip_channel[0];j++)
 		{
-			if (gc_node->priority==GC_UNINTERRUPT)                                     /*这个gc请求是不可中断的，优先服务这个gc操作*/
-			{
-				flag_priority=1;
-				break;
-			}
-		}
-		gc_node=gc_node->next_node;
-	}
-	if (flag_priority!=1)                                                              /*没有找到不可中断的gc请求，首先执行队首的gc请求*/
-	{
-		gc_node=ssd->channel_head[channel].gc_command;
-		while (gc_node!=NULL)
-		{
-			current_state=ssd->channel_head[channel].chip_head[gc_node->chip].current_state;
-			next_state=ssd->channel_head[channel].chip_head[gc_node->chip].next_state;
-			next_state_predict_time=ssd->channel_head[channel].chip_head[gc_node->chip].next_state_predict_time;
-			 /**********************************************
-			 *需要gc操作的目标chip是空闲的，才可以进行gc操作
-			 ***********************************************/
-			if((current_state==CHIP_IDLE)||((next_state==CHIP_IDLE)&&(next_state_predict_time<=ssd->current_time)))   
-			{
-				break;
-			}
-			gc_node=gc_node->next_node;
-		}
-
-	}
-	if(gc_node == NULL)
-	{
-		if(ssd->parameter->interruptible == 2)
-		{
-			for(j=0;j<ssd->parameter->chip_channel[0];j++)
+			current_state=ssd->channel_head[channel].chip_head[j].current_state;
+			next_state=ssd->channel_head[channel].chip_head[j].next_state;
+			next_state_predict_time=ssd->channel_head[channel].chip_head[j].next_state_predict_time;
+			if((current_state==CHIP_IDLE)||((next_state==CHIP_IDLE)&&(next_state_predict_time<=ssd->current_time)))
 			{
 				for(m=0;m<ssd->parameter->die_chip;m++)
 				{
@@ -1978,14 +1971,58 @@ Status gc_for_channel(struct ssd_info *ssd, unsigned int channel)
 			}
 		}
 	}
+	else
+	{
+		gc_node=ssd->channel_head[channel].gc_command;
+	}
+	
+	if(ssd->parameter->interruptible == 2)
+	{
+
+	}
+	else
+	{
+		while (gc_node!=NULL)
+		{
+			current_state=ssd->channel_head[channel].chip_head[gc_node->chip].current_state;
+			next_state=ssd->channel_head[channel].chip_head[gc_node->chip].next_state;
+			next_state_predict_time=ssd->channel_head[channel].chip_head[gc_node->chip].next_state_predict_time;
+			if((current_state==CHIP_IDLE)||((next_state==CHIP_IDLE)&&(next_state_predict_time<=ssd->current_time)))
+			{
+				if (gc_node->priority==GC_UNINTERRUPT)                                     /*这个gc请求是不可中断的，优先服务这个gc操作*/
+				{
+					flag_priority=1;
+					break;
+				}
+			}
+			gc_node=gc_node->next_node;
+		}
+		if (flag_priority!=1)                                                              /*没有找到不可中断的gc请求，首先执行队首的gc请求*/
+		{
+			gc_node=ssd->channel_head[channel].gc_command;
+			while (gc_node!=NULL)
+			{
+				current_state=ssd->channel_head[channel].chip_head[gc_node->chip].current_state;
+				next_state=ssd->channel_head[channel].chip_head[gc_node->chip].next_state;
+				next_state_predict_time=ssd->channel_head[channel].chip_head[gc_node->chip].next_state_predict_time;
+				/**********************************************
+				 *需要gc操作的目标chip是空闲的，才可以进行gc操作
+				***********************************************/
+				if((current_state==CHIP_IDLE)||((next_state==CHIP_IDLE)&&(next_state_predict_time<=ssd->current_time)))   
+				{
+					break;
+				}
+				gc_node=gc_node->next_node;
+			}
+		}
+	}
 	if(gc_node==NULL)
 	{
 		return FAILURE;
 	}
-
-	chip=gc_node->chip;
-	die=gc_node->die;
-	plane=gc_node->plane;
+	chip = gc_node->chip;
+	die = gc_node->die;
+	plane = gc_node->plane;
 
 	if (gc_node->priority==GC_UNINTERRUPT)
 	{

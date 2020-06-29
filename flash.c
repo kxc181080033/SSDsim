@@ -2053,10 +2053,11 @@ struct ssd_info *process(struct ssd_info *ssd)
 				{
 					for (n=0;n<ssd->parameter->plane_die; n++)
 					{
-						if(((ssd->channel_head[i].current_state==CHANNEL_IDLE)||(ssd->channel_head[i].next_state==CHANNEL_IDLE&&ssd->channel_head[i].next_state_predict_time<=ssd->current_time)))
+						if(ssd->channel_head[i].chip_head[j].die_head[m].plane_head[n].gc_hard_head!=NULL)
 						{
-							if(ssd->channel_head[i].chip_head[j].die_head[m].plane_head[n].gc_hard_head!=NULL)
+							if((ssd->channel_head[i].current_state==CHANNEL_IDLE)||(ssd->channel_head[i].next_state==CHANNEL_IDLE&&ssd->channel_head[i].next_state_predict_time<=ssd->current_time))
 							{
+								ssd->gc_type = 1;
 								gc(ssd,i,0);
 							}
 						}
@@ -2126,27 +2127,24 @@ struct ssd_info *process(struct ssd_info *ssd)
 		{   
 			if(ssd->parameter->interruptible == 2)
 			{
-				for(i=0;i<ssd->parameter->channel_number;i++)
+				for(j=0;j<ssd->parameter->chip_channel[0];j++)
 				{
-					for(j=0;j<ssd->parameter->chip_channel[0];j++)
+					for(m=0;m<ssd->parameter->die_chip;m++)
 					{
-						for(m=0;m<ssd->parameter->die_chip;m++)
+						for (n=0;n<ssd->parameter->plane_die; n++)
 						{
-							for (n=0;n<ssd->parameter->plane_die; n++)
+							if(((ssd->channel_head[i].chip_head[j].current_state==CHIP_IDLE)||(ssd->channel_head[i].chip_head[j].next_state==CHIP_IDLE&&ssd->channel_head[i].chip_head[j].next_state_predict_time<=ssd->current_time)))
 							{
-								if(((ssd->channel_head[i].current_state==CHANNEL_IDLE)||(ssd->channel_head[i].next_state==CHANNEL_IDLE&&ssd->channel_head[i].next_state_predict_time<=ssd->current_time)))
+								if(ssd->channel_head[i].chip_head[j].die_head[m].plane_head[n].gc_soft_head!=NULL)
 								{
-									if(ssd->channel_head[i].chip_head[j].die_head[m].plane_head[n].gc_hard_head!=NULL)
-									{
-										gc(ssd,i,0);
-									}
+									ssd->gc_type = 0;
+									gc(ssd,i,0);
 								}
 							}
-							
 						}
+						
 					}
-					
-				}
+				}	
 			}
 			else if(ssd->channel_head[i].gc_sub_queue != NULL)
 			{
