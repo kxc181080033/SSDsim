@@ -547,18 +547,6 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].page_head[page].written_count++;
 	ssd->write_flash_count++;
 
-	int count_in = 0;
-	for(int cnt = 0; cnt < ssd->parameter->page_block; cnt++)
-	{
-		if(ssd->channel_head[3].chip_head[3].die_head[0].plane_head[0].blk_head[66].page_head[cnt].valid_state == 0 && ssd->channel_head[3].chip_head[3].die_head[0].plane_head[0].blk_head[66].page_head[cnt].free_state == 0)
-		{
-			count_in++;
-		}
-	}
-	if(count_in != ssd->channel_head[3].chip_head[3].die_head[0].plane_head[0].blk_head[66].invalid_page_num)
-	{
-		//printf("123");
-	}
 	//KXC_2:the algorithm of 14's meeting DT-GC
 	if(ssd->parameter->interruptible == 2)
 	{
@@ -1606,18 +1594,6 @@ int interrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,uns
 
 				move_page(ssd, location, &transfer_size);
 
-				int count_in = 0;
-				for(int cnt = 0; cnt < ssd->parameter->page_block; cnt++)
-				{
-					if(ssd->channel_head[3].chip_head[3].die_head[0].plane_head[0].blk_head[66].page_head[cnt].valid_state == 0 && ssd->channel_head[3].chip_head[3].die_head[0].plane_head[0].blk_head[66].page_head[cnt].free_state == 0)
-					{
-						count_in++;
-					}
-				}
-				if(count_in != ssd->channel_head[3].chip_head[3].die_head[0].plane_head[0].blk_head[66].invalid_page_num)
-				{
-					//printf("123");
-				}
 				free(location);
 				location=NULL;
 
