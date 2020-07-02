@@ -166,6 +166,7 @@ struct ssd_info{
 
 	unsigned int token;                  //在动态分配中，为防止每次分配在第一个channel需要维持一个令牌，每次从令牌所指的位置开始分配
 	unsigned int gc_request;             //记录在SSD中，当前时刻有多少gc操作的请求
+	unsigned int ch_token;
 
 	unsigned int write_request_count;    //记录写操作的次数
 	unsigned int read_request_count;     //记录读操作的次数
