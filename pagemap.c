@@ -632,7 +632,7 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 }
 struct ssd_info *dtgc_judge(struct ssd_info *ssd,unsigned int channel,unsigned int chip,unsigned int die,unsigned int plane)
 {
-	double alpha = 0.1, beta = 0.05, gama = 0.15, sigma = 0.03, kesai = 0.07;
+	double alpha = 1.1, beta = 0.05, gama = 0.15, sigma = 1.03, kesai = 0.07;
 	double IGC_TH = 0.0, NGC_TH = 0.0;
 	unsigned int page_plane = ssd->parameter->block_plane * ssd->parameter->page_block;
 	double FPP = (double)ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].free_page / (double)page_plane;
