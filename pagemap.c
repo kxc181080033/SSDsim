@@ -454,6 +454,10 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 	*利用函数find_active_block在channel，chip，die，plane找到活跃block
 	*并且修改这个channel，chip，die，plane，active_block下的last_write_page和free_page_num
 	**************************************************************************************/
+	if(ssd->current_time == 183230664506250)
+	{
+		i = 0;
+	}
 	if(find_active_block(ssd,channel,chip,die,plane)==FAILURE)                      
 	{
 		printf("ERROR :there is no free page in channel:%d, chip:%d, die:%d, plane:%d\n",channel,chip,die,plane);	
@@ -495,7 +499,10 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 
 		ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].page_head[location->page].valid_state=0;             /*表示某一页失效，同时标记valid和free状态都为0*/
 		ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].page_head[location->page].free_state=0;              /*表示某一页失效，同时标记valid和free状态都为0*/
-		ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].page_head[location->page].lpn=0;
+		if(ssd->parameter->interruptible != 3)
+		{
+			ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].page_head[location->page].lpn=0;
+		}
 		ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].invalid_page_num++;
 		ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].invalid_page++;
 		/*******************************************************************************************
@@ -547,6 +554,21 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].page_head[page].written_count++;
 	ssd->write_flash_count++;
 
+	if(ssd->parameter->interruptible == 3)
+	{
+		/*if(ssd->dram->map->psn_entry1[lpn].psn < ssd->dram->map->psn_entry2[lpn].psn)
+		{
+			ssd->dram->map->psn_entry1[lpn].psn = ssd->fagc_count;
+		}
+		else
+		{
+			ssd->dram->map->psn_entry2[lpn].psn = ssd->fagc_count;
+		}*/
+		ssd->dram->map->psn_entry1[lpn].psn = ssd->dram->map->psn_entry2[lpn].psn;
+		ssd->dram->map->psn_entry2[lpn].psn = ssd->fagc_count;
+		ssd->fagc_count++;
+		hot_cold_identify(ssd,lpn);
+	}
 	//KXC_2:the algorithm of 14's meeting DT-GC
 	if(ssd->parameter->interruptible == 2)
 	{
@@ -981,15 +1003,39 @@ struct ssd_info * creat_sub_gc(struct ssd_info *ssd,struct gc_operation *gc_node
 #ifdef DEBUG
 	printf("enter get_ppn_for_gc,channel:%d, chip:%d, die:%d, plane:%d\n",channel,chip,die,plane);
 #endif
-
+	ssd->find_what = 1;
 	if(find_active_block(ssd,channel,chip,die,plane)!=SUCCESS)
 	{
 		printf("\n\n Error int get_ppn_for_gc().\n");
 		return 0xffffffff;
 	}
-    
-	active_block=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].active_block;
-
+    if(ssd->parameter->interruptible == 3)
+	{
+		if(ssd->hot_cold_flag == 0)
+		{
+			active_block=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].hot_block;
+		}
+		else if(ssd->hot_cold_flag == 1)
+		{
+			active_block=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].hot2_block;
+		}
+		else if(ssd->hot_cold_flag == 2)
+		{
+			active_block=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].cold2_block;
+		}
+		else if(ssd->hot_cold_flag == 3)
+		{
+			active_block=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].cold_block;
+		}
+		else
+		{
+			printf("error in hot and clod identify \n");
+		}
+	}
+	else
+	{
+		active_block=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].active_block;
+	}
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].last_write_page++;	
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].free_page_num--;
     //KSC:修改63
@@ -1408,17 +1454,101 @@ Status move_page(struct ssd_info * ssd, struct local *location, unsigned int * t
 	return SUCCESS;
 }
 
+Status move_page_hot_cold(struct ssd_info * ssd, struct local *location, unsigned int * transfer_size)
+{
+	struct local *new_location=NULL;
+	unsigned int free_state=0,valid_state=0;
+	unsigned int lpn=0,old_ppn=0,ppn=0;
+	int hot_flag = -1;
+
+	lpn=ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].page_head[location->page].lpn;
+	valid_state=ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].page_head[location->page].valid_state;
+	free_state=ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].page_head[location->page].free_state;
+	old_ppn=find_ppn(ssd,location->channel,location->chip,location->die,location->plane,location->block,location->page);      /*记录这个有效移动页的ppn，对比map或者额外映射关系中的ppn，进行删除和添加操作*/
+	if(ssd->dram->map->update_fre2[lpn] > 12)
+	{
+		hot_flag = 0;
+	}
+	else if(ssd->dram->map->update_fre2[lpn] > 8 && ssd->dram->map->update_fre2[lpn] <= 12)
+	{
+		hot_flag = 1;
+	}
+	else if(ssd->dram->map->update_fre2[lpn] > 4 && ssd->dram->map->update_fre2[lpn] <= 8)
+	{
+		hot_flag = 2;
+	}
+	else 
+	{
+		hot_flag = 3;
+	}
+	ssd->hot_cold_flag = hot_flag;
+	ppn=get_ppn_for_gc(ssd,location->channel,location->chip,location->die,location->plane);                /*找出来的ppn一定是在发生gc操作的plane中,才能使用copyback操作，为gc操作获取ppn*/
+
+	new_location=find_location(ssd,ppn);                                                                   /*根据新获得的ppn获取new_location*/
+	(* transfer_size)+=size(valid_state);
+	
+	ssd->channel_head[new_location->channel].chip_head[new_location->chip].die_head[new_location->die].plane_head[new_location->plane].blk_head[new_location->block].page_head[new_location->page].free_state=free_state;
+	ssd->channel_head[new_location->channel].chip_head[new_location->chip].die_head[new_location->die].plane_head[new_location->plane].blk_head[new_location->block].page_head[new_location->page].lpn=lpn;
+	ssd->channel_head[new_location->channel].chip_head[new_location->chip].die_head[new_location->die].plane_head[new_location->plane].blk_head[new_location->block].page_head[new_location->page].valid_state=valid_state;
+
+
+	ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].page_head[location->page].free_state=0;
+	//ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].page_head[location->page].lpn=0;
+	ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].page_head[location->page].valid_state=0;
+	ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].invalid_page_num++;
+	ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].invalid_page++;
+
+	if (old_ppn==ssd->dram->map->map_entry[lpn].pn)                                                     /*修改映射表*/
+	{
+		ssd->dram->map->map_entry[lpn].pn=ppn;
+	}
+	free(new_location);
+	new_location=NULL;
+
+	return SUCCESS;
+}
+Status hot_cold_identify(struct ssd_info * ssd, unsigned int lpn)
+{
+	unsigned int C = 1;
+	//unsigned psn = 0;
+	unsigned int Nblock = ssd->parameter->block_plane, Npage = ssd->parameter->page_block;
+	unsigned psn_dif;
+	double psn;
+	ssd->dram->map->update_fre1[lpn] = ssd->dram->map->update_fre2[lpn];
+	psn_dif = abs(ssd->dram->map->psn_entry1[lpn].psn - ssd->dram->map->psn_entry2[lpn].psn);
+	psn = (double)psn_dif / (double)Nblock;
+	if(psn > Npage / 2)
+	{
+		ssd->dram->map->update_fre2[lpn] = C;
+	}
+	else if(psn <= Npage / 2 && psn >= Npage / 8)
+	{
+		ssd->dram->map->update_fre2[lpn] = ssd->dram->map->update_fre1[lpn];
+	}
+	else
+	{
+		ssd->dram->map->update_fre2[lpn] = ssd->dram->map->update_fre2[lpn] > 16 ? 16 : (ssd->dram->map->update_fre1[lpn] + C);
+	}
+	
+	return 1;
+}
+
 /*******************************************************************************************************************************************
 *目标的plane没有可以直接删除的block，需要寻找目标擦除块后在实施擦除操作，用在不能中断的gc操作中，成功删除一个块，返回1，没有删除一个块返回-1
 *在这个函数中，不用考虑目标channel,die是否是空闲的,擦除invalid_page_num最多的block
 ********************************************************************************************************************************************/
 int uninterrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,unsigned int die,unsigned int plane)       
 {
-	unsigned int i=0,invalid_page=0;
+	unsigned int i=0,j=0,invalid_page=0;
 	unsigned int block,active_block,transfer_size,free_page,page_move_count=0;                           /*记录失效页最多的块号*/
 	struct local *  location=NULL;
 	unsigned int total_invalid_page_num=0;
 	int block_soft_gc;
+	int score = 0, score_tmp = 0;
+	int psn = 0;
+	unsigned int erase_max, erase_min, erase_mintmp, valid_block;
+	unsigned int lpn;
+	double te = 0.0;
 	if(ssd->parameter->interruptible == 2)
 	{
 		if(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].gc_soft_head == NULL)
@@ -1430,7 +1560,7 @@ int uninterrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,u
 			block_soft_gc = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].gc_soft_head->block;
 		}
 	}
-	else
+	else if(ssd->parameter->interruptible == 1)
 	{
 		if(ssd->channel_head[channel].gc_soft == NULL)
 		{
@@ -1452,13 +1582,72 @@ int uninterrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,u
 	invalid_page=0;
 	transfer_size=0;
 	block=-1;
-	for(i=0;i<ssd->parameter->block_plane;i++)                                                           /*查找最多invalid_page的块号，以及最大的invalid_page_num*/
-	{	
-		total_invalid_page_num+=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num;
-		if((i!=block_soft_gc)&&(active_block!=i)&&(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num>invalid_page))						
-		{				
-			invalid_page=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num;
-			block=i;						
+	if(ssd->parameter->interruptible != 3)
+	{
+		for(i=0;i<ssd->parameter->block_plane;i++)                                                           /*查找最多invalid_page的块号，以及最大的invalid_page_num*/
+		{	
+			total_invalid_page_num+=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num;
+			if((i!=block_soft_gc)&&(active_block!=i)&&(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num>invalid_page))						
+			{				
+				invalid_page=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num;
+				block=i;						
+			}
+		}
+	}
+	else
+	{
+		valid_block = 0;
+		for(i=0;i<ssd->parameter->block_plane;i++)                                            
+		{
+			if(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num == 0 )						
+			{				
+				valid_block++;
+			}
+		}
+		erase_max = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].max_erase;
+		erase_min = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].min_erase;
+		te = (1.0 - (double)valid_block/ssd->parameter->block_plane) * 100.0 / 2.0;
+		if((double)(erase_max - erase_min) > te)
+		{	
+			erase_mintmp = erase_max;
+			for(i=0;i<ssd->parameter->block_plane;i++)                                                           /*查找最多invalid_page的块号，以及最大的invalid_page_num*/
+			{	
+				if((i!=block_soft_gc)&&(active_block!=i)&&(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num>=invalid_page) && (ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count < erase_mintmp))						
+				{				
+					invalid_page=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num;
+					erase_mintmp = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count;					
+					block=i;						
+				}
+			}
+		}
+		else
+		{
+			score = 0;
+			for(i=0;i<ssd->parameter->block_plane;i++)                                                           /*查找最多invalid_page的块号，以及最大的invalid_page_num*/
+			{	
+				score_tmp = 0;
+				if(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num >= ssd->parameter->page_block * 0.8)
+				{
+					continue;
+				}
+				else
+				{
+					for(j=0;j<ssd->parameter->page_block;j++)
+					{
+						if(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].page_head[j].valid_state == 0 && ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].page_head[j].free_state == 0)
+						{
+							lpn = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].page_head[j].lpn;
+							psn = abs(ssd->dram->map->psn_entry1[lpn].psn - ssd->dram->map->psn_entry2[lpn].psn);
+							score_tmp += psn;
+						}
+					}
+					if((i!=block_soft_gc)&&(active_block!=i)&&(score_tmp > score))						
+					{				
+						score = score_tmp;
+						block=i;						
+					}
+				}
+			}
 		}
 	}
 	if (block==-1)
@@ -1496,7 +1685,15 @@ int uninterrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,u
 			location->plane=plane;
 			location->block=block;
 			location->page=i;
-			move_page( ssd, location, &transfer_size);                                                   /*真实的move_page操作*/
+			//lpn = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[block].page_head[i].lpn;
+			if(ssd->parameter->interruptible == 3)
+			{
+				move_page_hot_cold(ssd, location, &transfer_size);
+			}
+			else
+			{
+				move_page(ssd, location, &transfer_size);                                                   /*真实的move_page操作*/
+			}
 			page_move_count++;
 
 			free(location);	

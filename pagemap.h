@@ -49,6 +49,8 @@ unsigned int find_victim_interrupt_gc(struct ssd_info *ssd,unsigned int channel,
 struct ssd_info *soft_gc_distribute(struct ssd_info *ssd,unsigned int channel,unsigned int chip,unsigned int die,unsigned int plane);
 struct ssd_info * creat_sub_gc(struct ssd_info *ssd,struct gc_operation *gc_node,unsigned int channel, int page, int type);
 struct ssd_info *dtgc_judge(struct ssd_info *ssd,unsigned int channel,unsigned int chip,unsigned int die,unsigned int plane);
+Status move_page_hot_cold(struct ssd_info * ssd, struct local *location, unsigned int * transfer_size);
+Status hot_cold_identify(struct ssd_info * ssd, unsigned int lpn);
 #endif
 
 

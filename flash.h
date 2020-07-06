@@ -63,6 +63,7 @@ int delete_w_sub_request(struct ssd_info * ssd, unsigned int channel, struct sub
 int copy_back(struct ssd_info * ssd, unsigned int channel, unsigned int chip, unsigned int die,struct sub_request * sub);
 int static_write(struct ssd_info * ssd, unsigned int channel,unsigned int chip, unsigned int die,struct sub_request * sub);
 struct ssd_info *delete_gc_write_when_hit(struct ssd_info *ssd,unsigned int lpn);
+Status  find_active_hot_cold(struct ssd_info *ssd,unsigned int channel,unsigned int chip,unsigned int die,unsigned int plane);
 
 #endif
 

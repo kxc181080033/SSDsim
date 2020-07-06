@@ -539,23 +539,116 @@ struct ssd_info * insert2buffer(struct ssd_info *ssd,unsigned int lpn,int state,
 ***************************************************************************************/
 Status  find_active_block(struct ssd_info *ssd,unsigned int channel,unsigned int chip,unsigned int die,unsigned int plane)
 {
-	unsigned int active_block;
+	unsigned int active_block, write_block = -1, hot_block, hot2_block, cold_block, cold2_block;
 	unsigned int free_page_num=0;
 	unsigned int count=0;
 	int i;
 	unsigned int last = 0;
 	
-	active_block=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].active_block;
-	free_page_num=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].free_page_num;
+	hot_block = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].hot_block;
+	hot2_block = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].hot2_block;
+	cold_block = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].cold_block;
+	cold2_block = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].cold2_block;
+    if(ssd->parameter->interruptible == 3)
+	{
+		if(ssd->find_what == 1)
+		{
+			if(ssd->hot_cold_flag == 0)
+			{
+				active_block=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].hot_block;
+			}
+			else if(ssd->hot_cold_flag == 1)
+			{
+				active_block=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].hot2_block;
+			}
+			else if(ssd->hot_cold_flag == 2)
+			{
+				active_block=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].cold2_block;
+			}
+			else if(ssd->hot_cold_flag == 3)
+			{
+				active_block=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].cold_block;
+			}
+			else
+			{
+				printf("error in hot and clod identify \n");
+			}
+			write_block=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].active_block;
+		}
+		else
+		{
+			write_block = -1;
+			active_block=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].active_block;
+		}
+	}
+	else
+	{
+		write_block = -1;
+		active_block=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].active_block;
+	}
+	
+	//active_block=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].active_block;
+	free_page_num = 0;
+	if(active_block!= -1)
+	{
+		free_page_num=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].free_page_num;
+	}
 	//last_write_page=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].free_page_num;
+	if(active_block == -1)
+	{
+		while((free_page_num!=ssd->parameter->page_block)&&(count<ssd->parameter->block_plane))
+		{
+			active_block=(active_block+1)%ssd->parameter->block_plane;
+			if(active_block == write_block)	continue;
+			free_page_num=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].free_page_num;
+			count++;
+		}
+	}
 	while((free_page_num==0)&&(count<ssd->parameter->block_plane))
 	{
-		active_block=(active_block+1)%ssd->parameter->block_plane;	
+		active_block=(active_block+1)%ssd->parameter->block_plane;
+		if(active_block == write_block | active_block == hot_block | active_block == hot2_block | active_block == cold_block | active_block == cold2_block)
+			continue;	
 		free_page_num=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[active_block].free_page_num;
 		count++;
 	}
 
-	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].active_block=active_block;
+	//ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].active_block=active_block;
+	if(ssd->parameter->interruptible == 3)
+	{
+		if(ssd->find_what == 1)
+		{
+			if(ssd->hot_cold_flag == 0)
+			{
+				ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].hot_block=active_block;
+			}
+			else if(ssd->hot_cold_flag == 1)
+			{
+				ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].hot2_block=active_block;
+			}
+			else if(ssd->hot_cold_flag == 2)
+			{
+				ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].cold2_block=active_block;
+			}
+			else if(ssd->hot_cold_flag == 3)
+			{
+				ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].cold_block=active_block;
+			}
+			else
+			{
+				printf("error in hot and clod identify \n");
+			}
+		}
+		else
+		{
+			ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].active_block=active_block;
+		}
+	}
+	else
+	{
+		ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].active_block=active_block;
+	}
+	ssd->find_what = 0;
 	if(count<ssd->parameter->block_plane)
 	{
 		return SUCCESS;

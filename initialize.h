@@ -193,9 +193,12 @@ struct ssd_info{
 	int64_t iops_time;                   //KXC_2: once erase occurs, begin to count the wrtie delay and iops
 	long iops[60];
 	int64_t write_delay[60];
+	int64_t fagc_count;                  //KXC_2: the counter of FaGC+ to allocate the PSN of each LPN
 	int iops_count;
 	int write_delay_count;
 	int gc_type;
+	int hot_cold_flag;
+	int find_what;             //KXC_2: 0 for normal write, 1 for valid page migrate
 
 	unsigned int distributed[12];        //KXC:to record the response time distribution
 	long long *gc_buffer;                //KXC_2:the gc buffer used by soft gc
@@ -319,6 +322,10 @@ struct plane_info{
 	unsigned int invalid_page;          //the invalid page number of the plane
 	unsigned int ers_invalid;           //记录该plane中擦除失效的块数
 	unsigned int active_block;          //if a die has a active block, 该项表示其物理块号
+	unsigned int hot_block;            //0
+	unsigned int hot2_block;            //1
+	unsigned int cold2_block;           //2
+	unsigned int cold_block;           //3
 	int can_erase_block;                //记录在一个plane中准备在gc操作中被擦除操作的块,-1表示还没有找到合适的块
 	struct direct_erase *erase_node;    //用来记录可以直接删除的块号,在获取新的ppn时，每当出现invalid_page_num==64时，将其添加到这个指针上，供GC操作时直接删除
 	struct blk_info *blk_head;
@@ -394,6 +401,10 @@ struct dram_parameter{
 struct map_info{
 	struct entry *map_entry;            //该项是映射表结构体指针,each entry indicate a mapping information
 	struct buffer_info *attach_info;	// info about attach map
+	struct psninfo *psn_entry1;          //FaGC+ psn infomation
+	struct psninfo *psn_entry2;          //FaGC+ psn infomation
+	unsigned int *update_fre1;            //update frequency
+	unsigned int *update_fre2;
 };
 
 
@@ -557,6 +568,11 @@ struct parameter_value{
 struct entry{                       
 	unsigned int pn;                //物理号，既可以表示物理页号，也可以表示物理子页号，也可以表示物理块号
 	int state;                      //十六进制表示的话是0000-FFFF，每位表示相应的子页是否有效（页映射）。比如在这个页中，0，1号子页有效，2，3无效，这个应该是0x0003.
+};
+
+struct psninfo{                       
+	unsigned int pn;                //物理号，既可以表示物理页号，也可以表示物理子页号，也可以表示物理块号
+	int64_t psn;                      //十六进制表示的话是0000-FFFF，每位表示相应的子页是否有效（页映射）。比如在这个页中，0，1号子页有效，2，3无效，这个应该是0x0003.
 };
 
 

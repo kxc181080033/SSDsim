@@ -202,6 +202,20 @@ struct dram_info * initialize_dram(struct ssd_info * ssd)
 	dram->map->map_entry = (struct entry *)malloc(sizeof(struct entry) * page_num); //每个物理页和逻辑页都有对应关系
 	alloc_assert(dram->map->map_entry,"dram->map->map_entry");
 	memset(dram->map->map_entry,0,sizeof(struct entry) * page_num);
+
+	dram->map->update_fre1 = (unsigned int *)malloc(sizeof(unsigned int) * page_num); //每个物理页和逻辑页都有对应关系
+	alloc_assert(dram->map->update_fre1,"dram->map->update_fre1");
+	memset(dram->map->update_fre1,8,sizeof(unsigned int) * page_num);
+	dram->map->update_fre2 = (unsigned int *)malloc(sizeof(unsigned int) * page_num); //每个物理页和逻辑页都有对应关系
+	alloc_assert(dram->map->update_fre2,"dram->map->update_fre2");
+	memset(dram->map->update_fre2,8,sizeof(unsigned int) * page_num);
+	
+	dram->map->psn_entry1 = (struct psninfo *)malloc(sizeof(struct psninfo) * page_num); //每个物理页和逻辑页都有对应关系
+	alloc_assert(dram->map->psn_entry1,"dram->map->psn_entry1");
+	memset(dram->map->psn_entry1,0,sizeof(struct psninfo) * page_num);
+	dram->map->psn_entry2 = (struct psninfo *)malloc(sizeof(struct psninfo) * page_num); //每个物理页和逻辑页都有对应关系
+	alloc_assert(dram->map->psn_entry2,"dram->map->psn_entry2");
+	memset(dram->map->psn_entry2,0,sizeof(struct psninfo) * page_num);
 	
 	return dram;
 }
@@ -253,6 +267,10 @@ struct plane_info * initialize_plane(struct plane_info * p_plane,struct paramete
 		initialize_block( p_block ,parameter);			
 	}
 	p_plane->counter_th = 0.2 * parameter->page_block;
+	p_plane->hot_block = -1;
+	p_plane->hot2_block = -1;
+	p_plane->cold_block = -1;
+	p_plane->cold2_block = -1;
 	return p_plane;
 }
 
