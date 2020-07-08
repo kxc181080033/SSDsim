@@ -31,7 +31,6 @@ int  main()
 {
 	unsigned  int i,ii,j,k;
 	struct ssd_info *ssd;
-
 	#ifdef DEBUG
 	printf("enter main\n"); 
 	#endif
@@ -41,6 +40,8 @@ int  main()
 	memset(ssd,0, sizeof(struct ssd_info));
 
 	ssd=initiation(ssd);
+	ssd->find_what = 1;
+	ssd->hot_cold_flag = 0;
 	make_aged(ssd);
 	pre_process_page(ssd);
 
@@ -103,7 +104,6 @@ struct ssd_info *simulate(struct ssd_info *ssd)
 
 	fprintf(ssd->outputfile,"      arrive           lsn     size ope     begin time    response time    process time    wait time\n");	
 	fflush(ssd->outputfile);
-
 	while(flag!=100)      
 	{
         

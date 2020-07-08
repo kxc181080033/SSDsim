@@ -553,19 +553,19 @@ Status  find_active_block(struct ssd_info *ssd,unsigned int channel,unsigned int
 	{
 		if(ssd->find_what == 1)
 		{
-			if(ssd->hot_cold_flag == 0)
+			if(ssd->hot_cold_flag == 3)
 			{
 				active_block=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].hot_block;
 			}
-			else if(ssd->hot_cold_flag == 1)
+			else if(ssd->hot_cold_flag == 2)
 			{
 				active_block=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].hot2_block;
 			}
-			else if(ssd->hot_cold_flag == 2)
+			else if(ssd->hot_cold_flag == 1)
 			{
 				active_block=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].cold2_block;
 			}
-			else if(ssd->hot_cold_flag == 3)
+			else if(ssd->hot_cold_flag == 0)
 			{
 				active_block=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].cold_block;
 			}
@@ -618,19 +618,19 @@ Status  find_active_block(struct ssd_info *ssd,unsigned int channel,unsigned int
 	{
 		if(ssd->find_what == 1)
 		{
-			if(ssd->hot_cold_flag == 0)
+			if(ssd->hot_cold_flag == 3)
 			{
 				ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].hot_block=active_block;
 			}
-			else if(ssd->hot_cold_flag == 1)
+			else if(ssd->hot_cold_flag == 2)
 			{
 				ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].hot2_block=active_block;
 			}
-			else if(ssd->hot_cold_flag == 2)
+			else if(ssd->hot_cold_flag == 1)
 			{
 				ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].cold2_block=active_block;
 			}
-			else if(ssd->hot_cold_flag == 3)
+			else if(ssd->hot_cold_flag == 0)
 			{
 				ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].cold_block=active_block;
 			}
@@ -648,7 +648,7 @@ Status  find_active_block(struct ssd_info *ssd,unsigned int channel,unsigned int
 	{
 		ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].active_block=active_block;
 	}
-	ssd->find_what = 0;
+	//ssd->find_what = 0;
 	if(count<ssd->parameter->block_plane)
 	{
 		return SUCCESS;

@@ -186,7 +186,7 @@ struct ssd_info *initiation(struct ssd_info *ssd)
 
 struct dram_info * initialize_dram(struct ssd_info * ssd)
 {
-	unsigned int page_num;
+	unsigned int page_num, i;
 
 	struct dram_info *dram=ssd->dram;
 	dram->dram_capacity = ssd->parameter->dram_capacity;		
@@ -205,10 +205,10 @@ struct dram_info * initialize_dram(struct ssd_info * ssd)
 
 	dram->map->update_fre1 = (unsigned int *)malloc(sizeof(unsigned int) * page_num); //每个物理页和逻辑页都有对应关系
 	alloc_assert(dram->map->update_fre1,"dram->map->update_fre1");
-	memset(dram->map->update_fre1,8,sizeof(unsigned int) * page_num);
+	memset(dram->map->update_fre1,0,sizeof(unsigned int) * page_num);
 	dram->map->update_fre2 = (unsigned int *)malloc(sizeof(unsigned int) * page_num); //每个物理页和逻辑页都有对应关系
 	alloc_assert(dram->map->update_fre2,"dram->map->update_fre2");
-	memset(dram->map->update_fre2,8,sizeof(unsigned int) * page_num);
+	memset(dram->map->update_fre2,0,sizeof(unsigned int) * page_num);
 	
 	dram->map->psn_entry1 = (struct psninfo *)malloc(sizeof(struct psninfo) * page_num); //每个物理页和逻辑页都有对应关系
 	alloc_assert(dram->map->psn_entry1,"dram->map->psn_entry1");
@@ -216,6 +216,11 @@ struct dram_info * initialize_dram(struct ssd_info * ssd)
 	dram->map->psn_entry2 = (struct psninfo *)malloc(sizeof(struct psninfo) * page_num); //每个物理页和逻辑页都有对应关系
 	alloc_assert(dram->map->psn_entry2,"dram->map->psn_entry2");
 	memset(dram->map->psn_entry2,0,sizeof(struct psninfo) * page_num);
+	for(i = 0; i < page_num; i++)
+	{
+		dram->map->update_fre1[i] = 0;
+		dram->map->update_fre2[i] = 0;
+	}
 	
 	return dram;
 }
