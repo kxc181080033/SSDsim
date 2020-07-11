@@ -279,7 +279,31 @@ int get_requests(struct ssd_info *ssd)
 	request1->need_distr_flag = NULL;
 	request1->complete_lsn_count=0;         //record the count of lsn served by buffer
 	filepoint = ftell(ssd->tracefile);		// set the file point
+	
+	/*if (request1->operation==0)
+	{
+		if ((ssd->write_request_count%500)==0)
+		{
+			for (pp=0;pp<ssd->page;pp++)
+			{
+				count[pp]=0.6*count[pp];
+			}
+		}
+	
 
+		lastlpn=(request1->lsn+request1->size-1)/ssd->parameter->subpage_page;
+		firstlpn=request1->lsn/ssd->parameter->subpage_page;
+		for(p=firstlpn;p<=lastlpn;p++)
+		{
+			if (count[p]==0)
+			{
+				ssd->write_no++;
+			}
+			count[p]++;
+		}
+		
+	}*/
+	
 	if(ssd->request_queue == NULL)          //The queue is empty
 	{
 		ssd->request_queue = request1;

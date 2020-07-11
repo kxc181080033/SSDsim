@@ -378,6 +378,9 @@ struct ssd_info * initialize_channels(struct ssd_info * ssd )
 		ssd->mi[i] = ssd->mi[i-1] + (double)ssd->parameter->page_block/(pow(1+0.5,i));
 	}
 
+	ssd->fagc_count = (int64_t*)malloc(ssd->parameter->channel_number*sizeof(int64_t));
+	memset(ssd->fagc_count, 0, ssd->parameter->channel_number*sizeof(int64_t));
+
 	return ssd;
 }
 

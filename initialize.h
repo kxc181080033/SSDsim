@@ -193,7 +193,7 @@ struct ssd_info{
 	int64_t iops_time;                   //KXC_2: once erase occurs, begin to count the wrtie delay and iops
 	long iops[60];
 	int64_t write_delay[60];
-	int64_t fagc_count;                  //KXC_2: the counter of FaGC+ to allocate the PSN of each LPN
+	int64_t *fagc_count;                  //KXC_2: the counter of FaGC+ to allocate the PSN of each LPN
 	int iops_count;
 	int write_delay_count;
 	int gc_type;

@@ -17,7 +17,7 @@ Hao Luo         2011/01/01        2.0           Change               luohao13568
 *****************************************************************************************************************************/
 
 #define _CRTDBG_MAP_ALLOC
- 
+#include <math.h>
 #include "pagemap.h"
 
 
@@ -457,7 +457,7 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 	int old_ppn=-1;
 	unsigned int ppn,lpn,full_page,lpn_page;
 	unsigned int active_block;
-	unsigned int block;
+	unsigned int block,pagenum=0;
 	unsigned int page,flag=0,flag1=0;
 	unsigned int old_state=0,state=0,copy_subpage=0;
 	struct local *location;
@@ -467,6 +467,7 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 	int free_page = 0, invalid_page = 0, valid_page = 0,hot_flag;
 
 	unsigned int i=0,j=0,k=0,l=0,m=0,n=0;
+	pagenum = ssd->parameter->page_block*ssd->parameter->block_plane*ssd->parameter->plane_die*ssd->parameter->die_chip*ssd->parameter->chip_num;
 
 
 
@@ -487,18 +488,19 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 	}
 	if(ssd->parameter->interruptible == 3)
 	{
-		/*if(ssd->dram->map->psn_entry1[lpn].psn < ssd->dram->map->psn_entry2[lpn].psn)
-		{
-			ssd->dram->map->psn_entry1[lpn].psn = ssd->fagc_count;
-		}
-		else
-		{
-			ssd->dram->map->psn_entry2[lpn].psn = ssd->fagc_count;
-		}*/
 		ssd->dram->map->psn_entry1[lpn].psn = ssd->dram->map->psn_entry2[lpn].psn;
-		ssd->dram->map->psn_entry2[lpn].psn = ssd->fagc_count;
-		ssd->fagc_count++;
+		ssd->dram->map->psn_entry2[lpn].psn = ssd->fagc_count[channel];
+		ssd->fagc_count[channel]++;
 		hot_cold_identify(ssd,lpn);
+		//thessd->dram->map->psn_entry1[lpn].psn hit count of lpn
+		//ssd->dram->map->psn_entry1[lpn].pn++;
+		/*if(ssd->write_request_count % 500 == 0)
+		{
+			for(i = 0; i < pagenum; i++)
+			{
+				ssd->dram->map->psn_entry1[i].pn = 0.6 * ssd->dram->map->psn_entry1[i].pn;
+			}
+		}*/
 	}
 	if(ssd->dram->map->update_fre2[lpn] > 12)
 	{
@@ -516,6 +518,14 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 	{
 		hot_flag = 0;
 	}
+	/*if(ssd->dram->map->psn_entry1[lpn].pn > 4)
+	{
+		hot_flag = 3;
+	}
+	else
+	{
+		hot_flag = 0;
+	}*/
 	ssd->hot_cold_flag = hot_flag;
 	if(find_active_block(ssd,channel,chip,die,plane)==FAILURE)                      
 	{
@@ -591,7 +601,7 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 		ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].invalid_page_num++;
 		ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].invalid_page++;
 		/*******************************************************************************************
-		*该block中全是invalid的页，可以直接删除，就在创建一个可擦除的节点，挂在location下的plane下面
+		*该block中全是invalid的页，可以直接删除，就在创建一个可擦除的节点，挂在location下的plane下面(禁用)
 		********************************************************************************************/
 		if ( 0&& ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].invalid_page_num==ssd->parameter->page_block)    
 		{
@@ -610,6 +620,49 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 			{
 				new_direct_erase->next_node=ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].erase_node;
 				ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].erase_node=new_direct_erase;
+			}
+		}
+		/*******************************************************************************************
+		*该block中全是invalid的页，添加到soft gc中，在空闲时间完成擦除
+		********************************************************************************************/		
+		if ( ssd->parameter->interruptible == 1 && ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].invalid_page_num==ssd->parameter->page_block)    
+		{
+			if(ssd->channel_head[location->channel].gc_soft == NULL && ssd->channel_head[location->channel].gc_sub_queue == NULL)
+			{
+				//find block
+				//victim_block = find_victim_interrupt_gc(ssd,channel,chip,die,plane);
+				victim_block = location->block;
+				valid_page = 0;
+				for(i = 0; i < ssd->parameter->page_block; i++)
+				{
+					if(ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[victim_block].page_head[i].valid_state > 0)
+						valid_page++;
+				}
+
+				free_page = ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[victim_block].free_page_num;
+				//invalid_page = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[victim_block].invalid_page_num;
+				//valid_page = ssd->parameter->page_block - free_page - invalid_page;
+				if(free_page > 0) printf("error in victim block selection in soft gc");
+				//KXC_2: gc buffer is enough to put the valid pages
+				if(valid_page == 0 && valid_page <= ssd->parameter->gc_buffer_size - ssd->gc_buf_count)
+				{
+					gc_node=(struct gc_operation *)malloc(sizeof(struct gc_operation));
+					alloc_assert(gc_node,"gc_node");
+					memset(gc_node,0, sizeof(struct gc_operation));
+					gc_node->next_node=NULL;
+					gc_node->chip=location->chip;
+					gc_node->die=location->die;
+					gc_node->plane=location->plane;
+					gc_node->block= victim_block;
+					gc_node->page=0;
+					gc_node->state=GC_WAIT;
+					gc_node->priority=GC_INTERRUPT;
+					gc_node->next_node=ssd->channel_head[location->channel].gc_soft;
+					ssd->channel_head[location->channel].gc_soft=gc_node;
+					ssd->gc_request++;
+					ssd->gc_soft_count++;
+					soft_gc_distribute(ssd,location->channel,location->chip,location->die,location->plane);
+				}
 			}
 		}
 
@@ -677,8 +730,6 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 				{
 					//find block
 					victim_block = find_victim_interrupt_gc(ssd,channel,chip,die,plane);
-
-					if(victim_block == 500000) return ssd;
 					valid_page = 0;
 					for(i = 0; i < ssd->parameter->page_block; i++)
 					{
@@ -1552,6 +1603,14 @@ Status move_page_hot_cold(struct ssd_info * ssd, struct local *location, unsigne
 	{
 		hot_flag = 3;
 	}
+	/*if(ssd->dram->map->psn_entry1[lpn].pn > 4)
+	{
+		hot_flag = 3;
+	}
+	else
+	{
+		hot_flag = 0;
+	}*/
 	ssd->hot_cold_flag = hot_flag;
 	ppn=get_ppn_for_gc(ssd,location->channel,location->chip,location->die,location->plane);                /*找出来的ppn一定是在发生gc操作的plane中,才能使用copyback操作，为gc操作获取ppn*/
 
@@ -1582,7 +1641,7 @@ Status hot_cold_identify(struct ssd_info * ssd, unsigned int lpn)
 {
 	unsigned int C = 1;
 	//unsigned psn = 0;
-	unsigned int Nblock = ssd->parameter->block_plane, Npage = ssd->parameter->page_block;
+	unsigned int Nblock = ssd->parameter->block_plane, Npage = ssd->parameter->page_block * ssd->parameter->block_plane;
 	unsigned psn_dif;
 	double psn;
 	ssd->dram->map->update_fre1[lpn] = ssd->dram->map->update_fre2[lpn];
