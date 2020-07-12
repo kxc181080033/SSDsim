@@ -661,6 +661,7 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 					ssd->channel_head[location->channel].gc_soft=gc_node;
 					ssd->gc_request++;
 					ssd->gc_soft_count++;
+					ssd->direct_erase_count++;
 					soft_gc_distribute(ssd,location->channel,location->chip,location->die,location->plane);
 				}
 			}
@@ -2099,6 +2100,7 @@ unsigned int find_victim_interrupt_gc(struct ssd_info *ssd,unsigned int channel,
 	if(ssd->parameter->wear_leveling == 3)
 	{
 		score = 0.0;
+		max_erase = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].max_erase;
 		for (i=0;i<ssd->parameter->block_plane;i++)
 		{
 			invalid_block = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num;
@@ -2111,8 +2113,9 @@ unsigned int find_victim_interrupt_gc(struct ssd_info *ssd,unsigned int channel,
 			{
 				benifit_future += (double)ssd->parameter->page_block/(pow(1+0.5,j));
 			}*/
-			benifit_future = ssd->mi[ssd->parameter->ers_limit - erase];
-			
+			benifit_future = ssd->mi[max_erase - erase];
+			//benifit_future = ssd->mi[ssd->parameter->ers_limit - erase];
+			//score_tmp = (double) invalid_block/ssd->parameter->page_block + benifit_future/(max_erase+10)/10 - (double) valid_block/ssd->parameter->page_block;
 			score_tmp = (double) invalid_block/ssd->parameter->page_block + benifit_future/ssd->parameter->ers_limit - (double) valid_block/ssd->parameter->page_block;
 			
 			if((active_block!=i)&&(score < score_tmp))
