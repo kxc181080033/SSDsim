@@ -625,7 +625,7 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 		/*******************************************************************************************
 		*该block中全是invalid的页，添加到soft gc中，在空闲时间完成擦除
 		********************************************************************************************/		
-		if ( ssd->parameter->interruptible == 1 && ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].invalid_page_num=ssd->parameter->page_block)    
+		if ( ssd->parameter->interruptible == 1 && ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].invalid_page_num==ssd->parameter->page_block)    
 		{
 			if(ssd->channel_head[location->channel].gc_soft == NULL && ssd->channel_head[location->channel].gc_sub_queue == NULL)
 			{
