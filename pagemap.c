@@ -625,9 +625,9 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 		/*******************************************************************************************
 		*该block中全是invalid的页，添加到soft gc中，在空闲时间完成擦除
 		********************************************************************************************/		
-		if ( ssd->parameter->interruptible == 1 && ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].invalid_page_num>=ssd->parameter->page_block)    
+		if ( ssd->parameter->interruptible == 1 && ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].invalid_page_num=ssd->parameter->page_block)    
 		{
-			if(1)
+			if(ssd->channel_head[location->channel].gc_soft == NULL && ssd->channel_head[location->channel].gc_sub_queue == NULL)
 			{
 				//find block
 				//victim_block = find_victim_interrupt_gc(ssd,channel,chip,die,plane);
@@ -727,7 +727,7 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 		{
 			if(1)	
 			{
-				if(ssd->channel_head[channel].gc_soft == NULL)
+				if(ssd->channel_head[channel].gc_soft == NULL && ssd->channel_head[channel].gc_sub_queue == NULL)
 				{
 					//find block
 					victim_block = find_victim_interrupt_gc(ssd,channel,chip,die,plane);
@@ -791,7 +791,8 @@ struct ssd_info *dtgc_judge(struct ssd_info *ssd,unsigned int channel,unsigned i
 		ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].counter = 0;
 		IGC_TH = alpha * ssd->parameter->overprovide + beta * (1 - VPP) + gama * IPP;
 		NGC_TH = sigma * ssd->parameter->overprovide + kesai * (1- VPP);
-
+		IGC_TH = IGC_TH < ssd->parameter->gc_soft_threshold ? IGC_TH : ssd->parameter->gc_soft_threshold;
+		NGC_TH = NGC_TH < ssd->parameter->gc_hard_threshold ? NGC_TH : ssd->parameter->gc_soft_threshold;
 		if(FPP < IGC_TH)
 		{
 			if(FPP < NGC_TH)
