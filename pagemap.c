@@ -2100,7 +2100,7 @@ unsigned int find_victim_interrupt_gc(struct ssd_info *ssd,unsigned int channel,
 
 	if(ssd->parameter->wear_leveling == 3)
 	{
-		score = 0.0;
+		score = -500000.0;
 		max_erase = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].max_erase;
 		for (i=0;i<ssd->parameter->block_plane;i++)
 		{
@@ -2117,8 +2117,8 @@ unsigned int find_victim_interrupt_gc(struct ssd_info *ssd,unsigned int channel,
 			benifit_future = ssd->mi[max_erase - erase];
 			//benifit_future = ssd->mi[ssd->parameter->ers_limit - erase];
 			//score_tmp = (double) invalid_block/ssd->parameter->page_block + benifit_future/(max_erase+10)/10 - (double) valid_block/ssd->parameter->page_block;
-			score_tmp = (double) invalid_block/ssd->parameter->page_block + benifit_future/ssd->parameter->ers_limit - (double) valid_block/ssd->parameter->page_block;
-			
+			//score_tmp = (double) invalid_block/ssd->parameter->page_block + benifit_future/ssd->parameter->ers_limit - (double) valid_block/ssd->parameter->page_block;
+			score_tmp = (double) invalid_block/ssd->parameter->page_block + benifit_future/ssd->parameter->ers_limit;
 			if((active_block!=i)&&(score < score_tmp))
 			{
 				score = score_tmp;

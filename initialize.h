@@ -191,8 +191,8 @@ struct ssd_info{
 	int64_t max_wait_time;               //KXC:to record the max wait time
 	int64_t max_queue_time;              //KXC:to record the max time gap in the request queue
 	int64_t iops_time;                   //KXC_2: once erase occurs, begin to count the wrtie delay and iops
-	long iops[60];
-	int64_t write_delay[60];
+	long iops[62];
+	int64_t write_delay[62];
 	int64_t *fagc_count;                  //KXC_2: the counter of FaGC+ to allocate the PSN of each LPN
 	int iops_count;
 	int write_delay_count;

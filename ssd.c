@@ -750,9 +750,9 @@ void trace_output(struct ssd_info* ssd){
 					ssd->write_avg_wait=ssd->write_avg_wait+(end_time-req->time);
 				}
 
-				if(ssd->iops_time != 0 && end_time > ssd->iops_time && ssd->iops_count < 60)
+				if(ssd->iops_time != 0 && end_time > ssd->iops_time && ssd->iops_count < 62)
        			{
-					while(ssd->iops_count< 60)
+					while(ssd->iops_count< 62)
 					{
 						if(end_time > ssd->iops_time + ssd->iops_count * 60000000000 && end_time < ssd->iops_time + (ssd->iops_count + 1) * 60000000000)
 						{
@@ -1076,12 +1076,12 @@ void statistic_output(struct ssd_info *ssd)
 	fprintf(ssd->statisticfile,"10: %.3f\n",((double)ssd->distributed[11])/(double)(ssd->read_request_count+ssd->write_request_count));
 	
 	fprintf(ssd->statisticfile,"\n");
-	for(i = 0; i < 60; i++)
+	for(i = 0; i < 62; i++)
 	{
 		fprintf(ssd->statisticfile,"iops%d: %lld\n",i,ssd->iops[i]);
 	}
 	fprintf(ssd->statisticfile,"\n");
-	for(i = 0; i < 60; i++)
+	for(i = 0; i < 62; i++)
 	{
 		fprintf(ssd->statisticfile,"write_delay%d: %lld\n",i,ssd->write_delay[i]);
 	}
