@@ -502,7 +502,7 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 			}
 		}*/
 	}
-	if(ssd->dram->map->update_fre2[lpn] > 12)
+	/*if(ssd->dram->map->update_fre2[lpn] > 12)
 	{
 		hot_flag = 3;
 	}
@@ -517,15 +517,15 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 	else 
 	{
 		hot_flag = 0;
-	}
-	/*if(ssd->dram->map->psn_entry1[lpn].pn > 4)
+	}*/
+	if(ssd->dram->map->psn_entry1[lpn].pn > 4)
 	{
 		hot_flag = 3;
 	}
 	else
 	{
 		hot_flag = 0;
-	}*/
+	}
 	ssd->hot_cold_flag = hot_flag;
 	if(find_active_block(ssd,channel,chip,die,plane)==FAILURE)                      
 	{
@@ -1215,7 +1215,7 @@ Status erase_operation(struct ssd_info * ssd,unsigned int channel ,unsigned int 
 	ssd->channel_head[channel].chip_head[chip].erase_count++;
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].free_page+=ssd->parameter->page_block;
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].invalid_page-=ssd->parameter->page_block;
-	if(ssd->iops_time == 0) ssd->iops_time =500000000000000;
+	if(ssd->iops_time == 0) ssd->iops_time =400000000000000;
 	/*if(ssd->parameter->interruptible == 0)
 	{
 		if(ssd->iops_time == 0) 
@@ -1616,7 +1616,7 @@ Status move_page_hot_cold(struct ssd_info * ssd, struct local *location, unsigne
 	valid_state=ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].page_head[location->page].valid_state;
 	free_state=ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].page_head[location->page].free_state;
 	old_ppn=find_ppn(ssd,location->channel,location->chip,location->die,location->plane,location->block,location->page);      /*记录这个有效移动页的ppn，对比map或者额外映射关系中的ppn，进行删除和添加操作*/
-	if(ssd->dram->map->update_fre2[lpn] > 12)
+	/*if(ssd->dram->map->update_fre2[lpn] > 12)
 	{
 		hot_flag = 0;
 	}
@@ -1631,15 +1631,15 @@ Status move_page_hot_cold(struct ssd_info * ssd, struct local *location, unsigne
 	else 
 	{
 		hot_flag = 3;
-	}
-	/*if(ssd->dram->map->psn_entry1[lpn].pn > 4)
+	}*/
+	if(ssd->dram->map->psn_entry1[lpn].pn > 4)
 	{
 		hot_flag = 3;
 	}
 	else
 	{
 		hot_flag = 0;
-	}*/
+	}
 	ssd->hot_cold_flag = hot_flag;
 	ppn=get_ppn_for_gc(ssd,location->channel,location->chip,location->die,location->plane);                /*找出来的ppn一定是在发生gc操作的plane中,才能使用copyback操作，为gc操作获取ppn*/
 

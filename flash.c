@@ -124,6 +124,12 @@ Status allocate_location(struct ssd_info * ssd ,struct sub_request *sub_req)
 				//sub_req->location->channel=sub_req->lpn%ssd->parameter->channel_number;
 				sub_req->location->channel = ssd->ch_token;
 				ssd->ch_token = (ssd->ch_token + 1) % ssd->parameter->channel_number;
+				//if(ssd->parameter->interruptible == 0 && ssd->program_count % 1000 == 0)
+				/*if(ssd->parameter->interruptible == 0 && ssd->parameter->dram_capacity == 0)
+				{
+					if(ssd->program_count>10000 && ssd->program_count<50000)
+					ssd->ch_token = (ssd->ch_token + 1) % ssd->parameter->channel_number;
+				}*/
 				sub_req->location->chip=-1;
 				sub_req->location->die=-1;
 				sub_req->location->plane=-1;

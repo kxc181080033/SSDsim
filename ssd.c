@@ -754,7 +754,7 @@ void trace_output(struct ssd_info* ssd){
        			{
 					while(ssd->iops_count< 62)
 					{
-						if(end_time > ssd->iops_time + ssd->iops_count * 60000000000 && end_time < ssd->iops_time + (ssd->iops_count + 1) * 60000000000)
+						if(end_time > ssd->iops_time + ssd->iops_count * 3600000000000 && end_time < ssd->iops_time + (ssd->iops_count + 1) * 3600000000000)
 						{
 							break;
 						}
