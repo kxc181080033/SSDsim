@@ -792,7 +792,7 @@ struct ssd_info *dtgc_judge(struct ssd_info *ssd,unsigned int channel,unsigned i
 		IGC_TH = alpha * ssd->parameter->overprovide + beta * (1 - VPP) + gama * IPP;
 		NGC_TH = sigma * ssd->parameter->overprovide + kesai * (1- VPP);
 		IGC_TH = IGC_TH < ssd->parameter->gc_soft_threshold ? IGC_TH : ssd->parameter->gc_soft_threshold;
-		NGC_TH = NGC_TH < ssd->parameter->gc_hard_threshold ? NGC_TH : ssd->parameter->gc_soft_threshold;
+		NGC_TH = NGC_TH < ssd->parameter->gc_hard_threshold ? NGC_TH : ssd->parameter->gc_hard_threshold;
 		if(FPP < IGC_TH)
 		{
 			if(FPP < NGC_TH)
@@ -1215,7 +1215,34 @@ Status erase_operation(struct ssd_info * ssd,unsigned int channel ,unsigned int 
 	ssd->channel_head[channel].chip_head[chip].erase_count++;
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].free_page+=ssd->parameter->page_block;
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].invalid_page-=ssd->parameter->page_block;
-	if(ssd->iops_time == 0 ) ssd->iops_time = 500000000000000;
+	if(ssd->iops_time == 0) ssd->iops_time =500000000000000;
+	/*if(ssd->parameter->interruptible == 0)
+	{
+		if(ssd->iops_time == 0) 
+		{
+			ssd->iops_time = ssd->current_time;
+			FILE *fpWriter = fopen("time","w");
+			if(fpWriter == NULL)
+			{
+				printf("Error in the file open to write the time\n");
+			}
+			fprintf(fpWriter,"%d",ssd->iops_time);
+			fclose(fpWriter);
+		}
+	}
+	else
+	{
+		if(ssd->iops_time == 0) 
+		{
+			FILE *fpReader = fopen("time","r");
+			if(fpReader == NULL)
+			{
+				printf("Error in the file open to write the time\n");
+			}
+			fscanf(fpReader,"%d",&ssd->iops_time);
+			fclose(fpReader);
+		}
+	}*/		
 	return SUCCESS;
 
 }

@@ -1083,7 +1083,7 @@ void statistic_output(struct ssd_info *ssd)
 	fprintf(ssd->statisticfile,"\n");
 	for(i = 0; i < 62; i++)
 	{
-		fprintf(ssd->statisticfile,"write_delay%d: %lld\n",i,ssd->write_delay[i]);
+		fprintf(ssd->statisticfile,"write_delay%d: %lld\n",i,ssd->write_delay[i]/1000);
 	}
 
 
