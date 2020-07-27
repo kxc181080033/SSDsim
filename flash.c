@@ -2,7 +2,7 @@
 This project was supported by the National Basic Research 973 Program of China under Grant No.2011CB302301
 Huazhong University of Science and Technology (HUST)   Wuhan National Laboratory for Optoelectronics
 
-FileName£º flash.c
+FileNameï¿½ï¿½ flash.c
 Author: Hu Yang		Version: 2.1	Date:2011/12/02
 Description: 
 
@@ -19,7 +19,7 @@ Hao Luo         2011/01/01        2.0           Change               luohao13568
 #include "flash.h"
 
 /**********************
-*Õâ¸öº¯ÊýÖ»×÷ÓÃÓÚÐ´ÇëÇó
+*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½
 ***********************/
 Status allocate_location(struct ssd_info * ssd ,struct sub_request *sub_req)
 {
@@ -33,18 +33,18 @@ Status allocate_location(struct ssd_info * ssd ,struct sub_request *sub_req)
 	plane_num=ssd->parameter->plane_die;
     
 	
-	if (ssd->parameter->allocation_scheme==0)                                          /*¶¯Ì¬·ÖÅäµÄÇé¿ö*/
+	if (ssd->parameter->allocation_scheme==0)                                          /*ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	{
 		/******************************************************************
-		* ÔÚ¶¯Ì¬·ÖÅäÖÐ£¬ÒòÎªÒ³µÄ¸üÐÂ²Ù×÷Ê¹ÓÃ²»ÁËcopyback²Ù×÷£¬
-		*ÐèÒª²úÉúÒ»¸ö¶ÁÇëÇó£¬²¢ÇÒÖ»ÓÐÕâ¸ö¶ÁÇëÇóÍê³Éºó²ÅÄÜ½øÐÐÕâ¸öÒ³µÄÐ´²Ù×÷
+		* ï¿½Ú¶ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ÎªÒ³ï¿½Ä¸ï¿½ï¿½Â²ï¿½ï¿½ï¿½Ê¹ï¿½Ã²ï¿½ï¿½ï¿½copybackï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		*ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ó£¬²ï¿½ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Éºï¿½ï¿½ï¿½Ü½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½
 		*******************************************************************/
 
-		if (ssd->dram->map->map_entry[sub_req->lpn].state!=0)    //Ó³ÉäÏîÖÐ´æÔÚÓÐÐ§µÄÉÈÇø
+		if (ssd->dram->map->map_entry[sub_req->lpn].state!=0)    //Ó³ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		{
 			if ((sub_req->state&ssd->dram->map->map_entry[sub_req->lpn].state)!=ssd->dram->map->map_entry[sub_req->lpn].state)
 			{
-				ssd->read_count++;             //²úÉú¶ÁµÄÔ­ÒòÊÇÐèÒª¶Á³öÊý¾Ý²ÅÄÜÅÐ¶ÏÊý¾ÝÊÇ·ñÎªÐ´¸üÐÂ
+				ssd->read_count++;             //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý²ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ÎªÐ´ï¿½ï¿½ï¿½ï¿½
 				ssd->update_read_count++;
 
 				update=(struct sub_request *)malloc(sizeof(struct sub_request));
@@ -72,7 +72,7 @@ Status allocate_location(struct ssd_info * ssd ,struct sub_request *sub_req)
 				update->ppn = ssd->dram->map->map_entry[sub_req->lpn].pn;
 				update->operation = READ;
 				
-				if (ssd->channel_head[location->channel].subs_r_tail!=NULL)            /*²úÉúÐÂµÄ¶ÁÇëÇó£¬²¢ÇÒ¹Òµ½channelµÄsubs_r_tail¶ÓÁÐÎ²*/
+				if (ssd->channel_head[location->channel].subs_r_tail!=NULL)            /*ï¿½ï¿½ï¿½ï¿½ï¿½ÂµÄ¶ï¿½ï¿½ï¿½ï¿½ó£¬²ï¿½ï¿½Ò¹Òµï¿½channelï¿½ï¿½subs_r_tailï¿½ï¿½ï¿½ï¿½Î²*/
 				{
 						ssd->channel_head[location->channel].subs_r_tail->next_node=update;
 						ssd->channel_head[location->channel].subs_r_tail=update;
@@ -86,9 +86,9 @@ Status allocate_location(struct ssd_info * ssd ,struct sub_request *sub_req)
 		}
 		
 		/***************************************
-		*Ò»ÏÂÊÇ¶¯Ì¬·ÖÅäµÄ¼¸ÖÖÇé¿ö
-		*0£ºÈ«¶¯Ì¬·ÖÅä
-		*1£º±íÊ¾channel¶¨package£¬die£¬plane¶¯Ì¬
+		*Ò»ï¿½ï¿½ï¿½Ç¶ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		*0ï¿½ï¿½È«ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½
+		*1ï¿½ï¿½ï¿½ï¿½Ê¾channelï¿½ï¿½packageï¿½ï¿½dieï¿½ï¿½planeï¿½ï¿½Ì¬
 		****************************************/
 		switch(ssd->parameter->dynamic_allocation)
 		{
@@ -125,11 +125,11 @@ Status allocate_location(struct ssd_info * ssd ,struct sub_request *sub_req)
 				sub_req->location->channel = ssd->ch_token;
 				ssd->ch_token = (ssd->ch_token + 1) % ssd->parameter->channel_number;
 				//if(ssd->parameter->interruptible == 0 && ssd->program_count % 1000 == 0)
-				/*if(ssd->parameter->interruptible == 0 && ssd->parameter->dram_capacity == 0)
+				if(ssd->parameter->interruptible == 0 && ssd->parameter->dram_capacity == 0)
 				{
-					if(ssd->program_count>10000 && ssd->program_count<50000)
+					if(ssd->write_request_count > 0 && ssd->write_request_count < 1000000)
 					ssd->ch_token = (ssd->ch_token + 1) % ssd->parameter->channel_number;
-				}*/
+				}
 				sub_req->location->chip=-1;
 				sub_req->location->die=-1;
 				sub_req->location->plane=-1;
@@ -156,8 +156,8 @@ Status allocate_location(struct ssd_info * ssd ,struct sub_request *sub_req)
 	}
 	else                                                                          
 	{   /***************************************************************************
-		*ÊÇ¾²Ì¬·ÖÅä·½Ê½£¬ËùÒÔ¿ÉÒÔ½«Õâ¸ö×ÓÇëÇóµÄ×îÖÕchannel£¬chip£¬die£¬planeÈ«²¿µÃ³ö
-		*×Ü¹²ÓÐ0,1,2,3,4,5,ÕâÁùÖÖ¾²Ì¬·ÖÅä·½Ê½¡£
+		*ï¿½Ç¾ï¿½Ì¬ï¿½ï¿½ï¿½ä·½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¿ï¿½ï¿½Ô½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½channelï¿½ï¿½chipï¿½ï¿½dieï¿½ï¿½planeÈ«ï¿½ï¿½ï¿½Ã³ï¿½
+		*ï¿½Ü¹ï¿½ï¿½ï¿½0,1,2,3,4,5,ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½Ì¬ï¿½ï¿½ï¿½ä·½Ê½ï¿½ï¿½
 		****************************************************************************/
 		switch (ssd->parameter->static_allocation)
 		{
@@ -217,7 +217,7 @@ Status allocate_location(struct ssd_info * ssd ,struct sub_request *sub_req)
 		}
 
 		if (ssd->dram->map->map_entry[sub_req->lpn].state!=0)
-		{                                                                              /*Õâ¸öÐ´»ØµÄ×ÓÇëÇóµÄÂß¼­Ò³²»¿ÉÒÔ¸²¸ÇÖ®Ç°±»Ð´»ØµÄÊý¾Ý ÐèÒª²úÉú¶ÁÇëÇó*/ 
+		{                                                                              /*ï¿½ï¿½ï¿½Ð´ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¼ï¿½Ò³ï¿½ï¿½ï¿½ï¿½ï¿½Ô¸ï¿½ï¿½ï¿½Ö®Ç°ï¿½ï¿½Ð´ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/ 
 			if ((sub_req->state&ssd->dram->map->map_entry[sub_req->lpn].state)!=ssd->dram->map->map_entry[sub_req->lpn].state)  
 			{
 				ssd->read_count++;
@@ -288,11 +288,11 @@ Status allocate_location(struct ssd_info * ssd ,struct sub_request *sub_req)
 
 
 /*******************************************************************************
-*insert2bufferÕâ¸öº¯ÊýÊÇ×¨ÃÅÎªÐ´ÇëÇó·ÖÅä×ÓÇëÇó·þÎñµÄÔÚbuffer_managementÖÐ±»µ÷ÓÃ¡£
+*insert2bufferï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¨ï¿½ï¿½ÎªÐ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½buffer_managementï¿½Ð±ï¿½ï¿½ï¿½ï¿½Ã¡ï¿½
 ********************************************************************************/
 struct ssd_info * insert2buffer(struct ssd_info *ssd,unsigned int lpn,int state,struct sub_request *sub,struct request *req)      
 {
-	int write_back_count,flag=0;                                                             /*flag±íÊ¾ÎªÐ´ÈëÐÂÊý¾ÝÌÚ¿Õ¼äÊÇ·ñÍê³É£¬0±íÊ¾ÐèÒª½øÒ»²½ÌÚ£¬1±íÊ¾ÒÑ¾­ÌÚ¿Õ*/
+	int write_back_count,flag=0;                                                             /*flagï¿½ï¿½Ê¾ÎªÐ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¿Õ¼ï¿½ï¿½Ç·ï¿½ï¿½ï¿½É£ï¿½0ï¿½ï¿½Ê¾ï¿½ï¿½Òªï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ú£ï¿½1ï¿½ï¿½Ê¾ï¿½Ñ¾ï¿½ï¿½Ú¿ï¿½*/
 	unsigned int i,lsn,hit_flag,add_flag,sector_count,active_region_flag=0,free_sector=0;
 	struct buffer_group *buffer_node=NULL,*pt,*new_node=NULL,key;
 	struct sub_request *sub_req=NULL,*update=NULL;
@@ -304,16 +304,16 @@ struct ssd_info * insert2buffer(struct ssd_info *ssd,unsigned int lpn,int state,
 	printf("enter insert2buffer,  current time:%lld, lpn:%d, state:%d,\n",ssd->current_time,lpn,state);
 	#endif
 
-	sector_count=size(state);                                                                /*ÐèÒªÐ´µ½bufferµÄsector¸öÊý*/
+	sector_count=size(state);                                                                /*ï¿½ï¿½ÒªÐ´ï¿½ï¿½bufferï¿½ï¿½sectorï¿½ï¿½ï¿½ï¿½*/
 	key.group=lpn;
-	buffer_node= (struct buffer_group*)avlTreeFind(ssd->dram->buffer, (TREE_NODE *)&key);    /*ÔÚÆ½ºâ¶þ²æÊ÷ÖÐÑ°ÕÒbuffer node*/ 
+	buffer_node= (struct buffer_group*)avlTreeFind(ssd->dram->buffer, (TREE_NODE *)&key);    /*ï¿½ï¿½Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ°ï¿½ï¿½buffer node*/ 
     
 	/************************************************************************************************
-	*Ã»ÓÐÃüÖÐ¡£
-	*µÚÒ»²½¸ù¾ÝÕâ¸ölpnÓÐ¶àÉÙ×ÓÒ³ÐèÒªÐ´µ½buffer£¬È¥³ýÒÑÐ´»ØµÄlsn£¬Îª¸ÃlpnÌÚ³öÎ»ÖÃ£¬
-	*Ê×ÏÈ¼´Òª¼ÆËã³öfree sector£¨±íÊ¾»¹ÓÐ¶àÉÙ¿ÉÒÔÖ±½ÓÐ´µÄbuffer½Úµã£©¡£
-	*Èç¹ûfree_sector>=sector_count£¬¼´ÓÐ¶àÓàµÄ¿Õ¼ä¹»lpn×ÓÇëÇóÐ´£¬²»ÐèÒª²úÉúÐ´»ØÇëÇó
-	*·ñÔò£¬Ã»ÓÐ¶àÓàµÄ¿Õ¼ä¹©lpn×ÓÇëÇóÐ´£¬ÕâÊ±ÐèÒªÊÍ·ÅÒ»²¿·Ö¿Õ¼ä£¬²úÉúÐ´»ØÇëÇó¡£¾ÍÒªcreat_sub_request()
+	*Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½
+	*ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½lpnï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½Ò³ï¿½ï¿½ÒªÐ´ï¿½ï¿½bufferï¿½ï¿½È¥ï¿½ï¿½ï¿½ï¿½Ð´ï¿½Øµï¿½lsnï¿½ï¿½Îªï¿½ï¿½lpnï¿½Ú³ï¿½Î»ï¿½Ã£ï¿½
+	*ï¿½ï¿½ï¿½È¼ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½free sectorï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½Ù¿ï¿½ï¿½ï¿½Ö±ï¿½ï¿½Ð´ï¿½ï¿½bufferï¿½Úµã£©ï¿½ï¿½
+	*ï¿½ï¿½ï¿½free_sector>=sector_countï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½Ä¿Õ¼ä¹»lpnï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	*ï¿½ï¿½ï¿½ï¿½Ã»ï¿½Ð¶ï¿½ï¿½ï¿½Ä¿Õ¼ä¹©lpnï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Òªï¿½Í·ï¿½Ò»ï¿½ï¿½ï¿½Ö¿Õ¼ä£¬ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ó¡£¾ï¿½Òªcreat_sub_request()
 	*************************************************************************************************/
 	if(buffer_node==NULL)
 	{
@@ -324,8 +324,8 @@ struct ssd_info * insert2buffer(struct ssd_info *ssd,unsigned int lpn,int state,
 		}
 		if(flag==0)     
 		{
-			write_back_count=sector_count-free_sector;                //¼´ÐèÒª´Ó»º³åÇøÌÞ³ýµÄÉÈÇøÊý
-			ssd->dram->buffer->write_miss_hit=ssd->dram->buffer->write_miss_hit+write_back_count;//ÕâÀïÓÐ¿Õ¼äÐ´Èë±íÊ¾ÃüÖÐ£¬ÎÞ¿Õ¼äÐ´ÈëÊÓÎªÎ´ÃüÖÐ
+			write_back_count=sector_count-free_sector;                //ï¿½ï¿½ï¿½ï¿½Òªï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Þ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			ssd->dram->buffer->write_miss_hit=ssd->dram->buffer->write_miss_hit+write_back_count;//ï¿½ï¿½ï¿½ï¿½ï¿½Ð¿Õ¼ï¿½Ð´ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½Ð£ï¿½ï¿½Þ¿Õ¼ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ÎªÎ´ï¿½ï¿½ï¿½ï¿½
 			while(write_back_count>0)
 			{
 				sub_req=NULL;
@@ -335,10 +335,10 @@ struct ssd_info * insert2buffer(struct ssd_info *ssd,unsigned int lpn,int state,
 				sub_req=creat_sub_request(ssd,sub_req_lpn,sub_req_size,sub_req_state,req,WRITE);
 				
 				/**********************************************************************************
-				*req²»Îª¿Õ£¬±íÊ¾Õâ¸öinsert2bufferº¯ÊýÊÇÔÚbuffer_managementÖÐµ÷ÓÃ£¬´«µÝÁËrequest½øÀ´
-				*reqÎª¿Õ£¬±íÊ¾Õâ¸öº¯ÊýÊÇÔÚprocessº¯ÊýÖÐ´¦ÀíÒ»¶Ô¶àÓ³Éä¹ØÏµµÄ¶ÁµÄÊ±ºò£¬ÐèÒª½«Õâ¸ö¶Á³ö
-				*µÄÊý¾Ý¼Óµ½bufferÖÐ£¬Õâ¿ÉÄÜ²úÉúÊµÊ±µÄÐ´»Ø²Ù×÷£¬ÐèÒª½«Õâ¸öÊµÊ±µÄÐ´»Ø²Ù×÷µÄ×ÓÇëÇó¹ÒÔÚ
-				*Õâ¸ö¶ÁÇëÇóµÄ×ÜÇëÇóÉÏ
+				*reqï¿½ï¿½Îªï¿½Õ£ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½insert2bufferï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½buffer_managementï¿½Ðµï¿½ï¿½Ã£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½requestï¿½ï¿½ï¿½ï¿½
+				*reqÎªï¿½Õ£ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½processï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½Ò»ï¿½Ô¶ï¿½Ó³ï¿½ï¿½ï¿½Ïµï¿½Ä¶ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+				*ï¿½ï¿½ï¿½ï¿½ï¿½Ý¼Óµï¿½bufferï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½Ü²ï¿½ï¿½ï¿½ÊµÊ±ï¿½ï¿½Ð´ï¿½Ø²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ÊµÊ±ï¿½ï¿½Ð´ï¿½Ø²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+				*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				***********************************************************************************/
 				if(req!=NULL)                                             
 				{
@@ -350,8 +350,8 @@ struct ssd_info * insert2buffer(struct ssd_info *ssd,unsigned int lpn,int state,
 				}
                 
 				/*********************************************************************
-				*Ð´ÇëÇó²åÈëµ½ÁËÆ½ºâ¶þ²æÊ÷£¬ÕâÊ±¾ÍÒªÐÞ¸ÄdramµÄbuffer_sector_count£»
-				*Î¬³ÖÆ½ºâ¶þ²æÊ÷µ÷ÓÃavlTreeDel()ºÍAVL_TREENODE_FREE()º¯Êý£»Î¬³ÖLRUËã·¨£»
+				*Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ëµ½ï¿½ï¿½Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Òªï¿½Þ¸ï¿½dramï¿½ï¿½buffer_sector_countï¿½ï¿½
+				*Î¬ï¿½ï¿½Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½avlTreeDel()ï¿½ï¿½AVL_TREENODE_FREE()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î¬ï¿½ï¿½LRUï¿½ã·¨ï¿½ï¿½
 				**********************************************************************/
 				ssd->dram->buffer->buffer_sector_count=ssd->dram->buffer->buffer_sector_count-sub_req->size;
 				pt = ssd->dram->buffer->buffer_tail;
@@ -368,12 +368,12 @@ struct ssd_info * insert2buffer(struct ssd_info *ssd,unsigned int lpn,int state,
 				AVL_TREENODE_FREE(ssd->dram->buffer, (TREE_NODE *) pt);
 				pt = NULL;
 				
-				write_back_count=write_back_count-sub_req->size;                            /*ÒòÎª²úÉúÁËÊµÊ±Ð´»Ø²Ù×÷£¬ÐèÒª½«Ö÷¶¯Ð´»Ø²Ù×÷ÇøÓòÔö¼Ó*/
+				write_back_count=write_back_count-sub_req->size;                            /*ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÊµÊ±Ð´ï¿½Ø²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½Ø²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 			}
 		}
 		
 		/******************************************************************************
-		*Éú³ÉÒ»¸öbuffer node£¬¸ù¾ÝÕâ¸öÒ³µÄÇé¿ö·Ö±ð¸³Öµ¸ö¸÷¸ö³ÉÔ±£¬Ìí¼Óµ½¶ÓÊ×ºÍ¶þ²æÊ÷ÖÐ
+		*ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½buffer nodeï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô±ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½×ºÍ¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		*******************************************************************************/
 		new_node=NULL;
 		new_node=(struct buffer_group *)malloc(sizeof(struct buffer_group));
@@ -396,17 +396,17 @@ struct ssd_info * insert2buffer(struct ssd_info *ssd,unsigned int lpn,int state,
 		ssd->dram->buffer->buffer_sector_count += sector_count;
 	}
 	/****************************************************************************************
-	*ÔÚbufferÖÐÃüÖÐµÄÇé¿ö
-	*ËãÈ»ÃüÖÐÁË£¬µ«ÊÇÃüÖÐµÄÖ»ÊÇlpn£¬ÓÐ¿ÉÄÜÐÂÀ´µÄÐ´ÇëÇó£¬Ö»ÊÇÐèÒªÐ´lpnÕâÒ»pageµÄÄ³¼¸¸ösub_page
-	*ÕâÊ±ÓÐÐèÒª½øÒ»²½µÄÅÐ¶Ï
+	*ï¿½ï¿½bufferï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½
+	*ï¿½ï¿½È»ï¿½ï¿½ï¿½ï¿½ï¿½Ë£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½Ö»ï¿½ï¿½lpnï¿½ï¿½ï¿½Ð¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½ÒªÐ´lpnï¿½ï¿½Ò»pageï¿½ï¿½Ä³ï¿½ï¿½ï¿½ï¿½sub_page
+	*ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½
 	*****************************************************************************************/
 	else
 	{
 		for(i=0;i<ssd->parameter->subpage_page;i++)
 		{
 			/*************************************************************
-			*ÅÐ¶ÏstateµÚiÎ»ÊÇ²»ÊÇ1
-			*²¢ÇÒÅÐ¶ÏµÚi¸ösectorÊÇ·ñ´æÔÚbufferÖÐ£¬1±íÊ¾´æÔÚ£¬0±íÊ¾²»´æÔÚ¡£
+			*ï¿½Ð¶ï¿½stateï¿½ï¿½iÎ»ï¿½Ç²ï¿½ï¿½ï¿½1
+			*ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ïµï¿½iï¿½ï¿½sectorï¿½Ç·ï¿½ï¿½ï¿½ï¿½bufferï¿½Ð£ï¿½1ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½Ú£ï¿½0ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½Ú¡ï¿½
 			**************************************************************/
 			if((state>>i)%2!=0)                                                         
 			{
@@ -414,9 +414,9 @@ struct ssd_info * insert2buffer(struct ssd_info *ssd,unsigned int lpn,int state,
 				hit_flag=0;
 				hit_flag=(buffer_node->stored)&(0x00000001<<i);
 				
-				if(hit_flag!=0)				                                          /*ÃüÖÐÁË£¬ÐèÒª½«¸Ã½ÚµãÒÆµ½bufferµÄ¶ÓÊ×£¬²¢ÇÒ½«ÃüÖÐµÄlsn½øÐÐ±ê¼Ç*/
+				if(hit_flag!=0)				                                          /*ï¿½ï¿½ï¿½ï¿½ï¿½Ë£ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ã½Úµï¿½ï¿½Æµï¿½bufferï¿½Ä¶ï¿½ï¿½×£ï¿½ï¿½ï¿½ï¿½Ò½ï¿½ï¿½ï¿½ï¿½Ðµï¿½lsnï¿½ï¿½ï¿½Ð±ï¿½ï¿½*/
 				{	
-					active_region_flag=1;                                             /*ÓÃÀ´¼ÇÂ¼ÔÚÕâ¸öbuffer nodeÖÐµÄlsnÊÇ·ñ±»ÃüÖÐ£¬ÓÃÓÚºóÃæ¶ÔãÐÖµµÄÅÐ¶¨*/
+					active_region_flag=1;                                             /*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½buffer nodeï¿½Ðµï¿½lsnï¿½Ç·ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½Úºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½Ð¶ï¿½*/
 
 					if(req!=NULL)
 					{
@@ -438,7 +438,7 @@ struct ssd_info * insert2buffer(struct ssd_info *ssd,unsigned int lpn,int state,
 							ssd->dram->buffer->buffer_head=buffer_node;					
 						}					
 						ssd->dram->buffer->write_hit++;
-						req->complete_lsn_count++;                                        /*¹Ø¼ü µ±ÔÚbufferÖÐÃüÖÐÊ± ¾ÍÓÃreq->complete_lsn_count++±íÊ¾ÍùbufferÖÐÐ´ÁËÊý¾Ý¡£*/					
+						req->complete_lsn_count++;                                        /*ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ï¿½bufferï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê± ï¿½ï¿½ï¿½ï¿½req->complete_lsn_count++ï¿½ï¿½Ê¾ï¿½ï¿½bufferï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½Ý¡ï¿½*/					
 					}
 					else
 					{
@@ -447,19 +447,19 @@ struct ssd_info * insert2buffer(struct ssd_info *ssd,unsigned int lpn,int state,
 				else                 			
 				{
 					/************************************************************************************************************
-					*¸ÃlsnÃ»ÓÐÃüÖÐ£¬µ«ÊÇ½ÚµãÔÚbufferÖÐ£¬ÐèÒª½«Õâ¸ölsn¼Óµ½bufferµÄ¶ÔÓ¦½ÚµãÖÐ
-					*´ÓbufferµÄÄ©¶ËÕÒÒ»¸ö½Úµã£¬½«Ò»¸öÒÑ¾­Ð´»ØµÄlsn´Ó½ÚµãÖÐÉ¾³ý(Èç¹ûÕÒµ½µÄ»°)£¬¸ü¸ÄÕâ¸ö½ÚµãµÄ×´Ì¬£¬Í¬Ê±½«Õâ¸öÐÂµÄ
-					*lsn¼Óµ½ÏàÓ¦µÄbuffer½ÚµãÖÐ£¬¸Ã½Úµã¿ÉÄÜÔÚbufferÍ·£¬²»ÔÚµÄ»°£¬½«ÆäÒÆµ½Í·²¿¡£Èç¹ûÃ»ÓÐÕÒµ½ÒÑ¾­Ð´»ØµÄlsn£¬ÔÚbuffer
-					*½ÚµãÕÒÒ»¸ögroupÕûÌåÐ´»Ø£¬½«Õâ¸ö×ÓÇëÇó¹ÒÔÚÕâ¸öÇëÇóÉÏ¡£¿ÉÒÔÌáÇ°¹ÒÔÚÒ»¸öchannelÉÏ¡£
-					*µÚÒ»²½:½«buffer¶ÓÎ²µÄÒÑ¾­Ð´»ØµÄ½ÚµãÉ¾³ýÒ»¸ö£¬ÎªÐÂµÄlsnÌÚ³ö¿Õ¼ä£¬ÕâÀïÐèÒªÐÞ¸Ä¶ÓÎ²Ä³½ÚµãµÄstored×´Ì¬ÕâÀï»¹ÐèÒª
-					*       Ôö¼Ó£¬µ±Ã»ÓÐ¿ÉÒÔÖ®¼äÉ¾³ýµÄlsnÊ±£¬ÐèÒª²úÉúÐÂµÄÐ´×ÓÇëÇó£¬Ð´»ØLRU×îºóµÄ½Úµã¡£
-					*µÚ¶þ²½:½«ÐÂµÄlsn¼Óµ½ËùÊöµÄbuffer½ÚµãÖÐ¡£
+					*ï¿½ï¿½lsnÃ»ï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½Ç½Úµï¿½ï¿½ï¿½bufferï¿½Ð£ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½lsnï¿½Óµï¿½bufferï¿½Ä¶ï¿½Ó¦ï¿½Úµï¿½ï¿½ï¿½
+					*ï¿½ï¿½bufferï¿½ï¿½Ä©ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Úµã£¬ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ñ¾ï¿½Ð´ï¿½Øµï¿½lsnï¿½Ó½Úµï¿½ï¿½ï¿½É¾ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½Òµï¿½ï¿½Ä»ï¿½)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½×´Ì¬ï¿½ï¿½Í¬Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½
+					*lsnï¿½Óµï¿½ï¿½ï¿½Ó¦ï¿½ï¿½bufferï¿½Úµï¿½ï¿½Ð£ï¿½ï¿½Ã½Úµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½bufferÍ·ï¿½ï¿½ï¿½ï¿½ï¿½ÚµÄ»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æµï¿½Í·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Òµï¿½ï¿½Ñ¾ï¿½Ð´ï¿½Øµï¿½lsnï¿½ï¿½ï¿½ï¿½buffer
+					*ï¿½Úµï¿½ï¿½ï¿½Ò»ï¿½ï¿½groupï¿½ï¿½ï¿½ï¿½Ð´ï¿½Ø£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½channelï¿½Ï¡ï¿½
+					*ï¿½ï¿½Ò»ï¿½ï¿½:ï¿½ï¿½bufferï¿½ï¿½Î²ï¿½ï¿½ï¿½Ñ¾ï¿½Ð´ï¿½ØµÄ½Úµï¿½É¾ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Îªï¿½Âµï¿½lsnï¿½Ú³ï¿½ï¿½Õ¼ä£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½Þ¸Ä¶ï¿½Î²Ä³ï¿½Úµï¿½ï¿½stored×´Ì¬ï¿½ï¿½ï¿½ï»¹ï¿½ï¿½Òª
+					*       ï¿½ï¿½ï¿½Ó£ï¿½ï¿½ï¿½Ã»ï¿½Ð¿ï¿½ï¿½ï¿½Ö®ï¿½ï¿½É¾ï¿½ï¿½ï¿½ï¿½lsnÊ±ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½LRUï¿½ï¿½ï¿½Ä½Úµã¡£
+					*ï¿½Ú¶ï¿½ï¿½ï¿½:ï¿½ï¿½ï¿½Âµï¿½lsnï¿½Óµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½bufferï¿½Úµï¿½ï¿½Ð¡ï¿½
 					*************************************************************************************************************/	
 					ssd->dram->buffer->write_miss_hit++;
 					
 					if(ssd->dram->buffer->buffer_sector_count>=ssd->dram->buffer->max_buffer_sector)
 					{
-						if (buffer_node==ssd->dram->buffer->buffer_tail)                  /*Èç¹ûÃüÖÐµÄ½ÚµãÊÇbufferÖÐ×îºóÒ»¸ö½Úµã£¬½»»»×îºóÁ½¸ö½Úµã*/
+						if (buffer_node==ssd->dram->buffer->buffer_tail)                  /*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÐµÄ½Úµï¿½ï¿½ï¿½bufferï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Úµã£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½*/
 						{
 							pt = ssd->dram->buffer->buffer_tail->LRU_link_pre;
 							ssd->dram->buffer->buffer_tail->LRU_link_pre=pt->LRU_link_pre;
@@ -491,8 +491,8 @@ struct ssd_info * insert2buffer(struct ssd_info *ssd,unsigned int lpn,int state,
 						avlTreeDel(ssd->dram->buffer, (TREE_NODE *) pt);
 							
 						/************************************************************************/
-						/* ¸Ä:  ¹ÒÔÚÁË×ÓÇëÇó£¬bufferµÄ½Úµã²»Ó¦Á¢¼´É¾³ý£¬						*/
-						/*			ÐèµÈµ½Ð´»ØÁËÖ®ºó²ÅÄÜÉ¾³ý									*/
+						/* ï¿½ï¿½:  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½bufferï¿½Ä½Úµã²»Ó¦ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½ï¿½ï¿½						*/
+						/*			ï¿½ï¿½Èµï¿½Ð´ï¿½ï¿½ï¿½ï¿½Ö®ï¿½ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½									*/
 						/************************************************************************/
 						if(ssd->dram->buffer->buffer_head->LRU_link_next == NULL)
 						{
@@ -508,10 +508,10 @@ struct ssd_info * insert2buffer(struct ssd_info *ssd,unsigned int lpn,int state,
 						pt = NULL;	
 					}
 
-					                                                                     /*µÚ¶þ²½:½«ÐÂµÄlsn¼Óµ½ËùÊöµÄbuffer½ÚµãÖÐ*/	
+					                                                                     /*ï¿½Ú¶ï¿½ï¿½ï¿½:ï¿½ï¿½ï¿½Âµï¿½lsnï¿½Óµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½bufferï¿½Úµï¿½ï¿½ï¿½*/	
 					add_flag=0x00000001<<(lsn%ssd->parameter->subpage_page);
 					
-					if(ssd->dram->buffer->buffer_head!=buffer_node)                      /*Èç¹û¸Ãbuffer½Úµã²»ÔÚbufferµÄ¶ÓÊ×£¬ÐèÒª½«Õâ¸ö½ÚµãÌáµ½¶ÓÊ×*/
+					if(ssd->dram->buffer->buffer_head!=buffer_node)                      /*ï¿½ï¿½ï¿½ï¿½ï¿½bufferï¿½Úµã²»ï¿½ï¿½bufferï¿½Ä¶ï¿½ï¿½×£ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½áµ½ï¿½ï¿½ï¿½ï¿½*/
 					{				
 						if(ssd->dram->buffer->buffer_tail==buffer_node)
 						{					
@@ -541,7 +541,7 @@ struct ssd_info * insert2buffer(struct ssd_info *ssd,unsigned int lpn,int state,
 }
 
 /**************************************************************************************
-*º¯ÊýµÄ¹¦ÄÜÊÇÑ°ÕÒ»îÔ¾¿ì£¬Ó¦ÎªÃ¿¸öplaneÖÐ¶¼Ö»ÓÐÒ»¸ö»îÔ¾¿é£¬Ö»ÓÐÕâ¸ö»îÔ¾¿éÖÐ²ÅÄÜ½øÐÐ²Ù×÷
+*ï¿½ï¿½ï¿½ï¿½ï¿½Ä¹ï¿½ï¿½ï¿½ï¿½ï¿½Ñ°ï¿½Ò»ï¿½Ô¾ï¿½ì£¬Ó¦ÎªÃ¿ï¿½ï¿½planeï¿½Ð¶ï¿½Ö»ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ô¾ï¿½é£¬Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¾ï¿½ï¿½ï¿½Ð²ï¿½ï¿½Ü½ï¿½ï¿½Ð²ï¿½ï¿½ï¿½
 ***************************************************************************************/
 Status  find_active_block(struct ssd_info *ssd,unsigned int channel,unsigned int chip,unsigned int die,unsigned int plane)
 {
@@ -666,8 +666,8 @@ Status  find_active_block(struct ssd_info *ssd,unsigned int channel,unsigned int
 }
 
 /*************************************************
-*Õâ¸öº¯ÊýµÄ¹¦ÄÜ¾ÍÊÇÒ»¸öÄ£ÄâÒ»¸öÊµÊµÔÚÔÚµÄÐ´²Ù×÷
-*¾ÍÊÇ¸ü¸ÄÕâ¸öpageµÄÏà¹Ø²ÎÊý£¬ÒÔ¼°Õû¸össdµÄÍ³¼Æ²ÎÊý
+*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¹ï¿½ï¿½Ü¾ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Ä£ï¿½ï¿½Ò»ï¿½ï¿½ÊµÊµï¿½ï¿½ï¿½Úµï¿½Ð´ï¿½ï¿½ï¿½ï¿½
+*ï¿½ï¿½ï¿½Ç¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½pageï¿½ï¿½ï¿½ï¿½Ø²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½ssdï¿½ï¿½Í³ï¿½Æ²ï¿½ï¿½ï¿½
 **************************************************/
 Status write_page(struct ssd_info *ssd,unsigned int channel,unsigned int chip,unsigned int die,unsigned int plane,unsigned int active_block,unsigned int *ppn)
 {
@@ -691,7 +691,7 @@ Status write_page(struct ssd_info *ssd,unsigned int channel,unsigned int chip,un
 }
 
 /**********************************************
-*Õâ¸öº¯ÊýµÄ¹¦ÄÜÊÇ¸ù¾Ýlpn£¬size£¬state´´½¨×ÓÇëÇó
+*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¹ï¿½ï¿½ï¿½ï¿½Ç¸ï¿½ï¿½ï¿½lpnï¿½ï¿½sizeï¿½ï¿½stateï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 **********************************************/
 struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,int size,unsigned int state,struct request * req,unsigned int operation)
 {
@@ -702,7 +702,7 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 	int i,channel;
 	int buf_flag = 0;
 
-	sub = (struct sub_request*)malloc(sizeof(struct sub_request));                        /*ÉêÇëÒ»¸ö×ÓÇëÇóµÄ½á¹¹*/
+	sub = (struct sub_request*)malloc(sizeof(struct sub_request));                        /*ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä½á¹¹*/
 	alloc_assert(sub,"sub_request");
 	memset(sub,0, sizeof(struct sub_request));
 
@@ -722,8 +722,8 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 	}
 	
 	/*************************************************************************************
-	*ÔÚ¶Á²Ù×÷µÄÇé¿öÏÂ£¬ÓÐÒ»µã·Ç³£ÖØÒª¾ÍÊÇÒªÔ¤ÏÈÅÐ¶Ï¶Á×ÓÇëÇó¶ÓÁÐÖÐÊÇ·ñÓÐÓëÕâ¸ö×ÓÇëÇóÏàÍ¬µÄ£¬
-	*ÓÐµÄ»°£¬ÐÂ×ÓÇëÇó¾Í²»±ØÔÙÖ´ÐÐÁË£¬½«ÐÂµÄ×ÓÇëÇóÖ±½Ó¸³ÎªÍê³É
+	*ï¿½Ú¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â£ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Ç³ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ÒªÔ¤ï¿½ï¿½ï¿½Ð¶Ï¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½Ä£ï¿½
+	*ï¿½ÐµÄ»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í²ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½Ë£ï¿½ï¿½ï¿½ï¿½Âµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Ó¸ï¿½Îªï¿½ï¿½ï¿½
 	**************************************************************************************/
 	if (operation == READ)
 	{	
@@ -736,13 +736,13 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 		sub->next_state_predict_time=MAX_INT64;
 		sub->lpn = lpn;
 		sub->size=size;
-		sub->buf_flag = buf_flag;                                                               /*ÐèÒª¼ÆËã³ö¸Ã×ÓÇëÇóµÄÇëÇó´óÐ¡*/
+		sub->buf_flag = buf_flag;                                                               /*ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡*/
 
 		p_ch = &ssd->channel_head[loc->channel];	
 		sub->ppn = ssd->dram->map->map_entry[lpn].pn;
 		sub->operation = READ;
 		sub->state=(ssd->dram->map->map_entry[lpn].state&0x7fffffff);
-		sub_r=p_ch->subs_r_head;                                                      /*Ò»ÏÂ¼¸ÐÐ°üÀ¨flagÓÃÓÚÅÐ¶Ï¸Ã¶Á×ÓÇëÇó¶ÓÁÐÖÐÊÇ·ñÓÐÓëÕâ¸ö×ÓÇëÇóÏàÍ¬µÄ£¬ÓÐµÄ»°£¬½«ÐÂµÄ×ÓÇëÇóÖ±½Ó¸³ÎªÍê³É*/
+		sub_r=p_ch->subs_r_head;                                                      /*Ò»ï¿½Â¼ï¿½ï¿½Ð°ï¿½ï¿½ï¿½flagï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ï¸Ã¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½Ä£ï¿½ï¿½ÐµÄ»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Ó¸ï¿½Îªï¿½ï¿½ï¿½*/
 		flag=0;
 		while (sub_r!=NULL)
 		{
@@ -812,7 +812,7 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 		}
 	}
 	/*************************************************************************************
-	*Ð´ÇëÇóµÄÇé¿öÏÂ£¬¾ÍÐèÒªÀûÓÃµ½º¯Êýallocate_location(ssd ,sub)À´´¦Àí¾²Ì¬·ÖÅäºÍ¶¯Ì¬·ÖÅäÁË
+	*Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â£ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½allocate_location(ssd ,sub)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½Í¶ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	**************************************************************************************/
 	else if(operation == WRITE)
 	{                                
@@ -831,7 +831,7 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 
 		flag = 0;
 
-		//KXC_2:Èç¹ûgc_sub_queueÖÐÓÐ¶ÔÓ¦LPNµÄ¶ÁÐ´²Ù×÷£¬Ó¦µ±½«gc_subµÄÍ¬Ò»¸öLPNµÄ¶ÁÐ´×ÓÇëÇóÉ¾³ý
+		//KXC_2:ï¿½ï¿½ï¿½gc_sub_queueï¿½ï¿½ï¿½Ð¶ï¿½Ó¦LPNï¿½Ä¶ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½gc_subï¿½ï¿½Í¬Ò»ï¿½ï¿½LPNï¿½Ä¶ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½
 		delete_gc_write_when_hit(ssd,lpn);
 		if (allocate_location(ssd ,sub)==ERROR)
 		{
@@ -860,8 +860,8 @@ struct sub_request * creat_sub_request(struct ssd_info * ssd,unsigned int lpn,in
 
 
 /******************************************************
-*º¯ÊýµÄ¹¦ÄÜÊÇÈç¹ûgc_sub_queueÓÐÍ¬ÑùLPNµÄ¶ÁÐ´×ÓÇëÇó£¬½«ÆäÉ¾³ý
-*Õë¶ÔIOµÄÐ´×ÓÇëÇó£¬´ËÊ±gc²»ÓÃ½«¸ÃÒ³¶Á³öÀ´£¬Ò²²»ÓÃÔÙÍ¨¹ýgcÐ´Èë
+*ï¿½ï¿½ï¿½ï¿½ï¿½Ä¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½gc_sub_queueï¿½ï¿½Í¬ï¿½ï¿½LPNï¿½Ä¶ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ó£¬½ï¿½ï¿½ï¿½É¾ï¿½ï¿½
+*ï¿½ï¿½ï¿½IOï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ó£¬´ï¿½Ê±gcï¿½ï¿½ï¿½Ã½ï¿½ï¿½ï¿½Ò³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½gcÐ´ï¿½ï¿½
 *******************************************************/
 struct ssd_info *delete_gc_write_when_hit(struct ssd_info *ssd,unsigned int lpn)
 {
@@ -932,8 +932,8 @@ struct ssd_info *delete_gc_write_when_hit(struct ssd_info *ssd,unsigned int lpn)
 	return ssd;
 }
 /******************************************************
-*º¯ÊýµÄ¹¦ÄÜÊÇÔÚ¸ø³öµÄchannel£¬chip£¬dieÉÏÃæÑ°ÕÒ¶Á×ÓÇëÇó
-*Õâ¸ö×ÓÇëÇóµÄppnÒªÓëÏàÓ¦µÄplaneµÄ¼Ä´æÆ÷ÀïÃæµÄppnÏà·û
+*ï¿½ï¿½ï¿½ï¿½ï¿½Ä¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¸ï¿½ï¿½ï¿½ï¿½ï¿½channelï¿½ï¿½chipï¿½ï¿½dieï¿½ï¿½ï¿½ï¿½Ñ°ï¿½Ò¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ppnÒªï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½planeï¿½Ä¼Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ppnï¿½ï¿½ï¿½
 *******************************************************/
 struct sub_request * find_read_sub_request(struct ssd_info * ssd, unsigned int channel, unsigned int chip, unsigned int die)
 {
@@ -990,23 +990,23 @@ struct sub_request * find_read_sub_request(struct ssd_info * ssd, unsigned int c
 }
 
 /*******************************************************************************
-*º¯ÊýµÄ¹¦ÄÜÊÇÑ°ÕÒÐ´×ÓÇëÇó¡£
-*·ÖÁ½ÖÖÇé¿ö1£¬ÒªÊÇÊÇÍêÈ«¶¯Ì¬·ÖÅä¾ÍÔÚssd->subs_w_head¶ÓÁÐÉÏÕÒ
-*2£¬ÒªÊÇ²»ÊÇÍêÈ«¶¯Ì¬·ÖÅäÄÇÃ´¾ÍÔÚssd->channel_head[channel].subs_w_head¶ÓÁÐÉÏ²éÕÒ
+*ï¿½ï¿½ï¿½ï¿½ï¿½Ä¹ï¿½ï¿½ï¿½ï¿½ï¿½Ñ°ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ssd->subs_w_headï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+*2ï¿½ï¿½Òªï¿½Ç²ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã´ï¿½ï¿½ï¿½ï¿½ssd->channel_head[channel].subs_w_headï¿½ï¿½ï¿½ï¿½ï¿½Ï²ï¿½ï¿½ï¿½
 ********************************************************************************/
 struct sub_request * find_write_sub_request(struct ssd_info * ssd, unsigned int channel)
 {
 	struct sub_request * sub=NULL,* p=NULL;
-	if ((ssd->parameter->allocation_scheme==0)&&(ssd->parameter->dynamic_allocation==0))    /*ÊÇÍêÈ«µÄ¶¯Ì¬·ÖÅä*/
+	if ((ssd->parameter->allocation_scheme==0)&&(ssd->parameter->dynamic_allocation==0))    /*ï¿½ï¿½ï¿½ï¿½È«ï¿½Ä¶ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½*/
 	{
 		sub=ssd->subs_w_head;
 		while(sub!=NULL)        							
 		{
 			if(sub->current_state==SR_WAIT)								
 			{
-				if (sub->update!=NULL)                                                      /*Èç¹ûÓÐÐèÒªÌáÇ°¶Á³öµÄÒ³*/
+				if (sub->update!=NULL)                                                      /*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³*/
 				{
-					if ((sub->update->current_state==SR_COMPLETE)||((sub->update->next_state==SR_COMPLETE)&&(sub->update->next_state_predict_time<=ssd->current_time)))   //±»¸üÐÂµÄÒ³ÒÑ¾­±»¶Á³ö
+					if ((sub->update->current_state==SR_COMPLETE)||((sub->update->next_state==SR_COMPLETE)&&(sub->update->next_state_predict_time<=ssd->current_time)))   //ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½Ò³ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 					{
 						break;
 					}
@@ -1020,7 +1020,7 @@ struct sub_request * find_write_sub_request(struct ssd_info * ssd, unsigned int 
 			sub=sub->next_node;							
 		}
 
-		if (sub==NULL)                                                                      /*Èç¹ûÃ»ÓÐÕÒµ½¿ÉÒÔ·þÎñµÄ×ÓÇëÇó£¬Ìø³öÕâ¸öforÑ­»·*/
+		if (sub==NULL)                                                                      /*ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½Ô·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½forÑ­ï¿½ï¿½*/
 		{
 			return NULL;
 		}
@@ -1062,8 +1062,8 @@ struct sub_request * find_write_sub_request(struct ssd_info * ssd, unsigned int 
 		}
 	}
 	/**********************************************************
-	*³ýÁËÈ«¶¯Ì¬·ÖÅä·½Ê½£¬ÆäËû·½Ê½µÄÇëÇóÒÑ¾­·ÖÅäµ½ÌØ¶¨µÄchannel£¬
-	*¾ÍÖ»ÐèÒªÔÚchannelÉÏÕÒ³ö×¼±¸·þÎñµÄ×ÓÇëÇó
+	*ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ä·½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½äµ½ï¿½Ø¶ï¿½ï¿½ï¿½channelï¿½ï¿½
+	*ï¿½ï¿½Ö»ï¿½ï¿½Òªï¿½ï¿½channelï¿½ï¿½ï¿½Ò³ï¿½×¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	***********************************************************/
 	else            
 	{
@@ -1074,7 +1074,7 @@ struct sub_request * find_write_sub_request(struct ssd_info * ssd, unsigned int 
 			{
 				if (sub->update!=NULL)    
 				{
-					if ((sub->update->current_state==SR_COMPLETE)||((sub->update->next_state==SR_COMPLETE)&&(sub->update->next_state_predict_time<=ssd->current_time)))   //±»¸üÐÂµÄÒ³ÒÑ¾­±»¶Á³ö
+					if ((sub->update->current_state==SR_COMPLETE)||((sub->update->next_state==SR_COMPLETE)&&(sub->update->next_state_predict_time<=ssd->current_time)))   //ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½Ò³ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 					{
 						break;
 					}
@@ -1098,7 +1098,7 @@ struct sub_request * find_write_sub_request(struct ssd_info * ssd, unsigned int 
 }
 
 /*********************************************************************************************
-*×¨ÃÅÎªgc_sub_request ÖÐµÄ×ÓÇëÇó·þÎñ
+*×¨ï¿½ï¿½Îªgc_sub_request ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 **********************************************************************************************/
 Status services_2_gc_sub(struct ssd_info * ssd, int channel,unsigned int * channel_busy_flag, unsigned int * change_current_time_flag)
 {
@@ -1129,12 +1129,12 @@ Status services_2_gc_sub(struct ssd_info * ssd, int channel,unsigned int * chann
 				go_one_step(ssd, sub,NULL, SR_R_GC_SUB,NORMAL);
 						
 				*change_current_time_flag=0;
-				*channel_busy_flag=1;                                              /*ÒÑ¾­Õ¼ÓÃÁËÕâ¸öÖÜÆÚµÄ×ÜÏß£¬²»ÓÃÖ´ÐÐdieÖÐÊý¾ÝµÄ»Ø´«*/
+				*channel_busy_flag=1;                                              /*ï¿½Ñ¾ï¿½Õ¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½ï¿½ß£ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½dieï¿½ï¿½ï¿½ï¿½ï¿½ÝµÄ»Ø´ï¿½*/
 													
 			}	
 			else
 			{
-																					/*ÒòÎªdieµÄbusyµ¼ÖÂµÄ×èÈû*/
+																					/*ï¿½ï¿½Îªdieï¿½ï¿½busyï¿½ï¿½ï¿½Âµï¿½ï¿½ï¿½ï¿½ï¿½*/
 			}
 		}						
 	}
@@ -1160,7 +1160,7 @@ Status services_2_gc_sub(struct ssd_info * ssd, int channel,unsigned int * chann
 				ssd->predict_yes++;
 			}
 
-			erase_operation(ssd,channel,sub->location->chip, sub->location->die,sub->location->plane,sub->location->block);	                                              /*Ö´ÐÐÍêmove_page²Ù×÷ºó£¬¾ÍÁ¢¼´Ö´ÐÐblockµÄ²Á³ý²Ù×÷*/
+			erase_operation(ssd,channel,sub->location->chip, sub->location->die,sub->location->plane,sub->location->block);	                                              /*Ö´ï¿½ï¿½ï¿½ï¿½move_pageï¿½ï¿½ï¿½ï¿½ï¿½ó£¬¾ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½blockï¿½Ä²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 
 			ssd->channel_head[channel].current_state=CHANNEL_GC;									
 			ssd->channel_head[channel].current_time=ssd->current_time;										
@@ -1192,25 +1192,25 @@ Status services_2_gc_sub(struct ssd_info * ssd, int channel,unsigned int * chann
 }
 
 /*********************************************************************************************
-*×¨ÃÅÎª¶Á×ÓÇëÇó·þÎñµÄº¯Êý
-*1£¬Ö»ÓÐµ±¶Á×ÓÇëÇóµÄµ±Ç°×´Ì¬ÊÇSR_R_C_A_TRANSFER
-*2£¬¶Á×ÓÇëÇóµÄµ±Ç°×´Ì¬ÊÇSR_COMPLETE»òÕßÏÂÒ»×´Ì¬ÊÇSR_COMPLETE²¢ÇÒÏÂÒ»×´Ì¬µ½´ïµÄÊ±¼ä±Èµ±Ç°Ê±¼äÐ¡
+*×¨ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Äºï¿½ï¿½ï¿½
+*1ï¿½ï¿½Ö»ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Äµï¿½Ç°×´Ì¬ï¿½ï¿½SR_R_C_A_TRANSFER
+*2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Äµï¿½Ç°×´Ì¬ï¿½ï¿½SR_COMPLETEï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»×´Ì¬ï¿½ï¿½SR_COMPLETEï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Èµï¿½Ç°Ê±ï¿½ï¿½Ð¡
 **********************************************************************************************/
 Status services_2_r_cmd_trans_and_complete(struct ssd_info * ssd)
 {
 	unsigned int i=0, j = 0, flag = 0;
 	struct sub_request * sub=NULL, * p=NULL;
-	for(i=0;i<ssd->parameter->channel_number;i++)                                       /*Õâ¸öÑ­»·´¦Àí²»ÐèÒªchannelµÄÊ±¼ä(¶ÁÃüÁîÒÑ¾­µ½´ïchip£¬chipÓÉready±äÎªbusy)£¬µ±¶ÁÇëÇóÍê³ÉÊ±£¬½«Æä´ÓchannelµÄ¶ÓÁÐÖÐÈ¡³ö*/
+	for(i=0;i<ssd->parameter->channel_number;i++)                                       /*ï¿½ï¿½ï¿½Ñ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªchannelï¿½ï¿½Ê±ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½chipï¿½ï¿½chipï¿½ï¿½readyï¿½ï¿½Îªbusy)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½channelï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½*/
 	{
 		sub=ssd->channel_head[i].subs_r_head;
 
 		while(sub!=NULL)
 		{
-			if(sub->current_state==SR_R_C_A_TRANSFER)                                  /*¶ÁÃüÁî·¢ËÍÍê±Ï£¬½«¶ÔÓ¦µÄdieÖÃÎªbusy£¬Í¬Ê±ÐÞ¸ÄsubµÄ×´Ì¬; Õâ¸ö²¿·Ö×¨ÃÅ´¦Àí¶ÁÇëÇóÓÉµ±Ç°×´Ì¬Îª´«ÃüÁî±äÎªdie¿ªÊ¼busy£¬die¿ªÊ¼busy²»ÐèÒªchannelÎª¿Õ£¬ËùÒÔµ¥¶ÀÁÐ³ö*/
+			if(sub->current_state==SR_R_C_A_TRANSFER)                                  /*ï¿½ï¿½ï¿½ï¿½ï¿½î·¢ï¿½ï¿½ï¿½ï¿½Ï£ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½dieï¿½ï¿½Îªbusyï¿½ï¿½Í¬Ê±ï¿½Þ¸ï¿½subï¿½ï¿½×´Ì¬; ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¨ï¿½Å´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Éµï¿½Ç°×´Ì¬Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªdieï¿½ï¿½Ê¼busyï¿½ï¿½dieï¿½ï¿½Ê¼busyï¿½ï¿½ï¿½ï¿½ÒªchannelÎªï¿½Õ£ï¿½ï¿½ï¿½ï¿½Ôµï¿½ï¿½ï¿½ï¿½Ð³ï¿½*/
 			{
 				if(sub->next_state_predict_time<=ssd->current_time)
 				{
-					go_one_step(ssd, sub,NULL, SR_R_READ,NORMAL);                      /*×´Ì¬Ìø±ä´¦Àíº¯Êý*/
+					go_one_step(ssd, sub,NULL, SR_R_READ,NORMAL);                      /*×´Ì¬ï¿½ï¿½ï¿½ä´¦ï¿½ï¿½ï¿½ï¿½*/
 
 				}
 			}
@@ -1253,7 +1253,7 @@ Status services_2_r_cmd_trans_and_complete(struct ssd_info * ssd)
 	}
 
 	//KXC_2: to finish the gc read subrequests
-	for(i=0;i<ssd->parameter->channel_number;i++)                                       /*Õâ¸öÑ­»·´¦Àí²»ÐèÒªchannelµÄÊ±¼ä(¶ÁÃüÁîÒÑ¾­µ½´ïchip£¬chipÓÉready±äÎªbusy)£¬µ±¶ÁÇëÇóÍê³ÉÊ±£¬½«Æä´ÓchannelµÄ¶ÓÁÐÖÐÈ¡³ö*/
+	for(i=0;i<ssd->parameter->channel_number;i++)                                       /*ï¿½ï¿½ï¿½Ñ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªchannelï¿½ï¿½Ê±ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½chipï¿½ï¿½chipï¿½ï¿½readyï¿½ï¿½Îªbusy)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½channelï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½*/
 	{
 		sub=ssd->channel_head[i].gc_sub_queue;
 		p = NULL;
@@ -1319,8 +1319,8 @@ Status services_2_r_cmd_trans_and_complete(struct ssd_info * ssd)
 }
 
 /**************************************************************************
-*Õâ¸öº¯ÊýÒ²ÊÇÖ»´¦Àí¶Á×ÓÇëÇó£¬´¦Àíchipµ±Ç°×´Ì¬ÊÇCHIP_WAIT£¬
-*»òÕßÏÂÒ»¸ö×´Ì¬ÊÇCHIP_DATA_TRANSFER²¢ÇÒÏÂÒ»×´Ì¬µÄÔ¤¼ÆÊ±¼äÐ¡ÓÚµ±Ç°Ê±¼äµÄchip
+*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò²ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ó£¬´ï¿½ï¿½ï¿½chipï¿½ï¿½Ç°×´Ì¬ï¿½ï¿½CHIP_WAITï¿½ï¿½
+*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½×´Ì¬ï¿½ï¿½CHIP_DATA_TRANSFERï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»×´Ì¬ï¿½ï¿½Ô¤ï¿½ï¿½Ê±ï¿½ï¿½Ð¡ï¿½Úµï¿½Ç°Ê±ï¿½ï¿½ï¿½chip
 ***************************************************************************/
 Status services_2_r_data_trans(struct ssd_info * ssd,unsigned int channel,unsigned int * channel_busy_flag, unsigned int * change_current_time_flag)
 {
@@ -1336,7 +1336,7 @@ Status services_2_r_data_trans(struct ssd_info * ssd,unsigned int channel,unsign
 			{
 				for(die=0;die<ssd->parameter->die_chip;die++)
 				{
-					sub=find_read_sub_request(ssd,channel,chip,die);                   /*ÔÚchannel,chip,dieÖÐÕÒµ½¶Á×ÓÇëÇó£¬Êý¾ÝÒÑ¾­¶Áµ½¼Ä´æÆ÷ÖÐµÄ¶ÁÇëÇó*/
+					sub=find_read_sub_request(ssd,channel,chip,die);                   /*ï¿½ï¿½channel,chip,dieï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ÐµÄ¶ï¿½ï¿½ï¿½ï¿½ï¿½*/
 					if(sub!=NULL)
 					{
 						break;
@@ -1349,23 +1349,23 @@ Status services_2_r_data_trans(struct ssd_info * ssd,unsigned int channel,unsign
 				}
 				
 				/**************************************************************************************
-				*Èç¹ûssdÖ§³Ö¸ß¼¶ÃüÁî£¬ÄÇÃ»ÎÒÃÇ¿ÉÒÔÒ»Æð´¦ÀíÖ§³ÖAD_TWOPLANE_READ£¬AD_INTERLEAVEµÄ¶Á×ÓÇëÇó
-				*1£¬ÓÐ¿ÉÄÜ²úÉúÁËtwo plane²Ù×÷£¬ÔÚÕâÖÖÇé¿öÏÂ£¬½«Í¬Ò»¸ödieÉÏµÄÁ½¸öplaneµÄÊý¾ÝÒÀ´Î´«³ö
-				*2£¬ÓÐ¿ÉÄÜ²úÉúÁËinterleave²Ù×÷£¬ÔÚÕâÖÖÇé¿öÏÂ£¬½«²»Í¬dieÉÏµÄÁ½¸öplaneµÄÊý¾ÝÒÀ´Î´«³ö
+				*ï¿½ï¿½ï¿½ssdÖ§ï¿½Ö¸ß¼ï¿½ï¿½ï¿½ï¿½î£¬ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Ç¿ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ö§ï¿½ï¿½AD_TWOPLANE_READï¿½ï¿½AD_INTERLEAVEï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+				*1ï¿½ï¿½ï¿½Ð¿ï¿½ï¿½Ü²ï¿½ï¿½ï¿½ï¿½ï¿½two planeï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â£ï¿½ï¿½ï¿½Í¬Ò»ï¿½ï¿½dieï¿½Ïµï¿½ï¿½ï¿½ï¿½ï¿½planeï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½
+				*2ï¿½ï¿½ï¿½Ð¿ï¿½ï¿½Ü²ï¿½ï¿½ï¿½ï¿½ï¿½interleaveï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â£ï¿½ï¿½ï¿½ï¿½ï¿½Í¬dieï¿½Ïµï¿½ï¿½ï¿½ï¿½ï¿½planeï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½
 				***************************************************************************************/
 				if(((ssd->parameter->advanced_commands&AD_TWOPLANE_READ)==AD_TWOPLANE_READ)||((ssd->parameter->advanced_commands&AD_INTERLEAVE)==AD_INTERLEAVE))
 				{
-					if ((ssd->parameter->advanced_commands&AD_TWOPLANE_READ)==AD_TWOPLANE_READ)     /*ÓÐ¿ÉÄÜ²úÉúÁËtwo plane²Ù×÷£¬ÔÚÕâÖÖÇé¿öÏÂ£¬½«Í¬Ò»¸ödieÉÏµÄÁ½¸öplaneµÄÊý¾ÝÒÀ´Î´«³ö*/
+					if ((ssd->parameter->advanced_commands&AD_TWOPLANE_READ)==AD_TWOPLANE_READ)     /*ï¿½Ð¿ï¿½ï¿½Ü²ï¿½ï¿½ï¿½ï¿½ï¿½two planeï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â£ï¿½ï¿½ï¿½Í¬Ò»ï¿½ï¿½dieï¿½Ïµï¿½ï¿½ï¿½ï¿½ï¿½planeï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½*/
 					{
 						sub_twoplane_one=sub;
 						sub_twoplane_two=NULL;                                                      
-						                                                                            /*ÎªÁË±£Ö¤ÕÒµ½µÄsub_twoplane_twoÓësub_twoplane_one²»Í¬£¬Áîadd_reg_ppn=-1*/
+						                                                                            /*Îªï¿½Ë±ï¿½Ö¤ï¿½Òµï¿½ï¿½ï¿½sub_twoplane_twoï¿½ï¿½sub_twoplane_oneï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½add_reg_ppn=-1*/
 						ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[sub->location->plane].add_reg_ppn=-1;
-						sub_twoplane_two=find_read_sub_request(ssd,channel,chip,die);               /*ÔÚÏàÍ¬µÄchannel,chip,dieÖÐÑ°ÕÒÁíÍâÒ»¸ö¶Á×ÓÇëÇó*/
+						sub_twoplane_two=find_read_sub_request(ssd,channel,chip,die);               /*ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½channel,chip,dieï¿½ï¿½Ñ°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 						
 						/******************************************************
-						*Èç¹ûÕÒµ½ÁËÄÇÃ´¾ÍÖ´ÐÐTWO_PLANEµÄ×´Ì¬×ª»»º¯Êýgo_one_step
-						*Èç¹ûÃ»ÕÒµ½ÄÇÃ´¾ÍÖ´ÐÐÆÕÍ¨ÃüÁîµÄ×´Ì¬×ª»»º¯Êýgo_one_step
+						*ï¿½ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½Ã´ï¿½ï¿½Ö´ï¿½ï¿½TWO_PLANEï¿½ï¿½×´Ì¬×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½go_one_step
+						*ï¿½ï¿½ï¿½Ã»ï¿½Òµï¿½ï¿½ï¿½Ã´ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½go_one_step
 						******************************************************/
 						if (sub_twoplane_two==NULL)
 						{
@@ -1382,7 +1382,7 @@ Status services_2_r_data_trans(struct ssd_info * ssd,unsigned int channel,unsign
 
 						}
 					} 
-					else if ((ssd->parameter->advanced_commands&AD_INTERLEAVE)==AD_INTERLEAVE)      /*ÓÐ¿ÉÄÜ²úÉúÁËinterleave²Ù×÷£¬ÔÚÕâÖÖÇé¿öÏÂ£¬½«²»Í¬dieÉÏµÄÁ½¸öplaneµÄÊý¾ÝÒÀ´Î´«³ö*/
+					else if ((ssd->parameter->advanced_commands&AD_INTERLEAVE)==AD_INTERLEAVE)      /*ï¿½Ð¿ï¿½ï¿½Ü²ï¿½ï¿½ï¿½ï¿½ï¿½interleaveï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â£ï¿½ï¿½ï¿½ï¿½ï¿½Í¬dieï¿½Ïµï¿½ï¿½ï¿½ï¿½ï¿½planeï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½*/
 					{
 						sub_interleave_one=sub;
 						sub_interleave_two=NULL;
@@ -1392,7 +1392,7 @@ Status services_2_r_data_trans(struct ssd_info * ssd,unsigned int channel,unsign
 						{	
 							if(die1!=die)
 							{
-								sub_interleave_two=find_read_sub_request(ssd,channel,chip,die1);    /*ÔÚÏàÍ¬µÄchannel£¬chhip²»Í¬µÄdieÉÏÃæÕÒÁíÍâÒ»¸ö¶Á×ÓÇëÇó*/
+								sub_interleave_two=find_read_sub_request(ssd,channel,chip,die1);    /*ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½channelï¿½ï¿½chhipï¿½ï¿½Í¬ï¿½ï¿½dieï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 								if(sub_interleave_two!=NULL)
 								{
 									break;
@@ -1417,7 +1417,7 @@ Status services_2_r_data_trans(struct ssd_info * ssd,unsigned int channel,unsign
 						}
 					}
 				}
-				else                                                                                 /*Èç¹ûssd²»Ö§³Ö¸ß¼¶ÃüÁîÄÇÃ´¾ÍÖ´ÐÐÒ»¸öÒ»¸öµÄÖ´ÐÐ¶Á×ÓÇëÇó*/
+				else                                                                                 /*ï¿½ï¿½ï¿½ssdï¿½ï¿½Ö§ï¿½Ö¸ß¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã´ï¿½ï¿½Ö´ï¿½ï¿½Ò»ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ö´ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 				{
 											
 					go_one_step(ssd, sub,NULL, SR_R_DATA_TRANSFER,NORMAL);
@@ -1438,8 +1438,8 @@ Status services_2_r_data_trans(struct ssd_info * ssd,unsigned int channel,unsign
 
 
 /******************************************************
-*Õâ¸öº¯ÊýÒ²ÊÇÖ»·þÎñ¶Á×ÓÇëÇó£¬²¢ÇÒ´¦ÓÚµÈ´ý×´Ì¬µÄ¶Á×ÓÇëÇó
-KXC£º¸Ð¾õÕâÀïÂß¼­ÓÐ´íÎó£¬Èç¹ûÓÐTWOPLANE_READÔòÖ´ÐÐ£¬·ñÔòÓ¦µ±ÅÐ¶ÏÊÇ·ñÓÐINTERLEAVING£¬¶ø²»ÊÇÖ´ÐÐNORMAL
+*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò²ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ó£¬²ï¿½ï¿½Ò´ï¿½ï¿½ÚµÈ´ï¿½×´Ì¬ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+KXCï¿½ï¿½ï¿½Ð¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¼ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½TWOPLANE_READï¿½ï¿½Ö´ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½Ç·ï¿½ï¿½ï¿½INTERLEAVINGï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½NORMAL
 *******************************************************/
 int services_2_r_wait(struct ssd_info * ssd,unsigned int channel,unsigned int * channel_busy_flag, unsigned int * change_current_time_flag)
 {
@@ -1456,22 +1456,22 @@ int services_2_r_wait(struct ssd_info * ssd,unsigned int channel,unsigned int * 
 	{
 		sub_twoplane_one=NULL;
 		sub_twoplane_two=NULL;                                                         
-		                                                                                /*Ñ°ÕÒÄÜÖ´ÐÐtwo_planeµÄÁ½¸ö¶Á×ÓÇëÇó*/
+		                                                                                /*Ñ°ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½two_planeï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 		find_interleave_twoplane_sub_request(ssd,channel,sub_twoplane_one,sub_twoplane_two,TWO_PLANE);
 
-		if (sub_twoplane_two!=NULL)                                                     /*¿ÉÒÔÖ´ÐÐtwo plane read ²Ù×÷*/
+		if (sub_twoplane_two!=NULL)                                                     /*ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½two plane read ï¿½ï¿½ï¿½ï¿½*/
 		{
 			go_one_step(ssd, sub_twoplane_one,sub_twoplane_two, SR_R_C_A_TRANSFER,TWO_PLANE);
 						
 			*change_current_time_flag=0;
-			*channel_busy_flag=1;                                                       /*ÒÑ¾­Õ¼ÓÃÁËÕâ¸öÖÜÆÚµÄ×ÜÏß£¬²»ÓÃÖ´ÐÐdieÖÐÊý¾ÝµÄ»Ø´«*/
+			*channel_busy_flag=1;                                                       /*ï¿½Ñ¾ï¿½Õ¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½ï¿½ß£ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½dieï¿½ï¿½ï¿½ï¿½ï¿½ÝµÄ»Ø´ï¿½*/
 		} 
-		else if((ssd->parameter->advanced_commands&AD_INTERLEAVE)!=AD_INTERLEAVE)       /*Ã»ÓÐÂú×ãÌõ¼þµÄÁ½¸öpage£¬£¬²¢ÇÒÃ»ÓÐinterleave readÃüÁîÊ±£¬Ö»ÄÜÖ´ÐÐµ¥¸öpageµÄ¶Á*/
+		else if((ssd->parameter->advanced_commands&AD_INTERLEAVE)!=AD_INTERLEAVE)       /*Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½pageï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½interleave readï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Ö»ï¿½ï¿½Ö´ï¿½Ðµï¿½ï¿½ï¿½pageï¿½Ä¶ï¿½*/
 		{
 			while(sub!=NULL)                                                            /*if there are read requests in queue, send one of them to target die*/			
 			{		
 				if(sub->current_state==SR_WAIT)									
-				{	                                                                    /*×¢ÒâÏÂ¸öÕâ¸öÅÐ¶ÏÌõ¼þÓëservices_2_r_data_transÖÐÅÐ¶ÏÌõ¼þµÄ²»Í¬
+				{	                                                                    /*×¢ï¿½ï¿½ï¿½Â¸ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½services_2_r_data_transï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä²ï¿½Í¬
 																						*/
 					if((ssd->channel_head[sub->location->channel].chip_head[sub->location->chip].current_state==CHIP_IDLE)||((ssd->channel_head[sub->location->channel].chip_head[sub->location->chip].next_state==CHIP_IDLE)&&
 						(ssd->channel_head[sub->location->channel].chip_head[sub->location->chip].next_state_predict_time<=ssd->current_time)))												
@@ -1479,12 +1479,12 @@ int services_2_r_wait(struct ssd_info * ssd,unsigned int channel,unsigned int * 
 						go_one_step(ssd, sub,NULL, SR_R_C_A_TRANSFER,NORMAL);
 									
 						*change_current_time_flag=0;
-						*channel_busy_flag=1;                                           /*ÒÑ¾­Õ¼ÓÃÁËÕâ¸öÖÜÆÚµÄ×ÜÏß£¬²»ÓÃÖ´ÐÐdieÖÐÊý¾ÝµÄ»Ø´«*/
+						*channel_busy_flag=1;                                           /*ï¿½Ñ¾ï¿½Õ¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½ï¿½ß£ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½dieï¿½ï¿½ï¿½ï¿½ï¿½ÝµÄ»Ø´ï¿½*/
 						break;										
 					}	
 					else
 					{
-						                                                                /*ÒòÎªdieµÄbusyµ¼ÖÂµÄ×èÈû*/
+						                                                                /*ï¿½ï¿½Îªdieï¿½ï¿½busyï¿½ï¿½ï¿½Âµï¿½ï¿½ï¿½ï¿½ï¿½*/
 					}
 				}						
 				sub=sub->next_node;								
@@ -1497,15 +1497,15 @@ int services_2_r_wait(struct ssd_info * ssd,unsigned int channel,unsigned int * 
 		sub_interleave_two=NULL;
 		find_interleave_twoplane_sub_request(ssd,channel,sub_interleave_one,sub_interleave_two,INTERLEAVE);
 		
-		if (sub_interleave_two!=NULL)                                                  /*¿ÉÒÔÖ´ÐÐinterleave read ²Ù×÷*/
+		if (sub_interleave_two!=NULL)                                                  /*ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½interleave read ï¿½ï¿½ï¿½ï¿½*/
 		{
 
 			go_one_step(ssd, sub_interleave_one,sub_interleave_two, SR_R_C_A_TRANSFER,INTERLEAVE);
 						
 			*change_current_time_flag=0;
-			*channel_busy_flag=1;                                                      /*ÒÑ¾­Õ¼ÓÃÁËÕâ¸öÖÜÆÚµÄ×ÜÏß£¬²»ÓÃÖ´ÐÐdieÖÐÊý¾ÝµÄ»Ø´«*/
+			*channel_busy_flag=1;                                                      /*ï¿½Ñ¾ï¿½Õ¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½ï¿½ß£ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½dieï¿½ï¿½ï¿½ï¿½ï¿½ÝµÄ»Ø´ï¿½*/
 		} 
-		else                                                                           /*Ã»ÓÐÂú×ãÌõ¼þµÄÁ½¸öpage£¬Ö»ÄÜÖ´ÐÐµ¥¸öpageµÄ¶Á*/
+		else                                                                           /*Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½pageï¿½ï¿½Ö»ï¿½ï¿½Ö´ï¿½Ðµï¿½ï¿½ï¿½pageï¿½Ä¶ï¿½*/
 		{
 			while(sub!=NULL)                                                           /*if there are read requests in queue, send one of them to target die*/			
 			{		
@@ -1518,12 +1518,12 @@ int services_2_r_wait(struct ssd_info * ssd,unsigned int channel,unsigned int * 
 						go_one_step(ssd, sub,NULL, SR_R_C_A_TRANSFER,NORMAL);
 									
 						*change_current_time_flag=0;
-						*channel_busy_flag=1;                                          /*ÒÑ¾­Õ¼ÓÃÁËÕâ¸öÖÜÆÚµÄ×ÜÏß£¬²»ÓÃÖ´ÐÐdieÖÐÊý¾ÝµÄ»Ø´«*/
+						*channel_busy_flag=1;                                          /*ï¿½Ñ¾ï¿½Õ¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½ï¿½ß£ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½dieï¿½ï¿½ï¿½ï¿½ï¿½ÝµÄ»Ø´ï¿½*/
 						break;										
 					}	
 					else
 					{
-						                                                               /*ÒòÎªdieµÄbusyµ¼ÖÂµÄ×èÈû*/
+						                                                               /*ï¿½ï¿½Îªdieï¿½ï¿½busyï¿½ï¿½ï¿½Âµï¿½ï¿½ï¿½ï¿½ï¿½*/
 					}
 				}						
 				sub=sub->next_node;								
@@ -1532,7 +1532,7 @@ int services_2_r_wait(struct ssd_info * ssd,unsigned int channel,unsigned int * 
 	}
 
 	/*******************************
-	*ssd²»ÄÜÖ´ÐÐÖ´ÐÐ¸ß¼¶ÃüÁîµÄÇé¿öÏÂ
+	*ssdï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½Ö´ï¿½Ð¸ß¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	*******************************/
 	if (((ssd->parameter->advanced_commands&AD_INTERLEAVE)!=AD_INTERLEAVE)&&((ssd->parameter->advanced_commands&AD_TWOPLANE_READ)!=AD_TWOPLANE_READ))
 	{
@@ -1548,12 +1548,12 @@ int services_2_r_wait(struct ssd_info * ssd,unsigned int channel,unsigned int * 
 					go_one_step(ssd, sub,NULL, SR_R_C_A_TRANSFER,NORMAL);
 							
 					*change_current_time_flag=0;
-					*channel_busy_flag=1;                                              /*ÒÑ¾­Õ¼ÓÃÁËÕâ¸öÖÜÆÚµÄ×ÜÏß£¬²»ÓÃÖ´ÐÐdieÖÐÊý¾ÝµÄ»Ø´«*/
+					*channel_busy_flag=1;                                              /*ï¿½Ñ¾ï¿½Õ¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½ï¿½ß£ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½dieï¿½ï¿½ï¿½ï¿½ï¿½ÝµÄ»Ø´ï¿½*/
 					break;										
 				}	
 				else
 				{
-					                                                                   /*ÒòÎªdieµÄbusyµ¼ÖÂµÄ×èÈû*/
+					                                                                   /*ï¿½ï¿½Îªdieï¿½ï¿½busyï¿½ï¿½ï¿½Âµï¿½ï¿½ï¿½ï¿½ï¿½*/
 				}
 			}						
 			sub=sub->next_node;								
@@ -1564,12 +1564,12 @@ int services_2_r_wait(struct ssd_info * ssd,unsigned int channel,unsigned int * 
 }
 
 /*********************************************************************
-*µ±Ò»¸öÐ´×ÓÇëÇó´¦ÀíÍêºó£¬Òª´ÓÇëÇó¶ÓÁÐÉÏÉ¾³ý£¬Õâ¸öº¯Êý¾ÍÊÇÖ´ÐÐÕâ¸ö¹¦ÄÜ¡£
+*ï¿½ï¿½Ò»ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü¡ï¿½
 **********************************************************************/
 int delete_w_sub_request(struct ssd_info * ssd, unsigned int channel, struct sub_request * sub )
 {
 	struct sub_request * p=NULL;
-	if (sub==ssd->channel_head[channel].subs_w_head)                                   /*½«Õâ¸ö×ÓÇëÇó´Óchannel¶ÓÁÐÖÐÉ¾³ý*/
+	if (sub==ssd->channel_head[channel].subs_w_head)                                   /*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½channelï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½*/
 	{
 		if (ssd->channel_head[channel].subs_w_head!=ssd->channel_head[channel].subs_w_tail)
 		{
@@ -1604,16 +1604,16 @@ int delete_w_sub_request(struct ssd_info * ssd, unsigned int channel, struct sub
 }
 
 /*
-*º¯ÊýµÄ¹¦ÄÜ¾ÍÊÇÖ´ÐÐcopybackÃüÁîµÄ¹¦ÄÜ£¬
+*ï¿½ï¿½ï¿½ï¿½ï¿½Ä¹ï¿½ï¿½Ü¾ï¿½ï¿½ï¿½Ö´ï¿½ï¿½copybackï¿½ï¿½ï¿½ï¿½Ä¹ï¿½ï¿½Ü£ï¿½
 */
 Status copy_back(struct ssd_info * ssd, unsigned int channel, unsigned int chip, unsigned int die,struct sub_request * sub)
 {
 	int old_ppn=-1, new_ppn=-1;
 	long long time=0;
-	if (ssd->parameter->greed_CB_ad==1)                                               /*ÔÊÐíÌ°À·Ê¹ÓÃcopyback¸ß¼¶ÃüÁî*/
+	if (ssd->parameter->greed_CB_ad==1)                                               /*ï¿½ï¿½ï¿½ï¿½Ì°ï¿½ï¿½Ê¹ï¿½ï¿½copybackï¿½ß¼ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	{
 		old_ppn=-1;
-		if (ssd->dram->map->map_entry[sub->lpn].state!=0)                             /*ËµÃ÷Õâ¸öÂß¼­Ò³Ö®Ç°ÓÐÐ´¹ý£¬ÐèÒªÊ¹ÓÃcopyback+random inputÃüÁî£¬·ñÔòÖ±½ÓÐ´ÏÂÈ¥¼´¿É*/
+		if (ssd->dram->map->map_entry[sub->lpn].state!=0)                             /*Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¼ï¿½Ò³Ö®Ç°ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÒªÊ¹ï¿½ï¿½copyback+random inputï¿½ï¿½ï¿½î£¬ï¿½ï¿½ï¿½ï¿½Ö±ï¿½ï¿½Ð´ï¿½ï¿½È¥ï¿½ï¿½ï¿½ï¿½*/
 		{
 			if ((sub->state&ssd->dram->map->map_entry[sub->lpn].state)==ssd->dram->map->map_entry[sub->lpn].state)       
 			{
@@ -1625,7 +1625,7 @@ Status copy_back(struct ssd_info * ssd, unsigned int channel, unsigned int chip,
 				ssd->copy_back_count++;
 				ssd->read_count++;
 				ssd->update_read_count++;
-				old_ppn=ssd->dram->map->map_entry[sub->lpn].pn;                       /*¼ÇÂ¼Ô­À´µÄÎïÀíÒ³£¬ÓÃÓÚÔÚcopybackÊ±£¬ÅÐ¶ÏÊÇ·ñÂú×ãÍ¬ÎªÆæµØÖ·»òÕßÅ¼µØÖ·*/
+				old_ppn=ssd->dram->map->map_entry[sub->lpn].pn;                       /*ï¿½ï¿½Â¼Ô­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½copybackÊ±ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½Í¬Îªï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½Å¼ï¿½ï¿½Ö·*/
 			}															
 		} 
 		else
@@ -1637,10 +1637,10 @@ Status copy_back(struct ssd_info * ssd, unsigned int channel, unsigned int chip,
 
 		get_ppn(ssd,sub->location->channel,sub->location->chip,sub->location->die,sub->location->plane,sub);
 
-		if (old_ppn!=-1)                                                              /*²ÉÓÃÁËcopyback²Ù×÷£¬ÐèÒªÅÐ¶ÏÊÇ·ñÂú×ãÁËÆæÅ¼µØÖ·µÄÏÞÖÆ*/
+		if (old_ppn!=-1)                                                              /*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½copybackï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½Ð¶ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¼ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 		{
 			new_ppn=ssd->dram->map->map_entry[sub->lpn].pn;
-			while (old_ppn%2!=new_ppn%2)                                              /*Ã»ÓÐÂú×ãÆæÅ¼µØÖ·ÏÞÖÆ£¬ÐèÒªÔÙÍùÏÂÕÒÒ»Ò³*/
+			while (old_ppn%2!=new_ppn%2)                                              /*Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¼ï¿½ï¿½Ö·ï¿½ï¿½ï¿½Æ£ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»Ò³*/
 			{
 				get_ppn(ssd,sub->location->channel,sub->location->chip,sub->location->die,sub->location->plane,sub);
 				ssd->program_count--;
@@ -1650,7 +1650,7 @@ Status copy_back(struct ssd_info * ssd, unsigned int channel, unsigned int chip,
 			}
 		}
 	} 
-	else                                                                              /*²»ÄÜÌ°À·µÄÊ¹ÓÃcopyback¸ß¼¶ÃüÁî*/
+	else                                                                              /*ï¿½ï¿½ï¿½ï¿½Ì°ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½copybackï¿½ß¼ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	{
 		if (ssd->dram->map->map_entry[sub->lpn].state!=0)
 		{
@@ -1661,7 +1661,7 @@ Status copy_back(struct ssd_info * ssd, unsigned int channel, unsigned int chip,
 			} 
 			else
 			{
-				old_ppn=ssd->dram->map->map_entry[sub->lpn].pn;                       /*¼ÇÂ¼Ô­À´µÄÎïÀíÒ³£¬ÓÃÓÚÔÚcopybackÊ±£¬ÅÐ¶ÏÊÇ·ñÂú×ãÍ¬ÎªÆæµØÖ·»òÕßÅ¼µØÖ·*/
+				old_ppn=ssd->dram->map->map_entry[sub->lpn].pn;                       /*ï¿½ï¿½Â¼Ô­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½copybackÊ±ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½Í¬Îªï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½Å¼ï¿½ï¿½Ö·*/
 				get_ppn(ssd,sub->location->channel,sub->location->chip,sub->location->die,sub->location->plane,sub);
 				new_ppn=ssd->dram->map->map_entry[sub->lpn].pn;
 				if (old_ppn%2==new_ppn%2)
@@ -1687,7 +1687,7 @@ Status copy_back(struct ssd_info * ssd, unsigned int channel, unsigned int chip,
 	}
     
 	/****************************************************************
-	*Ö´ÐÐcopyback¸ß¼¶ÃüÁîÊ±£¬ÐèÒªÐÞ¸Ächannel£¬chipµÄ×´Ì¬£¬ÒÔ¼°Ê±¼äµÈ
+	*Ö´ï¿½ï¿½copybackï¿½ß¼ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Òªï¿½Þ¸ï¿½channelï¿½ï¿½chipï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½Ô¼ï¿½Ê±ï¿½ï¿½ï¿½
 	*****************************************************************/
 	ssd->channel_head[channel].current_state=CHANNEL_TRANSFER;										
 	ssd->channel_head[channel].current_time=ssd->current_time;										
@@ -1703,14 +1703,14 @@ Status copy_back(struct ssd_info * ssd, unsigned int channel, unsigned int chip,
 }
 
 /*****************
-*¾²Ì¬Ð´²Ù×÷µÄÊµÏÖ
+*ï¿½ï¿½Ì¬Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½
 ******************/
 Status static_write(struct ssd_info * ssd, unsigned int channel,unsigned int chip, unsigned int die,struct sub_request * sub)
 {
 	long long time=0;
-	if (ssd->dram->map->map_entry[sub->lpn].state!=0)                                    /*ËµÃ÷Õâ¸öÂß¼­Ò³Ö®Ç°ÓÐÐ´¹ý£¬ÐèÒªÊ¹ÓÃÏÈ¶Á³öÀ´£¬ÔÙÐ´ÏÂÈ¥£¬·ñÔòÖ±½ÓÐ´ÏÂÈ¥¼´¿É*/
+	if (ssd->dram->map->map_entry[sub->lpn].state!=0)                                    /*Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¼ï¿½Ò³Ö®Ç°ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÒªÊ¹ï¿½ï¿½ï¿½È¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½È¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½ï¿½Ð´ï¿½ï¿½È¥ï¿½ï¿½ï¿½ï¿½*/
 	{
-		if ((sub->state&ssd->dram->map->map_entry[sub->lpn].state)==ssd->dram->map->map_entry[sub->lpn].state)   /*¿ÉÒÔ¸²¸Ç£¬¼´ËùÓÐµÄÉÈÇøÔà¾»ÊÇÒ»ÖÂµÄ*/
+		if ((sub->state&ssd->dram->map->map_entry[sub->lpn].state)==ssd->dram->map->map_entry[sub->lpn].state)   /*ï¿½ï¿½ï¿½Ô¸ï¿½ï¿½Ç£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à¾»ï¿½ï¿½Ò»ï¿½Âµï¿½*/
 		{
 			sub->next_state_predict_time=ssd->current_time+7*ssd->parameter->time_characteristics.tWC+(sub->size*ssd->parameter->subpage_capacity)*ssd->parameter->time_characteristics.tWC;
 		} 
@@ -1718,7 +1718,7 @@ Status static_write(struct ssd_info * ssd, unsigned int channel,unsigned int chi
 		{
 			sub->next_state_predict_time=ssd->current_time+7*ssd->parameter->time_characteristics.tWC+ssd->parameter->time_characteristics.tR+(size((ssd->dram->map->map_entry[sub->lpn].state^sub->state)))*ssd->parameter->time_characteristics.tRC+(sub->size*ssd->parameter->subpage_capacity)*ssd->parameter->time_characteristics.tWC;
 			ssd->read_count++;
-			ssd->update_read_count++;   //ÉÈÇø¶ÔÆäºÏ²¢Ê±²úÉúµÄ¶Á²Ù×÷
+			ssd->update_read_count++;   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï²ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ï¿½
 		}
 	} 
 	else
@@ -1729,9 +1729,9 @@ Status static_write(struct ssd_info * ssd, unsigned int channel,unsigned int chi
 	time=sub->complete_time;
 
 	get_ppn(ssd,sub->location->channel,sub->location->chip,sub->location->die,sub->location->plane,sub);
-    //get_ppnÕâ¸öº¯ÊýÔÚÕâÀï¾ÍÊÇÐ´²Ù×÷Íê³É£¬ÐèÒª¸üÐÂactiveblockºÍ¸÷¸ötoken£¬ÕâÊÇÐèÒªÅÐ¶ÏÊÇ·ñÐèÒªÀ¬»ø»ØÊÕµÈµÈ
+    //get_ppnï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É£ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½activeblockï¿½Í¸ï¿½ï¿½ï¿½tokenï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½Ð¶ï¿½ï¿½Ç·ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÕµÈµï¿½
     /****************************************************************
-	*Ö´ÐÐcopyback¸ß¼¶ÃüÁîÊ±£¬ÐèÒªÐÞ¸Ächannel£¬chipµÄ×´Ì¬£¬ÒÔ¼°Ê±¼äµÈ
+	*Ö´ï¿½ï¿½copybackï¿½ß¼ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Òªï¿½Þ¸ï¿½channelï¿½ï¿½chipï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½Ô¼ï¿½Ê±ï¿½ï¿½ï¿½
 	*****************************************************************/
 	ssd->channel_head[channel].current_state=CHANNEL_TRANSFER;										
 	ssd->channel_head[channel].current_time=ssd->current_time;										
@@ -1747,7 +1747,7 @@ Status static_write(struct ssd_info * ssd, unsigned int channel,unsigned int chi
 }
 
 /********************
-Ð´×ÓÇëÇóµÄ´¦Àíº¯Êý
+Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½
 *********************/
 Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int * channel_busy_flag, unsigned int * change_current_time_flag)
 {
@@ -1766,12 +1766,12 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 	int channel_gc = 0, channel_gc_num = 0, find_flag = 0;
     int64_t next_state_time = 0;
 	/************************************************************************************************************************
-	*Ð´×ÓÇëÇó¹ÒÔÚÁ½¸öµØ·½Ò»¸öÊÇchannel_head[channel].subs_w_head£¬ÁíÍâÒ»¸öÊÇssd->subs_w_head£¬ËùÒÔÒª±£Ö¤ÖÁÉÙÓÐÒ»¸ö¶ÓÁÐ²»Îª¿Õ
-	*Í¬Ê±×ÓÇëÇóµÄ´¦Àí»¹·ÖÎª¶¯Ì¬·ÖÅäºÍ¾²Ì¬·ÖÅä¡£
+	*Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø·ï¿½Ò»ï¿½ï¿½ï¿½ï¿½channel_head[channel].subs_w_headï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ssd->subs_w_headï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½Ö¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ð²ï¿½Îªï¿½ï¿½
+	*Í¬Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½Í¾ï¿½Ì¬ï¿½ï¿½ï¿½ä¡£
 	*************************************************************************************************************************/
 	if((ssd->channel_head[channel].subs_w_head!=NULL)||(ssd->subs_w_head!=NULL))      
 	{
-		if (ssd->parameter->allocation_scheme==0)                                       /*¶¯Ì¬·ÖÅä*/
+		if (ssd->parameter->allocation_scheme==0)                                       /*ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½*/
 		{
 			for(j=0;j<ssd->channel_head[channel].chip;j++)					
 			{		
@@ -1780,7 +1780,7 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 					break;
 				}*/
 				
-				chip_token=ssd->channel_head[channel].token;                            /*ÁîÅÆ*/
+				chip_token=ssd->channel_head[channel].token;                            /*ï¿½ï¿½ï¿½ï¿½*/
 				if (*channel_busy_flag==0)
 				{
 					if((ssd->channel_head[channel].chip_head[chip_token].current_state==CHIP_IDLE)||((ssd->channel_head[channel].chip_head[chip_token].next_state==CHIP_IDLE)&&(ssd->channel_head[channel].chip_head[chip_token].next_state_predict_time<=ssd->current_time)))				
@@ -1813,14 +1813,14 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 										ssd->real_time_subreq--;
 									}
 
-									go_one_step(ssd,sub,NULL,SR_W_TRANSFER,NORMAL);       /*Ö´ÐÐÆÕÍ¨µÄ×´Ì¬µÄ×ª±ä¡£*/
-									delete_w_sub_request(ssd,channel,sub);                /*É¾µô´¦ÀíÍêºóµÄÐ´×ÓÇëÇó*/
+									go_one_step(ssd,sub,NULL,SR_W_TRANSFER,NORMAL);       /*Ö´ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½×´Ì¬ï¿½ï¿½×ªï¿½ä¡£*/
+									delete_w_sub_request(ssd,channel,sub);                /*É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 						
 									*channel_busy_flag=1;
 									/**************************************************************************
-									*Ìø³öforÑ­»·Ç°£¬ÐÞ¸ÄÁîÅÆ
-									*ÕâÀïµÄtokenµÄ±ä»¯ÍêÈ«È¡¾öÓÚÔÚÕâ¸öchannel chip die planeÏÂÐ´ÊÇ·ñ³É¹¦ 
-									*³É¹¦ÁË¾Íbreak Ã»³É¹¦token¾ÍÒª±ä»¯Ö±µ½ÕÒµ½ÄÜÐ´³É¹¦µÄchannel chip die plane
+									*ï¿½ï¿½ï¿½ï¿½forÑ­ï¿½ï¿½Ç°ï¿½ï¿½ï¿½Þ¸ï¿½ï¿½ï¿½ï¿½ï¿½
+									*ï¿½ï¿½ï¿½ï¿½ï¿½tokenï¿½Ä±ä»¯ï¿½ï¿½È«È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½channel chip die planeï¿½ï¿½Ð´ï¿½Ç·ï¿½É¹ï¿½ 
+									*ï¿½É¹ï¿½ï¿½Ë¾ï¿½break Ã»ï¿½É¹ï¿½tokenï¿½ï¿½Òªï¿½ä»¯Ö±ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½Ð´ï¿½É¹ï¿½ï¿½ï¿½channel chip die plane
 									***************************************************************************/
 									ssd->channel_head[channel].chip_head[chip_token].token=(ssd->channel_head[channel].chip_head[chip_token].token+1)%ssd->parameter->die_chip;
 									ssd->channel_head[channel].token=(ssd->channel_head[channel].token+1)%ssd->parameter->chip_channel[channel];
@@ -1836,7 +1836,7 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 								}
 								else
 								{
-									*channel_busy_flag=1;                                 /*Ö´ÐÐÁËÒ»¸öÇëÇó£¬´«ÊäÁËÊý¾Ý£¬Õ¼ÓÃÁË×ÜÏß£¬ÐèÒªÌø³öµ½ÏÂÒ»¸öchannel*/
+									*channel_busy_flag=1;                                 /*Ö´ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ó£¬´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½Õ¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß£ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½channel*/
                                     ssd->channel_head[channel].chip_head[chip_token].token=(ssd->channel_head[channel].chip_head[chip_token].token+1)%ssd->parameter->die_chip;
                                     ssd->channel_head[channel].token=(ssd->channel_head[channel].token+1)%ssd->parameter->chip_channel[channel];
 									break;
@@ -1850,7 +1850,7 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 				ssd->channel_head[channel].token=(ssd->channel_head[channel].token+1)%ssd->parameter->chip_channel[channel];
 			}
 		} 
-		else if(ssd->parameter->allocation_scheme==1)                                     /*¾²Ì¬·ÖÅä*/
+		else if(ssd->parameter->allocation_scheme==1)                                     /*ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½*/
 		{
 			for(chip=0;chip<ssd->channel_head[channel].chip;chip++)					
 			{	
@@ -1863,7 +1863,7 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 					if (*channel_busy_flag==0)
 					{
 							                                                            
-							if (((ssd->parameter->advanced_commands&AD_INTERLEAVE)!=AD_INTERLEAVE)&&((ssd->parameter->advanced_commands&AD_TWOPLANE)!=AD_TWOPLANE))     /*²»Ö´ÐÐ¸ß¼¶ÃüÁî*/
+							if (((ssd->parameter->advanced_commands&AD_INTERLEAVE)!=AD_INTERLEAVE)&&((ssd->parameter->advanced_commands&AD_TWOPLANE)!=AD_TWOPLANE))     /*ï¿½ï¿½Ö´ï¿½Ð¸ß¼ï¿½ï¿½ï¿½ï¿½ï¿½*/
 							{
 								for(die=0;die<ssd->channel_head[channel].chip_head[chip].die_num;die++)				
 								{	
@@ -1874,11 +1874,11 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 									sub=ssd->channel_head[channel].subs_w_head;
 									while (sub!=NULL)
 									{
-										if ((sub->current_state==SR_WAIT)&&(sub->location->channel==channel)&&(sub->location->chip==chip)&&(sub->location->die==die))      /*¸Ã×ÓÇëÇó¾ÍÊÇµ±Ç°dieµÄÇëÇó*/
+										if ((sub->current_state==SR_WAIT)&&(sub->location->channel==channel)&&(sub->location->chip==chip)&&(sub->location->die==die))      /*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Çµï¿½Ç°dieï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 										{
-											if (sub->update!=NULL)                                                      /*Èç¹ûÓÐÐèÒªÌáÇ°¶Á³öµÄÒ³*/
+											if (sub->update!=NULL)                                                      /*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³*/
 											{
-												if ((sub->update->current_state==SR_COMPLETE)||((sub->update->next_state==SR_COMPLETE)&&(sub->update->next_state_predict_time<=ssd->current_time)))   //±»¸üÐÂµÄÒ³ÒÑ¾­±»¶Á³ö
+												if ((sub->update->current_state==SR_COMPLETE)||((sub->update->next_state==SR_COMPLETE)&&(sub->update->next_state_predict_time<=ssd->current_time)))   //ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½Ò³ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 												{
 													break;
 												}
@@ -1903,12 +1903,12 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 
 										if ((ssd->parameter->advanced_commands&AD_COPYBACK)==AD_COPYBACK)
 										{
-											copy_back(ssd, channel,chip, die,sub);      /*Èç¹û¿ÉÒÔÖ´ÐÐcopyback¸ß¼¶ÃüÁî£¬ÄÇÃ´¾ÍÓÃº¯Êýcopy_back(ssd, channel,chip, die,sub)´¦ÀíÐ´×ÓÇëÇó*/
+											copy_back(ssd, channel,chip, die,sub);      /*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½copybackï¿½ß¼ï¿½ï¿½ï¿½ï¿½î£¬ï¿½ï¿½Ã´ï¿½ï¿½ï¿½Ãºï¿½ï¿½ï¿½copy_back(ssd, channel,chip, die,sub)ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 											*change_current_time_flag=0;
 										} 
 										else
 										{
-											static_write(ssd, channel,chip, die,sub);   /*²»ÄÜÖ´ÐÐcopyback¸ß¼¶ÃüÁî£¬ÄÇÃ´¾ÍÓÃstatic_write(ssd, channel,chip, die,sub)º¯ÊýÀ´´¦ÀíÐ´×ÓÇëÇó*/ 
+											static_write(ssd, channel,chip, die,sub);   /*ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½copybackï¿½ß¼ï¿½ï¿½ï¿½ï¿½î£¬ï¿½ï¿½Ã´ï¿½ï¿½ï¿½ï¿½static_write(ssd, channel,chip, die,sub)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/ 
 											*change_current_time_flag=0;
 										}
 										
@@ -1918,7 +1918,7 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 									}
 								}
 							} 
-							else                                                        /*²»ÄÜ´¦Àí¸ß¼¶ÃüÁî*/
+							else                                                        /*ï¿½ï¿½ï¿½Ü´ï¿½ï¿½ï¿½ß¼ï¿½ï¿½ï¿½ï¿½ï¿½*/
 							{
 								if (dynamic_advanced_process(ssd,channel,chip)==NULL)
 								{
@@ -1926,7 +1926,7 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 								}
 								else
 								{
-									*channel_busy_flag=1;                               /*Ö´ÐÐÁËÒ»¸öÇëÇó£¬´«ÊäÁËÊý¾Ý£¬Õ¼ÓÃÁË×ÜÏß£¬ÐèÒªÌø³öµ½ÏÂÒ»¸öchannel*/
+									*channel_busy_flag=1;                               /*Ö´ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ó£¬´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½Õ¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß£ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½channel*/
 									break;
 								}
 							}	
@@ -1941,7 +1941,7 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 		sub = NULL;
 		for(j=0;j<ssd->channel_head[channel].chip;j++)					
 		{		
-			chip_token=ssd->channel_head[channel].token;                            /*ÁîÅÆ*/
+			chip_token=ssd->channel_head[channel].token;                            /*ï¿½ï¿½ï¿½ï¿½*/
 			if (*channel_busy_flag==0)
 			{
 				next_state_time = ssd->channel_head[channel].next_state_predict_time+ssd->parameter->time_characteristics.tPROG;
@@ -2024,8 +2024,8 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 						{
 							ssd->real_time_subreq--;
 						}
-						go_one_step(ssd,sub,NULL,SR_W_TRANSFER,NORMAL);       /*Ö´ÐÐÆÕÍ¨µÄ×´Ì¬µÄ×ª±ä¡£*/
-						//delete_w_sub_request(ssd,channel,sub);                /*É¾µô´¦ÀíÍêºóµÄÐ´×ÓÇëÇó*/
+						go_one_step(ssd,sub,NULL,SR_W_TRANSFER,NORMAL);       /*Ö´ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½×´Ì¬ï¿½ï¿½×ªï¿½ä¡£*/
+						//delete_w_sub_request(ssd,channel,sub);                /*É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 						for(m = 0; m < ssd->parameter->gc_buffer_size; m++)
 						{
 							if(lpn == ssd->gc_buffer[m])
@@ -2061,9 +2061,9 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 			
 						*channel_busy_flag=1;
 						/**************************************************************************
-						*Ìø³öforÑ­»·Ç°£¬ÐÞ¸ÄÁîÅÆ
-						*ÕâÀïµÄtokenµÄ±ä»¯ÍêÈ«È¡¾öÓÚÔÚÕâ¸öchannel chip die planeÏÂÐ´ÊÇ·ñ³É¹¦ 
-						*³É¹¦ÁË¾Íbreak Ã»³É¹¦token¾ÍÒª±ä»¯Ö±µ½ÕÒµ½ÄÜÐ´³É¹¦µÄchannel chip die plane
+						*ï¿½ï¿½ï¿½ï¿½forÑ­ï¿½ï¿½Ç°ï¿½ï¿½ï¿½Þ¸ï¿½ï¿½ï¿½ï¿½ï¿½
+						*ï¿½ï¿½ï¿½ï¿½ï¿½tokenï¿½Ä±ä»¯ï¿½ï¿½È«È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½channel chip die planeï¿½ï¿½Ð´ï¿½Ç·ï¿½É¹ï¿½ 
+						*ï¿½É¹ï¿½ï¿½Ë¾ï¿½break Ã»ï¿½É¹ï¿½tokenï¿½ï¿½Òªï¿½ä»¯Ö±ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½Ð´ï¿½É¹ï¿½ï¿½ï¿½channel chip die plane
 						***************************************************************************/
 						ssd->channel_head[channel].chip_head[chip_token].token=(ssd->channel_head[channel].chip_head[chip_token].token+1)%ssd->parameter->die_chip;
 						ssd->channel_head[channel].token=(ssd->channel_head[channel].token+1)%ssd->parameter->chip_channel[channel];
@@ -2081,18 +2081,18 @@ Status services_2_write(struct ssd_info * ssd,unsigned int channel,unsigned int 
 
 
 /********************************************************
-*Õâ¸öº¯ÊýµÄÖ÷Òª¹¦ÄÜÊÇÖ÷¿Ø¶Á×ÓÇëÇóºÍÐ´×ÓÇëÇóµÄ×´Ì¬±ä»¯´¦Àí
+*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ä»¯ï¿½ï¿½ï¿½ï¿½
 *********************************************************/
 
 struct ssd_info *process(struct ssd_info *ssd)   
 {
 
 	/*********************************************************************************************************
-	*flag_die±íÊ¾ÊÇ·ñÒòÎªdieµÄbusy£¬×èÈûÁËÊ±¼äÇ°½ø£¬-1±íÊ¾Ã»ÓÐ£¬·Ç-1±íÊ¾ÓÐ×èÈû£¬
-	*flag_dieµÄÖµ±íÊ¾dieºÅ,old ppn¼ÇÂ¼ÔÚcopybackÖ®Ç°µÄÎïÀíÒ³ºÅ£¬ÓÃÓÚÅÐ¶ÏcopybackÊÇ·ñ×ñÊØÁËÆæÅ¼µØÖ·µÄÏÞÖÆ£»
-	*two_plane_bit[8],two_plane_place[8]Êý×é³ÉÔ±±íÊ¾Í¬Ò»¸öchannelÉÏÃ¿¸ödieµÄÇëÇó·ÖÅäÇé¿ö£»
-	*chg_cur_time_flag×÷ÎªÊÇ·ñÐèÒªµ÷Õûµ±Ç°Ê±¼äµÄ±êÖ¾Î»£¬µ±ÒòÎªchannel´¦ÓÚbusyµ¼ÖÂÇëÇó×èÈûÊ±£¬ÐèÒªµ÷Õûµ±Ç°Ê±¼ä£»
-	*³õÊ¼ÈÏÎªÐèÒªµ÷Õû£¬ÖÃÎª1£¬µ±ÈÎºÎÒ»¸öchannel´¦ÀíÁË´«ËÍÃüÁî»òÕßÊý¾ÝÊ±£¬Õâ¸öÖµÖÃÎª0£¬±íÊ¾²»ÐèÒªµ÷Õû£»
+	*flag_dieï¿½ï¿½Ê¾ï¿½Ç·ï¿½ï¿½ï¿½Îªdieï¿½ï¿½busyï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½-1ï¿½ï¿½Ê¾Ã»ï¿½Ð£ï¿½ï¿½ï¿½-1ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	*flag_dieï¿½ï¿½Öµï¿½ï¿½Ê¾dieï¿½ï¿½,old ppnï¿½ï¿½Â¼ï¿½ï¿½copybackÖ®Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³ï¿½Å£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½copybackï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¼ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½
+	*two_plane_bit[8],two_plane_place[8]ï¿½ï¿½ï¿½ï¿½ï¿½Ô±ï¿½ï¿½Ê¾Í¬Ò»ï¿½ï¿½channelï¿½ï¿½Ã¿ï¿½ï¿½dieï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	*chg_cur_time_flagï¿½ï¿½Îªï¿½Ç·ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°Ê±ï¿½ï¿½Ä±ï¿½Ö¾Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªchannelï¿½ï¿½ï¿½ï¿½busyï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°Ê±ï¿½ä£»
+	*ï¿½ï¿½Ê¼ï¿½ï¿½Îªï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª1ï¿½ï¿½ï¿½ï¿½ï¿½Îºï¿½Ò»ï¿½ï¿½channelï¿½ï¿½ï¿½ï¿½ï¿½Ë´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½Îª0ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	**********************************************************************************************************/
 	int old_ppn=-1,flag_die=-1; 
 	unsigned int i,j,m,n,chan,chip,die,plane,random_num;     
@@ -2107,9 +2107,9 @@ struct ssd_info *process(struct ssd_info *ssd)
 #endif
 
 	/*********************************************************
-	*ÅÐ¶ÏÊÇ·ñÓÐ¶ÁÐ´×ÓÇëÇó£¬Èç¹ûÓÐÄÇÃ´flagÁîÎª0£¬Ã»ÓÐflag¾ÍÎª1
-	*µ±flagÎª1Ê±£¬ÈôssdÖÐÓÐgc²Ù×÷ÕâÊ±¾Í¿ÉÒÔÖ´ÐÐgc²Ù×÷
-	*ÕâÀïÃ»ÓÐÎÊÌâ£¬²»¹ÜÓÐÃ»ÓÐGC¶¼ÏÈÇÐ»»²»Ó°ÏìÍ¨µÀ×´Ì¬µÄ¶Á×ÓÇëÇó¡£¶ÔÓÚGC¶ÔÃ¿¸öÍ¨µÀ½øÐÐ£¬²»¿ÉÖÐ¶ÏÒ³Ç¨ÒÆµÄÊ±¼äÃ»ÓÐÍ³¼ÆÔÚÄÚ£¬ºÜÆæ¹Ö£¬ÕâÀïÐÞ¸Ä
+	*ï¿½Ð¶ï¿½ï¿½Ç·ï¿½ï¿½Ð¶ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã´flagï¿½ï¿½Îª0ï¿½ï¿½Ã»ï¿½ï¿½flagï¿½ï¿½Îª1
+	*ï¿½ï¿½flagÎª1Ê±ï¿½ï¿½ï¿½ï¿½ssdï¿½ï¿½ï¿½ï¿½gcï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½Í¿ï¿½ï¿½ï¿½Ö´ï¿½ï¿½gcï¿½ï¿½ï¿½ï¿½
+	*ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½â£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½GCï¿½ï¿½ï¿½ï¿½ï¿½Ð»ï¿½ï¿½ï¿½Ó°ï¿½ï¿½Í¨ï¿½ï¿½×´Ì¬ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ó¡£¶ï¿½ï¿½ï¿½GCï¿½ï¿½Ã¿ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½Ò³Ç¨ï¿½Æµï¿½Ê±ï¿½ï¿½Ã»ï¿½ï¿½Í³ï¿½ï¿½ï¿½ï¿½ï¿½Ú£ï¿½ï¿½ï¿½ï¿½ï¿½Ö£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Þ¸ï¿½
 	**********************************************************/
 
 
@@ -2117,7 +2117,7 @@ struct ssd_info *process(struct ssd_info *ssd)
 	{          
 		if((ssd->channel_head[i].subs_r_head==NULL)&&(ssd->channel_head[i].subs_w_head==NULL)&&(ssd->subs_w_head==NULL))
 		{
-			flag=1;                       //ËùÓÐÍ¨µÀ¾ùÎÞÇëÇó´¦Àí¡£ÉÏ±ßÒ»ÐÐ£¬¶ÔÓÚÈ«¶¯Ì¬·ÖÅä²ßÂÔµÄÐ´ÇëÇó£¬²»¹ÒÔÚÍ¨µÀÉÏ£¬ÐèÒªÔÙ·ÖÅä
+			flag=1;                       //ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½Ò»ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ôµï¿½Ð´ï¿½ï¿½ï¿½ó£¬²ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½Ï£ï¿½ï¿½ï¿½Òªï¿½Ù·ï¿½ï¿½ï¿½
 		}
 		else
 		{
@@ -2128,9 +2128,9 @@ struct ssd_info *process(struct ssd_info *ssd)
 	if(flag==1)
 	{
 		ssd->flag=1;                                                                
-		if (ssd->gc_request>0)      //ÎÞ¶ÁÐ´ÇëÇó£¬¿ªÊ¼´¦Àí¿ÉÖÐ¶Ï  soft_gc ÆäÊµÓ¦¸ÃÊÇ¶ÔÃ¿¸öÍ¨µÀµ¥¶ÀÅÐ¶Ï£¬ÕâÀïÐÞ¸ÄÎª²»¿ÉÖÐ¶ÏGCÔÚÐ´ÈëÊ±´¥·¢¾ÍÖ´ÐÐ
+		if (ssd->gc_request>0)      //ï¿½Þ¶ï¿½Ð´ï¿½ï¿½ï¿½ó£¬¿ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½  soft_gc ï¿½ï¿½ÊµÓ¦ï¿½ï¿½ï¿½Ç¶ï¿½Ã¿ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ï£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Þ¸ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½GCï¿½ï¿½Ð´ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½
 		{
-			gc(ssd,0,1);            //Õâ¸ögcÒªÇóËùÓÐchannel¶¼±ØÐë±éÀúµ½
+			gc(ssd,0,1);            //ï¿½ï¿½ï¿½gcÒªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½channelï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		}
 		return ssd;
 	}
@@ -2140,9 +2140,9 @@ struct ssd_info *process(struct ssd_info *ssd)
 	}*/
 		
 	time = ssd->current_time;
-	services_2_r_cmd_trans_and_complete(ssd);                                            /*´¦Àíµ±Ç°×´Ì¬ÊÇSR_R_C_A_TRANSFER»òÕßµ±Ç°×´Ì¬ÊÇSR_COMPLETE£¬»òÕßÏÂÒ»×´Ì¬ÊÇSR_COMPLETE²¢ÇÒÏÂÒ»×´Ì¬Ô¤¼ÆÊ±¼äÐ¡ÓÚµ±Ç°×´Ì¬Ê±¼ä*/
+	services_2_r_cmd_trans_and_complete(ssd);                                            /*ï¿½ï¿½ï¿½ï¿½Ç°×´Ì¬ï¿½ï¿½SR_R_C_A_TRANSFERï¿½ï¿½ï¿½ßµï¿½Ç°×´Ì¬ï¿½ï¿½SR_COMPLETEï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»×´Ì¬ï¿½ï¿½SR_COMPLETEï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»×´Ì¬Ô¤ï¿½ï¿½Ê±ï¿½ï¿½Ð¡ï¿½Úµï¿½Ç°×´Ì¬Ê±ï¿½ï¿½*/
 	
-	//KXC_2:´¦Àí²»¿ÉÖÐ¶ÏGC hard GC
+	//KXC_2:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½GC hard GC
 	if(ssd->parameter->interruptible == 2)
 	{
 		for(i=0;i<ssd->parameter->channel_number;i++)
@@ -2182,33 +2182,33 @@ struct ssd_info *process(struct ssd_info *ssd)
 
 
 
-	random_num=ssd->program_count%ssd->parameter->channel_number;                        /*²úÉúÒ»¸öËæ»úÊý£¬±£Ö¤Ã¿´Î´Ó²»Í¬µÄchannel¿ªÊ¼²éÑ¯*/
+	random_num=ssd->program_count%ssd->parameter->channel_number;                        /*ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¤Ã¿ï¿½Î´Ó²ï¿½Í¬ï¿½ï¿½channelï¿½ï¿½Ê¼ï¿½ï¿½Ñ¯*/
 
 	/*****************************************
-	*Ñ­»·´¦ÀíËùÓÐchannelÉÏµÄ¶ÁÐ´×ÓÇëÇó
-	*·¢¶ÁÇëÇóÃüÁî£¬´«¶ÁÐ´Êý¾Ý£¬¶¼ÐèÒªÕ¼ÓÃ×ÜÏß£¬
+	*Ñ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½channelï¿½ÏµÄ¶ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½î£¬ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½ï¿½ï¿½ÒªÕ¼ï¿½ï¿½ï¿½ï¿½ï¿½ß£ï¿½
 	******************************************/
 	for(chan=0;chan<ssd->parameter->channel_number;chan++)	     
 	{
 		i=(random_num+chan)%ssd->parameter->channel_number;
 		flag=0;
-		flag_gc=0;                                                                       /*Ã¿´Î½øÈëchannelÊ±£¬½«gcµÄ±êÖ¾Î»ÖÃÎª0£¬Ä¬ÈÏÈÏÎªÃ»ÓÐ½øÐÐgc²Ù×÷*/
+		flag_gc=0;                                                                       /*Ã¿ï¿½Î½ï¿½ï¿½ï¿½channelÊ±ï¿½ï¿½ï¿½ï¿½gcï¿½Ä±ï¿½Ö¾Î»ï¿½ï¿½Îª0ï¿½ï¿½Ä¬ï¿½ï¿½ï¿½ï¿½ÎªÃ»ï¿½Ð½ï¿½ï¿½ï¿½gcï¿½ï¿½ï¿½ï¿½*/
 		if((ssd->channel_head[i].current_state==CHANNEL_IDLE)||(ssd->channel_head[i].next_state==CHANNEL_IDLE&&ssd->channel_head[i].next_state_predict_time<=ssd->current_time))		
 		{   
-			/*if (ssd->gc_request>0)                                                       //ÓÐgc²Ù×÷£¬ÐèÒª½øÐÐÒ»¶¨µÄÅÐ¶Ï
+			/*if (ssd->gc_request>0)                                                       //ï¿½ï¿½gcï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½
 			{
 				if (ssd->channel_head[i].gc_command!=NULL)
 				{
-					flag_gc=gc(ssd,i,0);                                                 //gcº¯Êý·µ»ØÒ»¸öÖµ£¬±íÊ¾ÊÇ·ñÖ´ÐÐÁËgc²Ù×÷£¬Èç¹ûÖ´ÐÐÁËgc²Ù×÷flag_gc=1£¬Õâ¸öchannelÔÚÕâ¸öÊ±¿Ì²»ÄÜ·þÎñÆäËûµÄÇëÇó
+					flag_gc=gc(ssd,i,0);                                                 //gcï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½Ê¾ï¿½Ç·ï¿½Ö´ï¿½ï¿½ï¿½ï¿½gcï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ï¿½gcï¿½ï¿½ï¿½ï¿½flag_gc=1ï¿½ï¿½ï¿½ï¿½ï¿½channelï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½Ì²ï¿½ï¿½Ü·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				}
-				if (flag_gc==1)                                                          //Ö´ÐÐ¹ýgc²Ù×÷£¬ÐèÒªÌø³ö´Ë´ÎÑ­»·
+				if (flag_gc==1)                                                          //Ö´ï¿½Ð¹ï¿½gcï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Ë´ï¿½Ñ­ï¿½ï¿½
 				{
 					continue;
 				}
 			}*/
 
-			sub=ssd->channel_head[i].subs_r_head;                                        /*ÏÈ´¦Àí¶ÁÇëÇó*/
-			services_2_r_wait(ssd,i,&flag,&chg_cur_time_flag);                           /*´¦Àí´¦ÓÚµÈ´ý×´Ì¬µÄ¶Á×ÓÇëÇó*/
+			sub=ssd->channel_head[i].subs_r_head;                                        /*ï¿½È´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
+			services_2_r_wait(ssd,i,&flag,&chg_cur_time_flag);                           /*ï¿½ï¿½ï¿½ï¿½ï¿½ÚµÈ´ï¿½×´Ì¬ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 		
 			if((flag==0)&&(ssd->channel_head[i].subs_r_head!=NULL))                      /*if there are no new read request and data is ready in some dies, send these data to controller and response this request*/		
 			{		     
@@ -2222,7 +2222,7 @@ struct ssd_info *process(struct ssd_info *ssd)
 			}	
 		}
 
-		//KXC_2:Ö´ÐÐÉÏÊö¶ÁÐ´×ÓÇëÇóºóÈôÍ¨µÀÒÀÈ»´¦ÓÚ¿ÕÏÐ×´Ì¬£¬Ôò¿ªÊ¼Ö´ÐÐsoft gc
+		//KXC_2:Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½È»ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½Ê¼Ö´ï¿½ï¿½soft gc
 		if((ssd->channel_head[i].current_state==CHANNEL_IDLE)||(ssd->channel_head[i].next_state==CHANNEL_IDLE&&ssd->channel_head[i].next_state_predict_time<=ssd->current_time))		
 		{   
 			if(ssd->parameter->interruptible == 2)
@@ -2286,8 +2286,8 @@ struct ssd_info *process(struct ssd_info *ssd)
 }
 
 /****************************************************************************************************************************
-*µ±ssdÖ§³Ö¸ß¼¶ÃüÁîÊ±£¬Õâ¸öº¯ÊýµÄ×÷ÓÃ¾ÍÊÇ´¦Àí¸ß¼¶ÃüÁîµÄÐ´×ÓÇëÇó
-*¸ù¾ÝÇëÇóµÄ¸öÊý£¬¾ö¶¨Ñ¡ÔñÄÄÖÖ¸ß¼¶ÃüÁî£¨Õâ¸öº¯ÊýÖ»´¦ÀíÐ´ÇëÇó£¬¶ÁÇëÇóÒÑ¾­·ÖÅäµ½Ã¿¸öchannel£¬ËùÒÔÔÚÖ´ÐÐÊ±Ö®¼ä½øÐÐÑ¡È¡ÏàÓ¦µÄÃüÁî£©
+*ï¿½ï¿½ssdÖ§ï¿½Ö¸ß¼ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¾ï¿½ï¿½Ç´ï¿½ï¿½ï¿½ß¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ß¼ï¿½ï¿½ï¿½ï¿½î£¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ó£¬¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½äµ½Ã¿ï¿½ï¿½channelï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½Ê±Ö®ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¡È¡ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½î£©
 *****************************************************************************************************************************/
 struct ssd_info *dynamic_advanced_process(struct ssd_info *ssd,unsigned int channel,unsigned int chip)         
 {
@@ -2333,7 +2333,7 @@ struct ssd_info *dynamic_advanced_process(struct ssd_info *ssd,unsigned int chan
 		}
 	}
 
-	if ((ssd->parameter->allocation_scheme==0))                                           /*È«¶¯Ì¬·ÖÅä£¬ÐèÒª´Óssd->subs_w_headÉÏÑ¡È¡µÈ´ý·þÎñµÄ×ÓÇëÇó*/
+	if ((ssd->parameter->allocation_scheme==0))                                           /*È«ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ä£¬ï¿½ï¿½Òªï¿½ï¿½ssd->subs_w_headï¿½ï¿½Ñ¡È¡ï¿½È´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	{
 		if(ssd->parameter->dynamic_allocation==0)
 		{
@@ -2350,7 +2350,7 @@ struct ssd_info *dynamic_advanced_process(struct ssd_info *ssd,unsigned int chan
 		{
 			if(sub->current_state==SR_WAIT)								
 			{
-				if ((sub->update==NULL)||((sub->update!=NULL)&&((sub->update->current_state==SR_COMPLETE)||((sub->update->next_state==SR_COMPLETE)&&(sub->update->next_state_predict_time<=ssd->current_time)))))    //Ã»ÓÐÐèÒªÌáÇ°¶Á³öµÄÒ³
+				if ((sub->update==NULL)||((sub->update!=NULL)&&((sub->update->current_state==SR_COMPLETE)||((sub->update->next_state==SR_COMPLETE)&&(sub->update->next_state_predict_time<=ssd->current_time)))))    //Ã»ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³
 				{
 					subs[subs_count]=sub;
 					subs_count++;
@@ -2361,7 +2361,7 @@ struct ssd_info *dynamic_advanced_process(struct ssd_info *ssd,unsigned int chan
 			sub=sub->next_node;	
 		}
 
-		if (subs_count==0)                                                               /*Ã»ÓÐÇëÇó¿ÉÒÔ·þÎñ£¬·µ»ØNULL*/
+		if (subs_count==0)                                                               /*Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô·ï¿½ï¿½ñ£¬·ï¿½ï¿½ï¿½NULL*/
 		{
 			for(i=0;i<max_sub_num;i++)
 			{
@@ -2376,8 +2376,8 @@ struct ssd_info *dynamic_advanced_process(struct ssd_info *ssd,unsigned int chan
 		if(subs_count>=2)
 		{
 		    /*********************************************
-			*two plane,interleave¶¼¿ÉÒÔÊ¹ÓÃ
-			*ÔÚÕâ¸öchannelÉÏ£¬Ñ¡ÓÃinterleave_two_planeÖ´ÐÐ
+			*two plane,interleaveï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½
+			*ï¿½ï¿½ï¿½ï¿½ï¿½channelï¿½Ï£ï¿½Ñ¡ï¿½ï¿½interleave_two_planeÖ´ï¿½ï¿½
 			**********************************************/
 			if (((ssd->parameter->advanced_commands&AD_TWOPLANE)==AD_TWOPLANE)&&((ssd->parameter->advanced_commands&AD_INTERLEAVE)==AD_INTERLEAVE))     
 			{                                                                        
@@ -2425,9 +2425,9 @@ struct ssd_info *dynamic_advanced_process(struct ssd_info *ssd,unsigned int chan
 		}
 		
 	}//if ((ssd->parameter->allocation_scheme==0)) 
-	else                                                                                  /*¾²Ì¬·ÖÅä·½Ê½£¬Ö»Ðè´ÓÕâ¸öÌØ¶¨µÄchannelÉÏÑ¡È¡µÈ´ý·þÎñµÄ×ÓÇëÇó*/
+	else                                                                                  /*ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ä·½Ê½ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø¶ï¿½ï¿½ï¿½channelï¿½ï¿½Ñ¡È¡ï¿½È´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	{
-		                                                                                  /*ÔÚ¾²Ì¬·ÖÅä·½Ê½ÖÐ£¬¸ù¾ÝchannelÉÏµÄÇëÇóÂäÔÚÍ¬Ò»¸ödieÉÏµÄÄÇÐ©planeÀ´È·¶¨Ê¹ÓÃÊ²Ã´ÃüÁî*/
+		                                                                                  /*ï¿½Ú¾ï¿½Ì¬ï¿½ï¿½ï¿½ä·½Ê½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½channelï¿½Ïµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬Ò»ï¿½ï¿½dieï¿½Ïµï¿½ï¿½ï¿½Ð©planeï¿½ï¿½È·ï¿½ï¿½Ê¹ï¿½ï¿½Ê²Ã´ï¿½ï¿½ï¿½ï¿½*/
 		
 			sub=ssd->channel_head[channel].subs_w_head;
 			plane_bits=(unsigned int * )malloc((ssd->parameter->die_chip)*sizeof(unsigned int));
@@ -2462,7 +2462,7 @@ struct ssd_info *dynamic_advanced_process(struct ssd_info *ssd,unsigned int chan
 				sub=sub->next_node;	
 			}//while ((sub!=NULL)&&(subs_count<max_sub_num))
 
-			if (subs_count==0)                                                            /*Ã»ÓÐÇëÇó¿ÉÒÔ·þÎñ£¬·µ»ØNULL*/
+			if (subs_count==0)                                                            /*Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô·ï¿½ï¿½ñ£¬·ï¿½ï¿½ï¿½NULL*/
 			{
 				for(i=0;i<max_sub_num;i++)
 				{
@@ -2477,9 +2477,9 @@ struct ssd_info *dynamic_advanced_process(struct ssd_info *ssd,unsigned int chan
 			flag=0;
 			if (ssd->parameter->advanced_commands!=0)
 			{
-				if ((ssd->parameter->advanced_commands&AD_COPYBACK)==AD_COPYBACK)        /*È«²¿¸ß¼¶ÃüÁî¶¼¿ÉÒÔÊ¹ÓÃ*/
+				if ((ssd->parameter->advanced_commands&AD_COPYBACK)==AD_COPYBACK)        /*È«ï¿½ï¿½ï¿½ß¼ï¿½ï¿½ï¿½ï¿½î¶¼ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½*/
 				{
-					if (subs_count>1)                                                    /*ÓÐ1¸öÒÔÉÏ¿ÉÒÔÖ±½Ó·þÎñµÄÐ´ÇëÇó*/
+					if (subs_count>1)                                                    /*ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ï¿½ï¿½Ö±ï¿½Ó·ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½*/
 					{
 						get_ppn_for_advanced_commands(ssd,channel,chip,subs,subs_count,COPY_BACK);
 					} 
@@ -2496,9 +2496,9 @@ struct ssd_info *dynamic_advanced_process(struct ssd_info *ssd,unsigned int chan
 					}
 				
 				}// if ((ssd->parameter->advanced_commands&AD_COPYBACK)==AD_COPYBACK)
-				else                                                                     /*²»ÄÜÖ´ÐÐcopyback*/
+				else                                                                     /*ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½copyback*/
 				{
-					if (subs_count>1)                                                    /*ÓÐ1¸öÒÔÉÏ¿ÉÒÔÖ±½Ó·þÎñµÄÐ´ÇëÇó*/
+					if (subs_count>1)                                                    /*ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ï¿½ï¿½Ö±ï¿½Ó·ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½*/
 					{
 						if (((ssd->parameter->advanced_commands&AD_INTERLEAVE)==AD_INTERLEAVE)&&((ssd->parameter->advanced_commands&AD_TWOPLANE)==AD_TWOPLANE))
 						{
@@ -2669,7 +2669,7 @@ struct ssd_info *dynamic_advanced_process(struct ssd_info *ssd,unsigned int chan
 }
 
 /****************************************
-*Ö´ÐÐÐ´×ÓÇëÇóÊ±£¬ÎªÆÕÍ¨µÄÐ´×ÓÇëÇó»ñÈ¡ppn
+*Ö´ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Îªï¿½ï¿½Í¨ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ppn
 *****************************************/
 Status get_ppn_for_normal_command(struct ssd_info * ssd, unsigned int channel,unsigned int chip, struct sub_request * sub)
 {
@@ -2705,11 +2705,11 @@ Status get_ppn_for_normal_command(struct ssd_info * ssd, unsigned int channel,un
 
 
 /************************************************************************************************
-*Îª¸ß¼¶ÃüÁî»ñÈ¡ppn
-*¸ù¾Ý²»Í¬µÄÃüÁî£¬×ñ´ÓÔÚÍ¬Ò»¸öblockÖÐË³ÐòÐ´µÄÒªÇó£¬Ñ¡È¡¿ÉÒÔ½øÐÐÐ´²Ù×÷µÄppn£¬Ìø¹ýµÄppnÈ«²¿ÖÃÎªÊ§Ð§¡£
-*ÔÚÊ¹ÓÃtwo plane²Ù×÷Ê±£¬ÎªÁËÑ°ÕÒÏàÍ¬Ë®Æ½Î»ÖÃµÄÒ³£¬¿ÉÄÜÐèÒªÖ±½ÓÕÒµ½Á½¸öÍêÈ«¿Õ°×µÄ¿é£¬Õâ¸öÊ±ºòÔ­À´
-*µÄ¿éÃ»ÓÐÓÃÍê£¬Ö»ÄÜ·ÅÔÚÕâ£¬µÈ´ýÏÂ´ÎÊ¹ÓÃ£¬Í¬Ê±ÐÞ¸Ä²éÕÒ¿Õ°×pageµÄ·½·¨£¬½«ÒÔÇ°Ê×ÏÈÑ°ÕÒfree¿é¸ÄÎª£¬Ö»
-*Òªinvalid block!=64¼´¿É¡£
+*Îªï¿½ß¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ppn
+*ï¿½ï¿½ï¿½Ý²ï¿½Í¬ï¿½ï¿½ï¿½ï¿½ï¿½î£¬ï¿½ï¿½ï¿½ï¿½ï¿½Í¬Ò»ï¿½ï¿½blockï¿½ï¿½Ë³ï¿½ï¿½Ð´ï¿½ï¿½Òªï¿½ï¿½Ñ¡È¡ï¿½ï¿½ï¿½Ô½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ppnï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ppnÈ«ï¿½ï¿½ï¿½ï¿½ÎªÊ§Ð§ï¿½ï¿½
+*ï¿½ï¿½Ê¹ï¿½ï¿½two planeï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Îªï¿½ï¿½Ñ°ï¿½ï¿½ï¿½ï¿½Í¬Ë®Æ½Î»ï¿½Ãµï¿½Ò³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÒªÖ±ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½Õ°×µÄ¿é£¬ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Ô­ï¿½ï¿½
+*ï¿½Ä¿ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ê£¬Ö»ï¿½Ü·ï¿½ï¿½ï¿½ï¿½â£¬ï¿½È´ï¿½ï¿½Â´ï¿½Ê¹ï¿½Ã£ï¿½Í¬Ê±ï¿½Þ¸Ä²ï¿½ï¿½Ò¿Õ°ï¿½pageï¿½Ä·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½Ñ°ï¿½ï¿½freeï¿½ï¿½ï¿½Îªï¿½ï¿½Ö»
+*Òªinvalid block!=64ï¿½ï¿½ï¿½É¡ï¿½
 *except find aim page, we should modify token and decide gc operation
 *************************************************************************************************/
 Status get_ppn_for_advanced_commands(struct ssd_info *ssd,unsigned int channel,unsigned int chip,struct sub_request * * subs ,unsigned int subs_count,unsigned int command)      
@@ -2731,14 +2731,14 @@ Status get_ppn_for_advanced_commands(struct ssd_info *ssd,unsigned int channel,u
 
 	max_subs_num=ssd->parameter->die_chip*ssd->parameter->plane_die;
 	
-	if (ssd->parameter->allocation_scheme==DYNAMIC_ALLOCATION)                         /*¶¯Ì¬·ÖÅä²Ù×÷*/ 
+	if (ssd->parameter->allocation_scheme==DYNAMIC_ALLOCATION)                         /*ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/ 
 	{
-		if((command==INTERLEAVE_TWO_PLANE)||(command==COPY_BACK))                      /*INTERLEAVE_TWO_PLANEÒÔ¼°COPY_BACKµÄÇé¿ö*/
+		if((command==INTERLEAVE_TWO_PLANE)||(command==COPY_BACK))                      /*INTERLEAVE_TWO_PLANEï¿½Ô¼ï¿½COPY_BACKï¿½ï¿½ï¿½ï¿½ï¿½*/
 		{
 			for(i=0;i<subs_count;i++)
 			{
 				die=ssd->channel_head[channel].chip_head[chip].token;
-				if(i<ssd->parameter->die_chip)                                         /*ÎªÃ¿¸ösubs[i]»ñÈ¡ppn£¬iÐ¡ÓÚdie_chip*/
+				if(i<ssd->parameter->die_chip)                                         /*ÎªÃ¿ï¿½ï¿½subs[i]ï¿½ï¿½È¡ppnï¿½ï¿½iÐ¡ï¿½ï¿½die_chip*/
 				{
 					plane=ssd->channel_head[channel].chip_head[chip].die_head[die].token;
 					get_ppn(ssd,channel,chip,die,plane,subs[i]);
@@ -2747,9 +2747,9 @@ Status get_ppn_for_advanced_commands(struct ssd_info *ssd,unsigned int channel,u
 				else                                                                  
 				{   
 					/*********************************************************************************************************************************
-					*³¬¹ýdie_chipµÄiËùÖ¸ÏòµÄsubs[i]Óësubs[i%ssd->parameter->die_chip]»ñÈ¡ÏàÍ¬Î»ÖÃµÄppn
-					*Èç¹û³É¹¦µÄ»ñÈ¡ÁËÔòÁîmulti_plane_flag=TRUE²¢Ö´ÐÐcompute_serve_time(ssd,channel,chip,0,subs,valid_subs_count,INTERLEAVE_TWO_PLANE);
-					*·ñÔòÖ´ÐÐcompute_serve_time(ssd,channel,chip,0,subs,valid_subs_count,INTERLEAVE);
+					*ï¿½ï¿½ï¿½ï¿½die_chipï¿½ï¿½iï¿½ï¿½Ö¸ï¿½ï¿½ï¿½subs[i]ï¿½ï¿½subs[i%ssd->parameter->die_chip]ï¿½ï¿½È¡ï¿½ï¿½Í¬Î»ï¿½Ãµï¿½ppn
+					*ï¿½ï¿½ï¿½ï¿½É¹ï¿½ï¿½Ä»ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½multi_plane_flag=TRUEï¿½ï¿½Ö´ï¿½ï¿½compute_serve_time(ssd,channel,chip,0,subs,valid_subs_count,INTERLEAVE_TWO_PLANE);
+					*ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½compute_serve_time(ssd,channel,chip,0,subs,valid_subs_count,INTERLEAVE);
 					***********************************************************************************************************************************/
 					state=make_level_page(ssd,subs[i%ssd->parameter->die_chip],subs[i]);
 					if(state!=SUCCESS)                                                 
@@ -2769,7 +2769,7 @@ Status get_ppn_for_advanced_commands(struct ssd_info *ssd,unsigned int channel,u
 			if(multi_plane_flag==TRUE)
 			{
 				ssd->inter_mplane_count++;
-				compute_serve_time(ssd,channel,chip,0,subs,valid_subs_count,INTERLEAVE_TWO_PLANE);/*¼ÆËãÐ´×ÓÇëÇóµÄ´¦ÀíÊ±¼ä£¬ÒÔÐ´×ÓÇëÇóµÄ×´Ì¬×ª±ä*/		
+				compute_serve_time(ssd,channel,chip,0,subs,valid_subs_count,INTERLEAVE_TWO_PLANE);/*ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½Ê±ï¿½ä£¬ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬×ªï¿½ï¿½*/		
 			}
 			else
 			{
@@ -2780,8 +2780,8 @@ Status get_ppn_for_advanced_commands(struct ssd_info *ssd,unsigned int channel,u
 		else if(command==INTERLEAVE)
 		{
 			/***********************************************************************************************
-			*INTERLEAVE¸ß¼¶ÃüÁîµÄ´¦Àí£¬Õâ¸ö´¦Àí±ÈTWO_PLANE¸ß¼¶ÃüÁîµÄ´¦Àí¼òµ¥
-			*ÒòÎªtwo_planeµÄÒªÇóÊÇÍ¬Ò»¸ödieÀïÃæ²»Í¬planeµÄÍ¬Ò»Î»ÖÃµÄpage£¬¶øinterleaveÒªÇóÔòÊÇ²»Í¬dieÀïÃæµÄ¡£
+			*INTERLEAVEï¿½ß¼ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½TWO_PLANEï¿½ß¼ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½
+			*ï¿½ï¿½Îªtwo_planeï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Í¬Ò»ï¿½ï¿½dieï¿½ï¿½ï¿½æ²»Í¬planeï¿½ï¿½Í¬Ò»Î»ï¿½Ãµï¿½pageï¿½ï¿½ï¿½ï¿½interleaveÒªï¿½ï¿½ï¿½ï¿½ï¿½Ç²ï¿½Í¬dieï¿½ï¿½ï¿½ï¿½Ä¡ï¿½
 			************************************************************************************************/
 			for(i=0;(i<subs_count)&&(i<ssd->parameter->die_chip);i++)
 			{
@@ -2807,10 +2807,10 @@ Status get_ppn_for_advanced_commands(struct ssd_info *ssd,unsigned int channel,u
 			{
 				if(j==1)
 				{
-					state=find_level_page(ssd,channel,chip,die,subs[0],subs[1]);        /*Ñ°ÕÒÓësubs[0]µÄppnÎ»ÖÃÏàÍ¬µÄsubs[1]£¬Ö´ÐÐTWO_PLANE¸ß¼¶ÃüÁî*/
+					state=find_level_page(ssd,channel,chip,die,subs[0],subs[1]);        /*Ñ°ï¿½ï¿½ï¿½ï¿½subs[0]ï¿½ï¿½ppnÎ»ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½subs[1]ï¿½ï¿½Ö´ï¿½ï¿½TWO_PLANEï¿½ß¼ï¿½ï¿½ï¿½ï¿½ï¿½*/
 					if(state!=SUCCESS)
 					{
-						get_ppn_for_normal_command(ssd,channel,chip,subs[0]);           /*Ã»ÕÒµ½£¬ÄÇÃ´¾Íµ±ÆÕÍ¨ÃüÁîÀ´´¦Àí*/
+						get_ppn_for_normal_command(ssd,channel,chip,subs[0]);           /*Ã»ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½Ã´ï¿½Íµï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 						return FAILURE;
 					}
 					else
@@ -2820,7 +2820,7 @@ Status get_ppn_for_advanced_commands(struct ssd_info *ssd,unsigned int channel,u
 				}
 				else if(j>1)
 				{
-					state=make_level_page(ssd,subs[0],subs[j]);                         /*Ñ°ÕÒÓësubs[0]µÄppnÎ»ÖÃÏàÍ¬µÄsubs[j]£¬Ö´ÐÐTWO_PLANE¸ß¼¶ÃüÁî*/
+					state=make_level_page(ssd,subs[0],subs[j]);                         /*Ñ°ï¿½ï¿½ï¿½ï¿½subs[0]ï¿½ï¿½ppnÎ»ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½subs[j]ï¿½ï¿½Ö´ï¿½ï¿½TWO_PLANEï¿½ß¼ï¿½ï¿½ï¿½ï¿½ï¿½*/
 					if(state!=SUCCESS)
 					{
 						for(k=j;k<subs_count;k++)
@@ -2846,7 +2846,7 @@ Status get_ppn_for_advanced_commands(struct ssd_info *ssd,unsigned int channel,u
 			return ERROR;
 		}
 	}//if (ssd->parameter->allocation_scheme==DYNAMIC_ALLOCATION)
-	else                                                                              /*¾²Ì¬·ÖÅäµÄÇé¿ö*/
+	else                                                                              /*ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	{
 		if((command==INTERLEAVE_TWO_PLANE)||(command==COPY_BACK))
 		{
@@ -3006,13 +3006,13 @@ Status get_ppn_for_advanced_commands(struct ssd_info *ssd,unsigned int channel,u
 		{
 			return ERROR;
 		}
-	}//elseb ¾²Ì¬·ÖÅäµÄÇé¿ö
+	}//elseb ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 }
 
 
 /***********************************************
-*º¯ÊýµÄ×÷ÓÃÊÇÈÃsub0£¬sub1µÄppnËùÔÚµÄpageÎ»ÖÃÏàÍ¬
-*Á½¸öÒ³Âú×ã¸ß¼¶ÃüÁîµÄÒªÇó
+*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½sub0ï¿½ï¿½sub1ï¿½ï¿½ppnï¿½ï¿½ï¿½Úµï¿½pageÎ»ï¿½ï¿½ï¿½ï¿½Í¬
+*ï¿½ï¿½ï¿½ï¿½Ò³ï¿½ï¿½ï¿½ï¿½ß¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½
 ************************************************/
 Status make_level_page(struct ssd_info * ssd, struct sub_request * sub0,struct sub_request * sub1)
 {
@@ -3034,9 +3034,9 @@ Status make_level_page(struct ssd_info * ssd, struct sub_request * sub0,struct s
 	old_plane_token=ssd->channel_head[channel].chip_head[chip].die_head[die].token;
 
 	/***********************************************************************************************
-	*¶¯Ì¬·ÖÅäµÄÇé¿öÏÂ
-	*sub1µÄplaneÊÇ¸ù¾Ýsub0µÄssd->channel_head[channel].chip_head[chip].die_head[die].tokenÁîÅÆ»ñÈ¡µÄ
-	*sub1µÄchannel£¬chip£¬die£¬block£¬page¶¼ºÍsub0µÄÏàÍ¬
+	*ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	*sub1ï¿½ï¿½planeï¿½Ç¸ï¿½ï¿½ï¿½sub0ï¿½ï¿½ssd->channel_head[channel].chip_head[chip].die_head[die].tokenï¿½ï¿½ï¿½Æ»ï¿½È¡ï¿½ï¿½
+	*sub1ï¿½ï¿½channelï¿½ï¿½chipï¿½ï¿½dieï¿½ï¿½blockï¿½ï¿½pageï¿½ï¿½ï¿½ï¿½sub0ï¿½ï¿½ï¿½ï¿½Í¬
 	************************************************************************************************/
 	if(ssd->parameter->allocation_scheme==DYNAMIC_ALLOCATION)                             
 	{
@@ -3046,13 +3046,13 @@ Status make_level_page(struct ssd_info * ssd, struct sub_request * sub0,struct s
 			plane1=ssd->channel_head[channel].chip_head[chip].die_head[die].token;
 			if(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane1].add_reg_ppn==-1)
 			{
-				find_active_block(ssd,channel,chip,die,plane1);                               /*ÔÚplane1ÖÐÕÒµ½»îÔ¾¿é*/
+				find_active_block(ssd,channel,chip,die,plane1);                               /*ï¿½ï¿½plane1ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½Ô¾ï¿½ï¿½*/
 				block1=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane1].active_block;
 
 				/*********************************************************************************************
-				*Ö»ÓÐÕÒµ½µÄblock1Óëblock0ÏàÍ¬£¬²ÅÄÜ¼ÌÐøÍùÏÂÑ°ÕÒÏàÍ¬µÄpage
-				*ÔÚÑ°ÕÒpageÊ±±È½Ï¼òµ¥£¬Ö±½ÓÓÃlast_write_page£¨ÉÏÒ»´ÎÐ´µÄpage£©+1¾Í¿ÉÒÔÁË¡£
-				*Èç¹ûÕÒµ½µÄpage²»ÏàÍ¬£¬ÄÇÃ´Èç¹ûssdÔÊÐíÌ°À·µÄÊ¹ÓÃ¸ß¼¶ÃüÁî£¬ÕâÑù¾Í¿ÉÒÔÈÃÐ¡µÄpage Íù´óµÄpage¿¿Â£
+				*Ö»ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½block1ï¿½ï¿½block0ï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½ï¿½Ü¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ°ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½page
+				*ï¿½ï¿½Ñ°ï¿½ï¿½pageÊ±ï¿½È½Ï¼òµ¥£ï¿½Ö±ï¿½ï¿½ï¿½ï¿½last_write_pageï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Ð´ï¿½ï¿½pageï¿½ï¿½+1ï¿½Í¿ï¿½ï¿½ï¿½ï¿½Ë¡ï¿½
+				*ï¿½ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½pageï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½Ã´ï¿½ï¿½ï¿½ssdï¿½ï¿½ï¿½ï¿½Ì°ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½Ã¸ß¼ï¿½ï¿½ï¿½ï¿½î£¬ï¿½ï¿½ï¿½ï¿½ï¿½Í¿ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½page ï¿½ï¿½ï¿½ï¿½ï¿½pageï¿½ï¿½Â£
 				*********************************************************************************************/
 				if(block1==block0)
 				{
@@ -3063,9 +3063,9 @@ Status make_level_page(struct ssd_info * ssd, struct sub_request * sub0,struct s
 					}
 					else if(page1<page0)
 					{
-						if (ssd->parameter->greed_MPW_ad==1)                                  /*ÔÊÐíÌ°À·µÄÊ¹ÓÃ¸ß¼¶ÃüÁî*/
+						if (ssd->parameter->greed_MPW_ad==1)                                  /*ï¿½ï¿½ï¿½ï¿½Ì°ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½Ã¸ß¼ï¿½ï¿½ï¿½ï¿½ï¿½*/
 						{                                                                   
-							//make_same_level(ssd,channel,chip,die,plane1,active_block1,page0); /*Ð¡µÄpageµØÖ·Íù´óµÄpageµØÖ·¿¿*/
+							//make_same_level(ssd,channel,chip,die,plane1,active_block1,page0); /*Ð¡ï¿½ï¿½pageï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½pageï¿½ï¿½Ö·ï¿½ï¿½*/
 							make_same_level(ssd,channel,chip,die,plane1,block1,page0);
 							break;
 						}    
@@ -3076,7 +3076,7 @@ Status make_level_page(struct ssd_info * ssd, struct sub_request * sub0,struct s
 		}//for(i=0;i<ssd->parameter->plane_die;i++)
 		if(i<ssd->parameter->plane_die)
 		{
-			flash_page_state_modify(ssd,sub1,channel,chip,die,plane1,block1,page0);          /*Õâ¸öº¯ÊýµÄ×÷ÓÃ¾ÍÊÇ¸üÐÂpage1Ëù¶ÔÓ¦µÄÎïÀíÒ³ÒÔ¼°location»¹ÓÐmap±í*/
+			flash_page_state_modify(ssd,sub1,channel,chip,die,plane1,block1,page0);          /*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¾ï¿½ï¿½Ç¸ï¿½ï¿½ï¿½page1ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³ï¿½Ô¼ï¿½locationï¿½ï¿½ï¿½ï¿½mapï¿½ï¿½*/
 			//flash_page_state_modify(ssd,sub1,channel,chip,die,plane1,block1,page1);
 			ssd->channel_head[channel].chip_head[chip].die_head[die].token=(plane1+1)%ssd->parameter->plane_die;
 			return SUCCESS;
@@ -3087,7 +3087,7 @@ Status make_level_page(struct ssd_info * ssd, struct sub_request * sub0,struct s
 			return FAILURE;
 		}
 	}
-	else                                                                                      /*¾²Ì¬·ÖÅäµÄÇé¿ö*/
+	else                                                                                      /*ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	{
 		if((sub1->location==NULL)||(sub1->location->channel!=channel)||(sub1->location->chip!=chip)||(sub1->location->die!=die))
 		{
@@ -3109,7 +3109,7 @@ Status make_level_page(struct ssd_info * ssd, struct sub_request * sub0,struct s
 				{
 					if (ssd->parameter->greed_MPW_ad==1)
 					{ 
-						//make_same_level(ssd,channel,chip,die,plane1,active_block1,page0);    /*Ð¡µÄpageµØÖ·Íù´óµÄpageµØÖ·¿¿*/
+						//make_same_level(ssd,channel,chip,die,plane1,active_block1,page0);    /*Ð¡ï¿½ï¿½pageï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½pageï¿½ï¿½Ö·ï¿½ï¿½*/
                         make_same_level(ssd,channel,chip,die,plane1,block1,page0);
 						flash_page_state_modify(ssd,sub1,channel,chip,die,plane1,block1,page0);
 						//flash_page_state_modify(ssd,sub1,channel,chip,die,plane1,block1,page1);
@@ -3143,9 +3143,9 @@ Status make_level_page(struct ssd_info * ssd, struct sub_request * sub0,struct s
 }
 
 /******************************************************************************************************
-*º¯ÊýµÄ¹¦ÄÜÊÇÎªtwo planeÃüÁîÑ°ÕÒ³öÁ½¸öÏàÍ¬Ë®Æ½Î»ÖÃµÄÒ³£¬²¢ÇÒÐÞ¸ÄÍ³¼ÆÖµ£¬ÐÞ¸ÄÒ³µÄ×´Ì¬
-*×¢ÒâÕâ¸öº¯ÊýÓëÉÏÒ»¸öº¯Êýmake_level_pageº¯ÊýµÄÇø±ð£¬make_level_pageÕâ¸öº¯ÊýÊÇÈÃsub1Óësub0µÄpageÎ»ÖÃÏàÍ¬
-*¶øfind_level_pageº¯ÊýµÄ×÷ÓÃÊÇÔÚ¸ø¶¨µÄchannel£¬chip£¬dieÖÐÕÒÁ½¸öÎ»ÖÃÏàÍ¬µÄsubAºÍsubB¡£
+*ï¿½ï¿½ï¿½ï¿½ï¿½Ä¹ï¿½ï¿½ï¿½ï¿½ï¿½Îªtwo planeï¿½ï¿½ï¿½ï¿½Ñ°ï¿½Ò³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬Ë®Æ½Î»ï¿½Ãµï¿½Ò³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Þ¸ï¿½Í³ï¿½ï¿½Öµï¿½ï¿½ï¿½Þ¸ï¿½Ò³ï¿½ï¿½×´Ì¬
+*×¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½make_level_pageï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½make_level_pageï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½sub1ï¿½ï¿½sub0ï¿½ï¿½pageÎ»ï¿½ï¿½ï¿½ï¿½Í¬
+*ï¿½ï¿½find_level_pageï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¸ï¿½ï¿½ï¿½ï¿½ï¿½channelï¿½ï¿½chipï¿½ï¿½dieï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½subAï¿½ï¿½subBï¿½ï¿½
 *******************************************************************************************************/
 Status find_level_page(struct ssd_info *ssd,unsigned int channel,unsigned int chip,unsigned int die,struct sub_request *subA,struct sub_request *subB)       
 {
@@ -3155,9 +3155,9 @@ Status find_level_page(struct ssd_info *ssd,unsigned int channel,unsigned int ch
 	old_plane=ssd->channel_head[channel].chip_head[chip].die_head[die].token;
     
 	/************************************************************
-	*ÔÚ¶¯Ì¬·ÖÅäµÄÇé¿öÏÂ
-	*planeA¸³³õÖµÎªdieµÄÁîÅÆ£¬Èç¹ûplaneAÊÇÅ¼ÊýÄÇÃ´planeB=planeA+1
-	*planeAÊÇÆæÊý£¬ÄÇÃ´planeA+1±äÎªÅ¼Êý£¬ÔÙÁîplaneB=planeA+1
+	*ï¿½Ú¶ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	*planeAï¿½ï¿½ï¿½ï¿½ÖµÎªdieï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½ï¿½ï¿½ï¿½planeAï¿½ï¿½Å¼ï¿½ï¿½ï¿½ï¿½Ã´planeB=planeA+1
+	*planeAï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã´planeA+1ï¿½ï¿½ÎªÅ¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½planeB=planeA+1
 	*************************************************************/
 	if (ssd->parameter->allocation_scheme==0)                                                
 	{
@@ -3174,12 +3174,12 @@ Status find_level_page(struct ssd_info *ssd,unsigned int channel,unsigned int ch
 			ssd->channel_head[channel].chip_head[chip].die_head[die].token=(ssd->channel_head[channel].chip_head[chip].die_head[die].token+3)%ssd->parameter->plane_die;
 		}
 	} 
-	else                                                                                     /*¾²Ì¬·ÖÅäµÄÇé¿ö£¬¾ÍÖ±½Ó¸³Öµ¸øplaneAºÍplaneB*/
+	else                                                                                     /*ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Ó¸ï¿½Öµï¿½ï¿½planeAï¿½ï¿½planeB*/
 	{
 		planeA=subA->location->plane;
 		planeB=subB->location->plane;
 	}
-	find_active_block(ssd,channel,chip,die,planeA);                                          /*Ñ°ÕÒactive_block*/
+	find_active_block(ssd,channel,chip,die,planeA);                                          /*Ñ°ï¿½ï¿½active_block*/
 	find_active_block(ssd,channel,chip,die,planeB);
 	active_blockA=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[planeA].active_block;
 	active_blockB=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[planeB].active_block;
@@ -3187,26 +3187,26 @@ Status find_level_page(struct ssd_info *ssd,unsigned int channel,unsigned int ch
 	
     
 	/*****************************************************
-	*Èç¹ûactive_blockÏàÍ¬£¬ÄÇÃ´¾ÍÔÚÕâÁ½¸ö¿éÖÐÕÒÏàÍ¬µÄpage
-	*»òÕßÊ¹ÓÃÌ°À·µÄ·½·¨ÕÒµ½Á½¸öÏàÍ¬µÄpage
+	*ï¿½ï¿½ï¿½active_blockï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½Ã´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½page
+	*ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½Ì°ï¿½ï¿½ï¿½Ä·ï¿½ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½page
 	******************************************************/
 	if (active_blockA==active_blockB)
 	{
 		pageA=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[planeA].blk_head[active_blockA].last_write_page+1;      
 		pageB=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[planeB].blk_head[active_blockB].last_write_page+1;
-		if (pageA==pageB)                                                                    /*Á½¸ö¿ÉÓÃµÄÒ³ÕýºÃÔÚÍ¬Ò»¸öË®Æ½Î»ÖÃÉÏ*/
+		if (pageA==pageB)                                                                    /*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½Ò³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬Ò»ï¿½ï¿½Ë®Æ½Î»ï¿½ï¿½ï¿½ï¿½*/
 		{
 			flash_page_state_modify(ssd,subA,channel,chip,die,planeA,active_blockA,pageA);
 			flash_page_state_modify(ssd,subB,channel,chip,die,planeB,active_blockB,pageB);
 		} 
 		else
 		{
-			if (ssd->parameter->greed_MPW_ad==1)                                             /*Ì°À·µØÊ¹ÓÃ¸ß¼¶ÃüÁî*/
+			if (ssd->parameter->greed_MPW_ad==1)                                             /*Ì°ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½Ã¸ß¼ï¿½ï¿½ï¿½ï¿½ï¿½*/
 			{
 				if (pageA<pageB)                                                            
 				{
 					aim_page=pageB;
-					make_same_level(ssd,channel,chip,die,planeA,active_blockA,aim_page);     /*Ð¡µÄpageµØÖ·Íù´óµÄpageµØÖ·¿¿*/
+					make_same_level(ssd,channel,chip,die,planeA,active_blockA,aim_page);     /*Ð¡ï¿½ï¿½pageï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½pageï¿½ï¿½Ö·ï¿½ï¿½*/
 				}
 				else
 				{
@@ -3216,7 +3216,7 @@ Status find_level_page(struct ssd_info *ssd,unsigned int channel,unsigned int ch
 				flash_page_state_modify(ssd,subA,channel,chip,die,planeA,active_blockA,aim_page);
 				flash_page_state_modify(ssd,subB,channel,chip,die,planeB,active_blockB,aim_page);
 			} 
-			else                                                                             /*²»ÄÜÌ°À·µÄÊ¹ÓÃ¸ß¼¶ÃüÁî*/
+			else                                                                             /*ï¿½ï¿½ï¿½ï¿½Ì°ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½Ã¸ß¼ï¿½ï¿½ï¿½ï¿½ï¿½*/
 			{
 				subA=NULL;
 				subB=NULL;
@@ -3226,7 +3226,7 @@ Status find_level_page(struct ssd_info *ssd,unsigned int channel,unsigned int ch
 		}
 	}
 	/*********************************
-	*Èç¹ûÕÒµ½µÄÁ½¸öactive_block²»ÏàÍ¬
+	*ï¿½ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½active_blockï¿½ï¿½ï¿½ï¿½Í¬
 	**********************************/
 	else
 	{   
@@ -3234,12 +3234,12 @@ Status find_level_page(struct ssd_info *ssd,unsigned int channel,unsigned int ch
 		pageB=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[planeB].blk_head[active_blockB].last_write_page+1;
 		if (pageA<pageB)
 		{
-			if (ssd->parameter->greed_MPW_ad==1)                                             /*Ì°À·µØÊ¹ÓÃ¸ß¼¶ÃüÁî*/
+			if (ssd->parameter->greed_MPW_ad==1)                                             /*Ì°ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½Ã¸ß¼ï¿½ï¿½ï¿½ï¿½ï¿½*/
 			{
 				/*******************************************************************************
-				*ÔÚplaneAÖÐ£¬Óëactive_blockBÏàÍ¬Î»ÖÃµÄµÄblockÖÐ£¬ÓëpageBÏàÍ¬Î»ÖÃµÄpageÊÇ¿ÉÓÃµÄ¡£
-				*Ò²¾ÍÊÇpalneAÖÐµÄÏàÓ¦Ë®Æ½Î»ÖÃÊÇ¿ÉÓÃµÄ£¬½«Æä×îÎªÓëplaneBÖÐ¶ÔÓ¦µÄÒ³¡£
-				*ÄÇÃ´¿ÉÒ²ÈÃplaneA£¬active_blockBÖÐµÄpageÍùpageB¿¿Â£
+				*ï¿½ï¿½planeAï¿½Ð£ï¿½ï¿½ï¿½active_blockBï¿½ï¿½Í¬Î»ï¿½ÃµÄµï¿½blockï¿½Ð£ï¿½ï¿½ï¿½pageBï¿½ï¿½Í¬Î»ï¿½Ãµï¿½pageï¿½Ç¿ï¿½ï¿½ÃµÄ¡ï¿½
+				*Ò²ï¿½ï¿½ï¿½ï¿½palneAï¿½Ðµï¿½ï¿½ï¿½Ó¦Ë®Æ½Î»ï¿½ï¿½ï¿½Ç¿ï¿½ï¿½ÃµÄ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½planeBï¿½Ð¶ï¿½Ó¦ï¿½ï¿½Ò³ï¿½ï¿½
+				*ï¿½ï¿½Ã´ï¿½ï¿½Ò²ï¿½ï¿½planeAï¿½ï¿½active_blockBï¿½Ðµï¿½pageï¿½ï¿½pageBï¿½ï¿½Â£
 				********************************************************************************/
 				if (ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[planeA].blk_head[active_blockB].page_head[pageB].free_state==PG_SUB)    
 				{
@@ -3248,8 +3248,8 @@ Status find_level_page(struct ssd_info *ssd,unsigned int channel,unsigned int ch
 					flash_page_state_modify(ssd,subB,channel,chip,die,planeB,active_blockB,pageB);
 				}
                 /********************************************************************************
-				*ÔÚplaneAÖÐ£¬Óëactive_blockBÏàÍ¬Î»ÖÃµÄµÄblockÖÐ£¬ÓëpageBÏàÍ¬Î»ÖÃµÄpageÊÇ¿ÉÓÃµÄ¡£
-				*ÄÇÃ´¾ÍÒªÖØÐÂÑ°ÕÒblock£¬ÐèÒªÖØÐÂÕÒË®Æ½Î»ÖÃÏàÍ¬µÄÒ»¶ÔÒ³
+				*ï¿½ï¿½planeAï¿½Ð£ï¿½ï¿½ï¿½active_blockBï¿½ï¿½Í¬Î»ï¿½ÃµÄµï¿½blockï¿½Ð£ï¿½ï¿½ï¿½pageBï¿½ï¿½Í¬Î»ï¿½Ãµï¿½pageï¿½Ç¿ï¿½ï¿½ÃµÄ¡ï¿½
+				*ï¿½ï¿½Ã´ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Ñ°ï¿½ï¿½blockï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë®Æ½Î»ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½Ò»ï¿½ï¿½Ò³
 				*********************************************************************************/
 				else    
 				{
@@ -3358,9 +3358,9 @@ Status find_level_page(struct ssd_info *ssd,unsigned int channel,unsigned int ch
 				if ((pageA==pageB)&&(pageA==0))
 				{
 					/*******************************************************************************************
-					*ÏÂÃæÊÇÁ½ÖÖÇé¿ö
-					*1£¬planeA£¬planeBÖÐµÄactive_blockA£¬pageAÎ»ÖÃ¶¼¿ÉÓÃ£¬ÄÇÃ´²»Í¬plane µÄÏàÍ¬Î»ÖÃ£¬ÒÔblockAÎª×¼
-					*2£¬planeA£¬planeBÖÐµÄactive_blockB£¬pageAÎ»ÖÃ¶¼¿ÉÓÃ£¬ÄÇÃ´²»Í¬plane µÄÏàÍ¬Î»ÖÃ£¬ÒÔblockBÎª×¼
+					*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+					*1ï¿½ï¿½planeAï¿½ï¿½planeBï¿½Ðµï¿½active_blockAï¿½ï¿½pageAÎ»ï¿½Ã¶ï¿½ï¿½ï¿½ï¿½Ã£ï¿½ï¿½ï¿½Ã´ï¿½ï¿½Í¬plane ï¿½ï¿½ï¿½ï¿½Í¬Î»ï¿½Ã£ï¿½ï¿½ï¿½blockAÎª×¼
+					*2ï¿½ï¿½planeAï¿½ï¿½planeBï¿½Ðµï¿½active_blockBï¿½ï¿½pageAÎ»ï¿½Ã¶ï¿½ï¿½ï¿½ï¿½Ã£ï¿½ï¿½ï¿½Ã´ï¿½ï¿½Í¬plane ï¿½ï¿½ï¿½ï¿½Í¬Î»ï¿½Ã£ï¿½ï¿½ï¿½blockBÎª×¼
 					********************************************************************************************/
 					if ((ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[planeA].blk_head[active_blockA].page_head[pageA].free_state==PG_SUB)
 					  &&(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[planeB].blk_head[active_blockA].page_head[pageA].free_state==PG_SUB))
@@ -3434,7 +3434,7 @@ Status find_level_page(struct ssd_info *ssd,unsigned int channel,unsigned int ch
 }
 
 /*
-*º¯ÊýµÄ¹¦ÄÜÊÇÐÞ¸ÄÕÒµ½µÄpageÒ³µÄ×´Ì¬ÒÔ¼°ÏàÓ¦µÄdramÖÐÓ³Éä±íµÄÖµ
+*ï¿½ï¿½ï¿½ï¿½ï¿½Ä¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Þ¸ï¿½ï¿½Òµï¿½ï¿½ï¿½pageÒ³ï¿½ï¿½×´Ì¬ï¿½Ô¼ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½dramï¿½ï¿½Ó³ï¿½ï¿½ï¿½ï¿½Öµ
 */
 struct ssd_info *flash_page_state_modify(struct ssd_info *ssd,struct sub_request *sub,unsigned int channel,unsigned int chip,unsigned int die,unsigned int plane,unsigned int block,unsigned int page)
 {
@@ -3457,16 +3457,16 @@ struct ssd_info *flash_page_state_modify(struct ssd_info *ssd,struct sub_request
 		ssd->dram->map->map_entry[sub->lpn].pn=find_ppn(ssd,channel,chip,die,plane,block,page);
 		ssd->dram->map->map_entry[sub->lpn].state=sub->state;
 	}
-	else                                                                                      /*Õâ¸öÂß¼­Ò³½øÐÐÁË¸üÐÂ£¬ÐèÒª½«Ô­À´µÄÒ³ÖÃÎªÊ§Ð§*/
+	else                                                                                      /*ï¿½ï¿½ï¿½ï¿½ß¼ï¿½Ò³ï¿½ï¿½ï¿½ï¿½ï¿½Ë¸ï¿½ï¿½Â£ï¿½ï¿½ï¿½Òªï¿½ï¿½Ô­ï¿½ï¿½ï¿½ï¿½Ò³ï¿½ï¿½ÎªÊ§Ð§*/
 	{
 		ppn=ssd->dram->map->map_entry[sub->lpn].pn;
 		location=find_location(ssd,ppn);
-		ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].page_head[location->page].valid_state=0;        //±íÊ¾Ä³Ò»Ò³Ê§Ð§£¬Í¬Ê±±ê¼ÇvalidºÍfree×´Ì¬¶¼Îª0
-		ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].page_head[location->page].free_state=0;         //±íÊ¾Ä³Ò»Ò³Ê§Ð§£¬Í¬Ê±±ê¼ÇvalidºÍfree×´Ì¬¶¼Îª0
+		ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].page_head[location->page].valid_state=0;        //ï¿½ï¿½Ê¾Ä³Ò»Ò³Ê§Ð§ï¿½ï¿½Í¬Ê±ï¿½ï¿½ï¿½validï¿½ï¿½free×´Ì¬ï¿½ï¿½Îª0
+		ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].page_head[location->page].free_state=0;         //ï¿½ï¿½Ê¾Ä³Ò»Ò³Ê§Ð§ï¿½ï¿½Í¬Ê±ï¿½ï¿½ï¿½validï¿½ï¿½free×´Ì¬ï¿½ï¿½Îª0
 		ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].page_head[location->page].lpn=0;
 		ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].invalid_page_num++;
 		ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].invalid_page++;
-		if (ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].invalid_page_num==ssd->parameter->page_block)    //¸ÃblockÖÐÈ«ÊÇinvalidµÄÒ³£¬¿ÉÒÔÖ±½ÓÉ¾³ý
+		if (ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].invalid_page_num==ssd->parameter->page_block)    //ï¿½ï¿½blockï¿½ï¿½È«ï¿½ï¿½invalidï¿½ï¿½Ò³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½ï¿½É¾ï¿½ï¿½
 		{
 			new_direct_erase=(struct direct_erase *)malloc(sizeof(struct direct_erase));
 			alloc_assert(new_direct_erase,"new_direct_erase");
@@ -3513,19 +3513,19 @@ struct ssd_info *flash_page_state_modify(struct ssd_info *ssd,struct sub_request
 
 
 /********************************************
-*º¯ÊýµÄ¹¦ÄÜ¾ÍÊÇÈÃÁ½¸öÎ»ÖÃ²»Í¬µÄpageÎ»ÖÃÏàÍ¬
+*ï¿½ï¿½ï¿½ï¿½ï¿½Ä¹ï¿½ï¿½Ü¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½Ã²ï¿½Í¬ï¿½ï¿½pageÎ»ï¿½ï¿½ï¿½ï¿½Í¬
 *********************************************/
 struct ssd_info *make_same_level(struct ssd_info *ssd,unsigned int channel,unsigned int chip,unsigned int die,unsigned int plane,unsigned int block,unsigned int aim_page)
 {
 	int i=0,step,page;
 	struct direct_erase *new_direct_erase,*direct_erase_node;
 
-	page=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[block].last_write_page+1;                  /*ÐèÒªµ÷ÕûµÄµ±Ç°¿éµÄ¿ÉÐ´Ò³ºÅ*/
+	page=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[block].last_write_page+1;                  /*ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Äµï¿½Ç°ï¿½ï¿½Ä¿ï¿½Ð´Ò³ï¿½ï¿½*/
 	step=aim_page-page;
 	while (i<step)
 	{
-		ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[block].page_head[page+i].valid_state=0;     /*±íÊ¾Ä³Ò»Ò³Ê§Ð§£¬Í¬Ê±±ê¼ÇvalidºÍfree×´Ì¬¶¼Îª0*/
-		ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[block].page_head[page+i].free_state=0;      /*±íÊ¾Ä³Ò»Ò³Ê§Ð§£¬Í¬Ê±±ê¼ÇvalidºÍfree×´Ì¬¶¼Îª0*/
+		ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[block].page_head[page+i].valid_state=0;     /*ï¿½ï¿½Ê¾Ä³Ò»Ò³Ê§Ð§ï¿½ï¿½Í¬Ê±ï¿½ï¿½ï¿½validï¿½ï¿½free×´Ì¬ï¿½ï¿½Îª0*/
+		ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[block].page_head[page+i].free_state=0;      /*ï¿½ï¿½Ê¾Ä³Ò»Ò³Ê§Ð§ï¿½ï¿½Í¬Ê±ï¿½ï¿½ï¿½validï¿½ï¿½free×´Ì¬ï¿½ï¿½Îª0*/
 		ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[block].page_head[page+i].lpn=0;
 
 		ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[block].invalid_page_num++;
@@ -3537,11 +3537,11 @@ struct ssd_info *make_same_level(struct ssd_info *ssd,unsigned int channel,unsig
 		i++;
 	}
 
-	ssd->waste_page_count+=step;//Ö®Ç°µÄÒ³¶¼ÀË·ÑµôÁË
+	ssd->waste_page_count+=step;//Ö®Ç°ï¿½ï¿½Ò³ï¿½ï¿½ï¿½Ë·Ñµï¿½ï¿½ï¿½
 
 	ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[block].last_write_page=aim_page-1;
 
-	if (ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[block].invalid_page_num==ssd->parameter->page_block)    /*¸ÃblockÖÐÈ«ÊÇinvalidµÄÒ³£¬¿ÉÒÔÖ±½ÓÉ¾³ý*/
+	if (ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[block].invalid_page_num==ssd->parameter->page_block)    /*ï¿½ï¿½blockï¿½ï¿½È«ï¿½ï¿½invalidï¿½ï¿½Ò³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½ï¿½É¾ï¿½ï¿½*/
 	{
 		new_direct_erase=(struct direct_erase *)malloc(sizeof(struct direct_erase));
 		alloc_assert(new_direct_erase,"new_direct_erase");
@@ -3570,9 +3570,9 @@ struct ssd_info *make_same_level(struct ssd_info *ssd,unsigned int channel,unsig
 
 
 /****************************************************************************
-*ÔÚ´¦Àí¸ß¼¶ÃüÁîµÄÐ´×ÓÇëÇóÊ±£¬Õâ¸öº¯ÊýµÄ¹¦ÄÜ¾ÍÊÇ¼ÆËã´¦ÀíÊ±¼äÒÔ¼°´¦ÀíµÄ×´Ì¬×ª±ä
-*¹¦ÄÜ»¹²»ÊÇºÜÍêÉÆ£¬ÐèÒªÍêÉÆ£¬ÐÞ¸ÄÊ±×¢ÒâÒª·ÖÎª¾²Ì¬·ÖÅäºÍ¶¯Ì¬·ÖÅäÁ½ÖÖÇé¿ö
-KXC£ºÔÚ´¦Àí¸ß¼¶ÃüÁîÊ±µ÷ÓÃ£¬²»ÊÇºÜ¶®
+*ï¿½Ú´ï¿½ï¿½ï¿½ß¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¹ï¿½ï¿½Ü¾ï¿½ï¿½Ç¼ï¿½ï¿½ã´¦ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬×ªï¿½ï¿½
+*ï¿½ï¿½ï¿½Ü»ï¿½ï¿½ï¿½ï¿½Çºï¿½ï¿½ï¿½ï¿½Æ£ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Æ£ï¿½ï¿½Þ¸ï¿½Ê±×¢ï¿½ï¿½Òªï¿½ï¿½Îªï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½Í¶ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+KXCï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½ß¼ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ã£ï¿½ï¿½ï¿½ï¿½ÇºÜ¶ï¿½
 *****************************************************************************/
 struct ssd_info *compute_serve_time(struct ssd_info *ssd,unsigned int channel,unsigned int chip,unsigned int die,struct sub_request **subs, unsigned int subs_count,unsigned int command)
 {
@@ -3708,16 +3708,16 @@ struct ssd_info *compute_serve_time(struct ssd_info *ssd,unsigned int channel,un
 
 
 /*****************************************************************************************
-*º¯ÊýµÄ¹¦ÄÜ¾ÍÊÇ°Ñ×ÓÇëÇó´Óssd->subs_w_head»òÕßssd->channel_head[channel].subs_w_headÉÏÉ¾³ý
-*Ö»É¾³ýÐ´×ÓÇëÇó,¶ÁÇëÇóÔÚÍê³ÉÊ±¾ÍÖ±½ÓÉ¾µôÁË
+*ï¿½ï¿½ï¿½ï¿½ï¿½Ä¹ï¿½ï¿½Ü¾ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ssd->subs_w_headï¿½ï¿½ï¿½ï¿½ssd->channel_head[channel].subs_w_headï¿½ï¿½É¾ï¿½ï¿½
+*Ö»É¾ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Ö±ï¿½ï¿½É¾ï¿½ï¿½ï¿½ï¿½
 ******************************************************************************************/
 struct ssd_info *delete_from_channel(struct ssd_info *ssd,unsigned int channel,struct sub_request * sub_req)
 {
 	struct sub_request *sub,*p;
     
 	/******************************************************************
-	*ÍêÈ«¶¯Ì¬·ÖÅä×ÓÇëÇó¾ÍÔÚssd->subs_w_headÉÏ
-	*²»ÊÇÍêÈ«¶¯Ì¬·ÖÅä×ÓÇëÇó¾ÍÔÚssd->channel_head[channel].subs_w_headÉÏ
+	*ï¿½ï¿½È«ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ssd->subs_w_headï¿½ï¿½
+	*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ssd->channel_head[channel].subs_w_headï¿½ï¿½
 	*******************************************************************/
 	if ((ssd->parameter->allocation_scheme==0)&&(ssd->parameter->dynamic_allocation==0))    
 	{
@@ -3740,7 +3740,7 @@ struct ssd_info *delete_from_channel(struct ssd_info *ssd,unsigned int channel,s
 					ssd->real_time_subreq--;
 				}
 				
-				if (sub==ssd->subs_w_head)                                                     /*½«Õâ¸ö×ÓÇëÇó´Ósub request¶ÓÁÐÖÐÉ¾³ý*/
+				if (sub==ssd->subs_w_head)                                                     /*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½sub requestï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½*/
 				{
 					if (ssd->subs_w_head!=ssd->subs_w_tail)
 					{
@@ -3774,7 +3774,7 @@ struct ssd_info *delete_from_channel(struct ssd_info *ssd,unsigned int channel,s
 			}//if ((ssd->parameter->allocation_scheme==0)&&(ssd->parameter->dynamic_allocation==0)) 
 			else
 			{
-				if (sub==ssd->channel_head[channel].subs_w_head)                               /*½«Õâ¸ö×ÓÇëÇó´Óchannel¶ÓÁÐÖÐÉ¾³ý*/
+				if (sub==ssd->channel_head[channel].subs_w_head)                               /*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½channelï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½*/
 				{
 					if (ssd->channel_head[channel].subs_w_head!=ssd->channel_head[channel].subs_w_tail)
 					{
@@ -3820,11 +3820,11 @@ struct ssd_info *un_greed_interleave_copyback(struct ssd_info *ssd,unsigned int 
 	unsigned int old_ppn1,ppn1,old_ppn2,ppn2,greed_flag=0;
 
 	old_ppn1=ssd->dram->map->map_entry[sub1->lpn].pn;
-	get_ppn(ssd,channel,chip,die,sub1->location->plane,sub1);                                  /*ÕÒ³öÀ´µÄppnÒ»¶¨ÊÇ·¢ÉúÔÚÓë×ÓÇëÇóÏàÍ¬µÄplaneÖÐ,²ÅÄÜÊ¹ÓÃcopyback²Ù×÷*/
+	get_ppn(ssd,channel,chip,die,sub1->location->plane,sub1);                                  /*ï¿½Ò³ï¿½ï¿½ï¿½ï¿½ï¿½ppnÒ»ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½planeï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½copybackï¿½ï¿½ï¿½ï¿½*/
 	ppn1=sub1->ppn;
 
 	old_ppn2=ssd->dram->map->map_entry[sub2->lpn].pn;
-	get_ppn(ssd,channel,chip,die,sub2->location->plane,sub2);                                  /*ÕÒ³öÀ´µÄppnÒ»¶¨ÊÇ·¢ÉúÔÚÓë×ÓÇëÇóÏàÍ¬µÄplaneÖÐ,²ÅÄÜÊ¹ÓÃcopyback²Ù×÷*/
+	get_ppn(ssd,channel,chip,die,sub2->location->plane,sub2);                                  /*ï¿½Ò³ï¿½ï¿½ï¿½ï¿½ï¿½ppnÒ»ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½planeï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½copybackï¿½ï¿½ï¿½ï¿½*/
 	ppn2=sub2->ppn;
 
 	if ((old_ppn1%2==ppn1%2)&&(old_ppn2%2==ppn2%2))
@@ -3929,21 +3929,21 @@ struct ssd_info *un_greed_interleave_copyback(struct ssd_info *ssd,unsigned int 
 	return ssd;
 }
 
-//Õâ¸öº¯ÊýÃ»ÓÐ±»µ÷ÓÃ¹ý£¬Ïà¹ØµÄ¹¦ÄÜÔÚgc()Õâ¸öº¯ÊýÖÐÒ²ÓÐ
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½Ð±ï¿½ï¿½ï¿½ï¿½Ã¹ï¿½ï¿½ï¿½ï¿½ï¿½ØµÄ¹ï¿½ï¿½ï¿½ï¿½ï¿½gc()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò²ï¿½ï¿½
 struct ssd_info *un_greed_copyback(struct ssd_info *ssd,unsigned int channel,unsigned int chip,unsigned int die,struct sub_request *sub1)
 {
 	unsigned int old_ppn,ppn;
 
 	old_ppn=ssd->dram->map->map_entry[sub1->lpn].pn;
-	get_ppn(ssd,channel,chip,die,0,sub1);                                                     /*ÕÒ³öÀ´µÄppnÒ»¶¨ÊÇ·¢ÉúÔÚÓë×ÓÇëÇóÏàÍ¬µÄplaneÖÐ,²ÅÄÜÊ¹ÓÃcopyback²Ù×÷*/
+	get_ppn(ssd,channel,chip,die,0,sub1);                                                     /*ï¿½Ò³ï¿½ï¿½ï¿½ï¿½ï¿½ppnÒ»ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½planeï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½copybackï¿½ï¿½ï¿½ï¿½*/
 	ppn=sub1->ppn;
 	
-	if (old_ppn%2==ppn%2)        //ÆæÅ¼Ð£ÑéÒ»ÖÂ
+	if (old_ppn%2==ppn%2)        //ï¿½ï¿½Å¼Ð£ï¿½ï¿½Ò»ï¿½ï¿½
 	{
 		ssd->copy_back_count++;
 		sub1->current_state=SR_W_TRANSFER;
 		sub1->current_time=ssd->current_time;
-		sub1->next_state=SR_COMPLETE;  //ÕâÀïµÄÊ±¼ä°üÀ¨¶Á³ö´«ÊäÖÁ¼Ä´æÆ÷µÄÊ±¼ä£¬ÓÃtWC¶ø²»ÓÃtPROG£¬²»ÊÇºÜÇå³þ£¬ÔÚ¼ÆËãÐ¾Æ¬µÄÏÂ¸ö×´Ì¬µÄÔ¤²âÊ±¼äÓÃµÄÊÇtPROG£¬ÕâÀïµÄsub->sizeÖ¸µÄÊÇÉÈÇøÊýÁ¿
+		sub1->next_state=SR_COMPLETE;  //ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ä£¬ï¿½ï¿½tWCï¿½ï¿½ï¿½ï¿½ï¿½ï¿½tPROGï¿½ï¿½ï¿½ï¿½ï¿½Çºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¼ï¿½ï¿½ï¿½Ð¾Æ¬ï¿½ï¿½ï¿½Â¸ï¿½×´Ì¬ï¿½ï¿½Ô¤ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½tPROGï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½sub->sizeÖ¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		sub1->next_state_predict_time=ssd->current_time+14*ssd->parameter->time_characteristics.tWC+ssd->parameter->time_characteristics.tR+(sub1->size*ssd->parameter->subpage_capacity)*ssd->parameter->time_characteristics.tWC;
 		sub1->complete_time=sub1->next_state_predict_time;
 
@@ -3961,7 +3961,7 @@ struct ssd_info *un_greed_copyback(struct ssd_info *ssd,unsigned int channel,uns
 	{
 		sub1->current_state=SR_W_TRANSFER;
 		sub1->current_time=ssd->current_time;
-		sub1->next_state=SR_COMPLETE;   //ÕâÀï·ÇÌ°ÐÄ²ßÂÔ£¬ÆæÅ¼Ð£Ñé²»Í¨¹ý£¬Ç¨ÒÆµ½ÁíÒ»¸öplaneÀï£¬Òò´ËÁ½±¶×ÜÏß´«ÊäÊ±¼ä£¨twc£©
+		sub1->next_state=SR_COMPLETE;   //ï¿½ï¿½ï¿½ï¿½ï¿½Ì°ï¿½Ä²ï¿½ï¿½Ô£ï¿½ï¿½ï¿½Å¼Ð£ï¿½é²»Í¨ï¿½ï¿½ï¿½ï¿½Ç¨ï¿½Æµï¿½ï¿½ï¿½Ò»ï¿½ï¿½planeï¿½ï£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß´ï¿½ï¿½ï¿½Ê±ï¿½ä£¨twcï¿½ï¿½
 		sub1->next_state_predict_time=ssd->current_time+14*ssd->parameter->time_characteristics.tWC+ssd->parameter->time_characteristics.tR+2*(ssd->parameter->subpage_page*ssd->parameter->subpage_capacity)*ssd->parameter->time_characteristics.tWC;
 		sub1->complete_time=sub1->next_state_predict_time;
 
@@ -3983,8 +3983,8 @@ struct ssd_info *un_greed_copyback(struct ssd_info *ssd,unsigned int channel,uns
 
 
 /****************************************************************************************
-*º¯ÊýµÄ¹¦ÄÜÊÇÔÚ´¦Àí¶Á×ÓÇëÇóµÄ¸ß¼¶ÃüÁîÊ±£¬ÐèÒªÕÒÓëone_pageÏàÆ¥ÅäµÄÁíÍâÒ»¸öpage¼´two_page
-*Ã»ÓÐÕÒµ½¿ÉÒÔºÍone_pageÖ´ÐÐtwo plane»òÕßinterleave²Ù×÷µÄÒ³,ÐèÒª½«one_pageÏòºóÒÆÒ»¸ö½Úµã
+*ï¿½ï¿½ï¿½ï¿½ï¿½Ä¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ß¼ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½one_pageï¿½ï¿½Æ¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½pageï¿½ï¿½two_page
+*Ã»ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½Ôºï¿½one_pageÖ´ï¿½ï¿½two planeï¿½ï¿½ï¿½ï¿½interleaveï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³,ï¿½ï¿½Òªï¿½ï¿½one_pageï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Úµï¿½
 *****************************************************************************************/
 struct sub_request *find_interleave_twoplane_page(struct ssd_info *ssd, struct sub_request *one_page,unsigned int command)
 {
@@ -4010,7 +4010,7 @@ struct sub_request *find_interleave_twoplane_page(struct ssd_info *ssd, struct s
 				{
 					if (one_page->location->plane!=two_page->location->plane)
 					{
-						return two_page;                                                       /*ÕÒµ½ÁËÓëone_page¿ÉÒÔÖ´ÐÐtwo plane²Ù×÷µÄÒ³*/
+						return two_page;                                                       /*ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½one_pageï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½two planeï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³*/
 					}
 					else
 					{
@@ -4022,7 +4022,7 @@ struct sub_request *find_interleave_twoplane_page(struct ssd_info *ssd, struct s
 					two_page=two_page->next_node;
 				}
 		     }//while (two_page!=NULL)
-		    if (two_page==NULL)                                                               /*Ã»ÓÐÕÒµ½¿ÉÒÔºÍone_pageÖ´ÐÐtwo_plane²Ù×÷µÄÒ³,ÐèÒª½«one_pageÏòºóÒÆÒ»¸ö½Úµã*/
+		    if (two_page==NULL)                                                               /*Ã»ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½Ôºï¿½one_pageÖ´ï¿½ï¿½two_planeï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³,ï¿½ï¿½Òªï¿½ï¿½one_pageï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Úµï¿½*/
 		    {
 				return NULL;
 			}
@@ -4037,14 +4037,14 @@ struct sub_request *find_interleave_twoplane_page(struct ssd_info *ssd, struct s
 				}
 				else if ((one_page->location->chip==two_page->location->chip)&&(one_page->location->die!=two_page->location->die))
 				{
-					return two_page;                                                           /*ÕÒµ½ÁËÓëone_page¿ÉÒÔÖ´ÐÐinterleave²Ù×÷µÄÒ³*/
+					return two_page;                                                           /*ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½one_pageï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½interleaveï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³*/
 				}
 				else
 				{
 					two_page=two_page->next_node;
 				}
 		     }
-		    if (two_page==NULL)                                                                /*Ã»ÓÐÕÒµ½¿ÉÒÔºÍone_pageÖ´ÐÐinterleave²Ù×÷µÄÒ³,ÐèÒª½«one_pageÏòºóÒÆÒ»¸ö½Úµã*/
+		    if (two_page==NULL)                                                                /*Ã»ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½Ôºï¿½one_pageÖ´ï¿½ï¿½interleaveï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³,ï¿½ï¿½Òªï¿½ï¿½one_pageï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Úµï¿½*/
 		    {
 				return NULL;
 			}//while (two_page!=NULL)
@@ -4058,19 +4058,19 @@ struct sub_request *find_interleave_twoplane_page(struct ssd_info *ssd, struct s
 
 
 /*************************************************************************
-*ÔÚ´¦Àí¶Á×ÓÇëÇó¸ß¼¶ÃüÁîÊ±£¬ÀûÓÃÕâ¸ö»¹ÊÇ²éÕÒ¿ÉÒÔÖ´ÐÐ¸ß¼¶ÃüÁîµÄsub_request
+*ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¼ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç²ï¿½ï¿½Ò¿ï¿½ï¿½ï¿½Ö´ï¿½Ð¸ß¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½sub_request
 **************************************************************************/
 int find_interleave_twoplane_sub_request(struct ssd_info * ssd, unsigned int channel,struct sub_request * sub_request_one,struct sub_request * sub_request_two,unsigned int command)
 {
 	sub_request_one=ssd->channel_head[channel].subs_r_head;
 	while (sub_request_one!=NULL)
 	{
-		sub_request_two=find_interleave_twoplane_page(ssd,sub_request_one,command);                /*ÕÒ³öÁ½¸ö¿ÉÒÔ×ötwo_plane»òÕßinterleaveµÄread×ÓÇëÇó£¬°üÀ¨Î»ÖÃÌõ¼þºÍÊ±¼äÌõ¼þ*/
+		sub_request_two=find_interleave_twoplane_page(ssd,sub_request_one,command);                /*ï¿½Ò³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½two_planeï¿½ï¿½ï¿½ï¿½interleaveï¿½ï¿½readï¿½ï¿½ï¿½ï¿½ï¿½ó£¬°ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 		if (sub_request_two==NULL)
 		{
 			sub_request_one=sub_request_one->next_node;
 		}
-		else if (sub_request_two!=NULL)                                                            /*ÕÒµ½ÁËÁ½¸ö¿ÉÒÔÖ´ÐÐtwo plane²Ù×÷µÄÒ³*/
+		else if (sub_request_two!=NULL)                                                            /*ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½two planeï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³*/
 		{
 			break;
 		}
@@ -4079,7 +4079,7 @@ int find_interleave_twoplane_sub_request(struct ssd_info * ssd, unsigned int cha
 	if (sub_request_two!=NULL)
 	{
 		if (ssd->request_queue!=ssd->request_tail)      
-		{                                                                                         /*È·±£interleave readµÄ×ÓÇëÇóÊÇµÚÒ»¸öÇëÇóµÄ×ÓÇëÇó*/
+		{                                                                                         /*È·ï¿½ï¿½interleave readï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Çµï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 			if ((ssd->request_queue->lsn-ssd->parameter->subpage_page)<(sub_request_one->lpn*ssd->parameter->subpage_page))  
 			{
 				if ((ssd->request_queue->lsn+ssd->request_queue->size+ssd->parameter->subpage_page)>(sub_request_one->lpn*ssd->parameter->subpage_page))
@@ -4110,8 +4110,8 @@ int find_interleave_twoplane_sub_request(struct ssd_info * ssd, unsigned int cha
 
 
 /**************************************************************************
-*Õâ¸öº¯Êý·Ç³£ÖØÒª£¬¶Á×ÓÇëÇóµÄ×´Ì¬×ª±ä£¬ÒÔ¼°Ê±¼äµÄ¼ÆËã¶¼Í¨¹ýÕâ¸öº¯ÊýÀ´´¦Àí
-*»¹ÓÐÐ´×ÓÇëÇóµÄÖ´ÐÐÆÕÍ¨ÃüÁîÊ±µÄ×´Ì¬£¬ÒÔ¼°Ê±¼äµÄ¼ÆËãÒ²ÊÇÍ¨¹ýÕâ¸öº¯ÊýÀ´´¦ÀíµÄ
+*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç³ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬×ªï¿½ä£¬ï¿½Ô¼ï¿½Ê±ï¿½ï¿½Ä¼ï¿½ï¿½ã¶¼Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+*ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½Ô¼ï¿½Ê±ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½Ò²ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 ****************************************************************************/
 Status go_one_step(struct ssd_info * ssd, struct sub_request * sub1,struct sub_request *sub2, unsigned int aim_state,unsigned int command)
 {
@@ -4127,8 +4127,8 @@ Status go_one_step(struct ssd_info * ssd, struct sub_request * sub1,struct sub_r
 	}
 	
 	/***************************************************************************************************
-	*´¦ÀíÆÕÍ¨ÃüÁîÊ±£¬¶Á×ÓÇëÇóµÄÄ¿±ê×´Ì¬·ÖÎªÒÔÏÂ¼¸ÖÖÇé¿öSR_R_READ£¬SR_R_C_A_TRANSFER£¬SR_R_DATA_TRANSFER
-	*Ð´×ÓÇëÇóµÄÄ¿±ê×´Ì¬Ö»ÓÐSR_W_TRANSFER
+	*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½×´Ì¬ï¿½ï¿½Îªï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½SR_R_READï¿½ï¿½SR_R_C_A_TRANSFERï¿½ï¿½SR_R_DATA_TRANSFER
+	*Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½×´Ì¬Ö»ï¿½ï¿½SR_W_TRANSFER
 	****************************************************************************************************/
 	if(command==NORMAL)
 	{
@@ -4139,8 +4139,8 @@ Status go_one_step(struct ssd_info * ssd, struct sub_request * sub1,struct sub_r
 			case SR_R_READ:
 			{   
 				/*****************************************************************************************************
-			    *Õâ¸öÄ¿±ê×´Ì¬ÊÇÖ¸flash´¦ÓÚ¶ÁÊý¾ÝµÄ×´Ì¬£¬subµÄÏÂÒ»×´Ì¬¾ÍÓ¦¸ÃÊÇ´«ËÍÊý¾ÝSR_R_DATA_TRANSFER
-			    *ÕâÊ±ÓëchannelÎÞ¹Ø£¬Ö»ÓëchipÓÐ¹ØËùÒÔÒªÐÞ¸ÄchipµÄ×´Ì¬ÎªCHIP_READ_BUSY£¬ÏÂÒ»¸ö×´Ì¬¾ÍÊÇCHIP_DATA_TRANSFER
+			    *ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½×´Ì¬ï¿½ï¿½Ö¸flashï¿½ï¿½ï¿½Ú¶ï¿½ï¿½ï¿½ï¿½Ýµï¿½×´Ì¬ï¿½ï¿½subï¿½ï¿½ï¿½ï¿½Ò»×´Ì¬ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Ç´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½SR_R_DATA_TRANSFER
+			    *ï¿½ï¿½Ê±ï¿½ï¿½channelï¿½Þ¹Ø£ï¿½Ö»ï¿½ï¿½chipï¿½Ð¹ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½Þ¸ï¿½chipï¿½ï¿½×´Ì¬ÎªCHIP_READ_BUSYï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½CHIP_DATA_TRANSFER
 			    ******************************************************************************************************/
 				sub->current_time=ssd->current_time;
 				sub->current_state=SR_R_READ;
@@ -4157,9 +4157,9 @@ Status go_one_step(struct ssd_info * ssd, struct sub_request * sub1,struct sub_r
 			case SR_R_C_A_TRANSFER:
 			{   
 				/*******************************************************************************************************
-				*Ä¿±ê×´Ì¬ÊÇÃüÁîµØÖ·´«ÊäÊ±£¬subµÄÏÂÒ»¸ö×´Ì¬¾ÍÊÇSR_R_READ
-				*Õâ¸ö×´Ì¬Óëchannel£¬chipÓÐ¹Ø£¬ËùÒÔÒªÐÞ¸Ächannel£¬chipµÄ×´Ì¬·Ö±ðÎªCHANNEL_C_A_TRANSFER£¬CHIP_C_A_TRANSFER
-				*ÏÂÒ»×´Ì¬·Ö±ðÎªCHANNEL_IDLE£¬CHIP_READ_BUSY
+				*Ä¿ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½subï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½SR_R_READ
+				*ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½channelï¿½ï¿½chipï¿½Ð¹Ø£ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½Þ¸ï¿½channelï¿½ï¿½chipï¿½ï¿½×´Ì¬ï¿½Ö±ï¿½ÎªCHANNEL_C_A_TRANSFERï¿½ï¿½CHIP_C_A_TRANSFER
+				*ï¿½ï¿½Ò»×´Ì¬ï¿½Ö±ï¿½ÎªCHANNEL_IDLEï¿½ï¿½CHIP_READ_BUSY
 				*******************************************************************************************************/
 				sub->current_time=ssd->current_time;									
 				sub->current_state=SR_R_C_A_TRANSFER;									
@@ -4167,7 +4167,7 @@ Status go_one_step(struct ssd_info * ssd, struct sub_request * sub1,struct sub_r
 				sub->next_state_predict_time=ssd->current_time+7*ssd->parameter->time_characteristics.tWC;									
 				sub->begin_time=ssd->current_time;
 
-				ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].add_reg_ppn=sub->ppn;//½«PPN´«µ½µØÖ·¼Ä´æÆ÷
+				ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].add_reg_ppn=sub->ppn;//ï¿½ï¿½PPNï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½Ä´ï¿½ï¿½ï¿½
 				ssd->read_count++;
 
 				ssd->channel_head[location->channel].current_state=CHANNEL_C_A_TRANSFER;									
@@ -4186,9 +4186,9 @@ Status go_one_step(struct ssd_info * ssd, struct sub_request * sub1,struct sub_r
 			case SR_R_DATA_TRANSFER:
 			{   
 				/**************************************************************************************************************
-				*Ä¿±ê×´Ì¬ÊÇÊý¾Ý´«ÊäÊ±£¬subµÄÏÂÒ»¸ö×´Ì¬¾ÍÊÇÍê³É×´Ì¬SR_COMPLETE
-				*Õâ¸ö×´Ì¬µÄ´¦ÀíÒ²Óëchannel£¬chipÓÐ¹Ø£¬ËùÒÔchannel£¬chipµÄµ±Ç°×´Ì¬±äÎªCHANNEL_DATA_TRANSFER£¬CHIP_DATA_TRANSFER
-				*ÏÂÒ»¸ö×´Ì¬·Ö±ðÎªCHANNEL_IDLE£¬CHIP_IDLE¡£
+				*Ä¿ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½Ý´ï¿½ï¿½ï¿½Ê±ï¿½ï¿½subï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬SR_COMPLETE
+				*ï¿½ï¿½ï¿½×´Ì¬ï¿½Ä´ï¿½ï¿½ï¿½Ò²ï¿½ï¿½channelï¿½ï¿½chipï¿½Ð¹Ø£ï¿½ï¿½ï¿½ï¿½ï¿½channelï¿½ï¿½chipï¿½Äµï¿½Ç°×´Ì¬ï¿½ï¿½ÎªCHANNEL_DATA_TRANSFERï¿½ï¿½CHIP_DATA_TRANSFER
+				*ï¿½ï¿½Ò»ï¿½ï¿½×´Ì¬ï¿½Ö±ï¿½ÎªCHANNEL_IDLEï¿½ï¿½CHIP_IDLEï¿½ï¿½
 				***************************************************************************************************************/
 				sub->current_time=ssd->current_time;					
 				sub->current_state=SR_R_DATA_TRANSFER;		
@@ -4206,17 +4206,17 @@ Status go_one_step(struct ssd_info * ssd, struct sub_request * sub1,struct sub_r
 				ssd->channel_head[location->channel].chip_head[location->chip].next_state=CHIP_IDLE;			
 				ssd->channel_head[location->channel].chip_head[location->chip].next_state_predict_time=sub->next_state_predict_time;
 
-				ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].add_reg_ppn=-1;  //Çå¿Õ¼Ä´æÆ÷
+				ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].add_reg_ppn=-1;  //ï¿½ï¿½Õ¼Ä´ï¿½ï¿½ï¿½
 
 				break;
 			}
 			case SR_R_GC_SUB:
 			{   
 				/**************************************************************************************************************
-				*Ä¿±ê×´Ì¬ÊÇÊý¾Ý´«ÊäÊ±£¬subµÄÏÂÒ»¸ö×´Ì¬¾ÍÊÇÍê³É×´Ì¬SR_COMPLETE
-				*ÕâÀï´¦Àí soft_gcµÄ¶ÁÇëÇó£¬ÓëÕý³£¶ÁµÄ SR_R_DATA_TRANSFER Ò»ÖÂ£¬²»¹ýÊ±¼ä²»Í¬
-				*Õâ¸ö×´Ì¬µÄ´¦ÀíÒ²Óëchannel£¬chipÓÐ¹Ø£¬ËùÒÔchannel£¬chipµÄµ±Ç°×´Ì¬±äÎªCHANNEL_DATA_TRANSFER£¬CHIP_DATA_TRANSFER
-				*ÏÂÒ»¸ö×´Ì¬·Ö±ðÎªCHANNEL_IDLE£¬CHIP_IDLE¡£
+				*Ä¿ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½Ý´ï¿½ï¿½ï¿½Ê±ï¿½ï¿½subï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬SR_COMPLETE
+				*ï¿½ï¿½ï¿½ï´¦ï¿½ï¿½ soft_gcï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ SR_R_DATA_TRANSFER Ò»ï¿½Â£ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ä²»Í¬
+				*ï¿½ï¿½ï¿½×´Ì¬ï¿½Ä´ï¿½ï¿½ï¿½Ò²ï¿½ï¿½channelï¿½ï¿½chipï¿½Ð¹Ø£ï¿½ï¿½ï¿½ï¿½ï¿½channelï¿½ï¿½chipï¿½Äµï¿½Ç°×´Ì¬ï¿½ï¿½ÎªCHANNEL_DATA_TRANSFERï¿½ï¿½CHIP_DATA_TRANSFER
+				*ï¿½ï¿½Ò»ï¿½ï¿½×´Ì¬ï¿½Ö±ï¿½ÎªCHANNEL_IDLEï¿½ï¿½CHIP_IDLEï¿½ï¿½
 				***************************************************************************************************************/
 				sub->current_time=ssd->current_time;					
 				sub->current_state=SR_R_DATA_TRANSFER;		
@@ -4235,23 +4235,23 @@ Status go_one_step(struct ssd_info * ssd, struct sub_request * sub1,struct sub_r
 				ssd->channel_head[location->channel].chip_head[location->chip].next_state=CHIP_IDLE;			
 				ssd->channel_head[location->channel].chip_head[location->chip].next_state_predict_time=sub->next_state_predict_time;
 
-				ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].add_reg_ppn=-1;  //Çå¿Õ¼Ä´æÆ÷
+				ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].add_reg_ppn=-1;  //ï¿½ï¿½Õ¼Ä´ï¿½ï¿½ï¿½
 
 				break;
 			}
 			case SR_W_TRANSFER:
 			{
 				/******************************************************************************************************
-				*ÕâÊÇ´¦ÀíÐ´×ÓÇëÇóÊ±£¬×´Ì¬µÄ×ª±äÒÔ¼°Ê±¼äµÄ¼ÆËã
-				*ËäÈ»Ð´×ÓÇëÇóµÄ´¦Àí×´Ì¬Ò²Ïñ¶Á×ÓÇëÇóÄÇÃ´¶à£¬µ«ÊÇÐ´ÇëÇó¶¼ÊÇ´ÓÉÏÍùplaneÖÐ´«ÊäÊý¾Ý
-				*ÕâÑù¾Í¿ÉÒÔ°Ñ¼¸¸ö×´Ì¬µ±Ò»¸ö×´Ì¬À´´¦Àí£¬¾Íµ±³ÉSR_W_TRANSFERÕâ¸ö×´Ì¬À´´¦Àí£¬subµÄÏÂÒ»¸ö×´Ì¬¾ÍÊÇÍê³É×´Ì¬ÁË
-				*´ËÊ±channel£¬chipµÄµ±Ç°×´Ì¬±äÎªCHANNEL_TRANSFER£¬CHIP_WRITE_BUSY
-				*ÏÂÒ»¸ö×´Ì¬±äÎªCHANNEL_IDLE£¬CHIP_IDLE
+				*ï¿½ï¿½ï¿½Ç´ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½×´Ì¬ï¿½ï¿½×ªï¿½ï¿½ï¿½Ô¼ï¿½Ê±ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½
+				*ï¿½ï¿½È»Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½×´Ì¬Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã´ï¿½à£¬ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½Ç´ï¿½ï¿½ï¿½ï¿½ï¿½planeï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+				*ï¿½ï¿½ï¿½ï¿½ï¿½Í¿ï¿½ï¿½Ô°Ñ¼ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½Ò»ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Íµï¿½ï¿½ï¿½SR_W_TRANSFERï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½subï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½
+				*ï¿½ï¿½Ê±channelï¿½ï¿½chipï¿½Äµï¿½Ç°×´Ì¬ï¿½ï¿½ÎªCHANNEL_TRANSFERï¿½ï¿½CHIP_WRITE_BUSY
+				*ï¿½ï¿½Ò»ï¿½ï¿½×´Ì¬ï¿½ï¿½ÎªCHANNEL_IDLEï¿½ï¿½CHIP_IDLE
 				*******************************************************************************************************/
 				sub->begin_time = ssd->current_time;
 				sub->current_time=ssd->current_time;
 				sub->current_state=SR_W_TRANSFER;
-				sub->next_state=SR_COMPLETE;        //Ð´×ÓÇëÇó½«ÃüÁî´«ÊäºÍÊý¾Ý´«ÊäµÄÊ±¼ä¼ÆËã·ÅÔÚÒ»Æð£¬ÒòÎªÕâÁ½¸ö×´Ì¬Á¬Ðø£¬ÇÒ¶¯×÷ÏàÍ¬
+				sub->next_state=SR_COMPLETE;        //Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½î´«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý´ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò¶ï¿½ï¿½ï¿½ï¿½ï¿½Í¬
 				sub->next_state_predict_time=ssd->current_time+7*ssd->parameter->time_characteristics.tWC+(sub->size*ssd->parameter->subpage_capacity)*ssd->parameter->time_characteristics.tWC;
 				sub->complete_time=sub->next_state_predict_time;		
 				time=sub->complete_time;
@@ -4259,12 +4259,12 @@ Status go_one_step(struct ssd_info * ssd, struct sub_request * sub1,struct sub_r
 				ssd->channel_head[location->channel].current_state=CHANNEL_TRANSFER;										
 				ssd->channel_head[location->channel].current_time=ssd->current_time;										
 				ssd->channel_head[location->channel].next_state=CHANNEL_IDLE;										
-				ssd->channel_head[location->channel].next_state_predict_time=time;   //Êý¾Ý´«ÊäÍê³Éºó£¬Í¨µÀ×´Ì¬±äÎª¿ÕÏÐ
+				ssd->channel_head[location->channel].next_state_predict_time=time;   //ï¿½ï¿½ï¿½Ý´ï¿½ï¿½ï¿½ï¿½ï¿½Éºï¿½Í¨ï¿½ï¿½×´Ì¬ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½
 
 				ssd->channel_head[location->channel].chip_head[location->chip].current_state=CHIP_WRITE_BUSY;										
 				ssd->channel_head[location->channel].chip_head[location->chip].current_time=ssd->current_time;									
 				ssd->channel_head[location->channel].chip_head[location->chip].next_state=CHIP_IDLE;										
-				ssd->channel_head[location->channel].chip_head[location->chip].next_state_predict_time=time+ssd->parameter->time_characteristics.tPROG;//Êý¾ÝÐ´ÈëÍê³Éºó£¬Ð¾Æ¬±äÎª¿ÕÏÐ
+				ssd->channel_head[location->channel].chip_head[location->chip].next_state_predict_time=time+ssd->parameter->time_characteristics.tPROG;//ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½Éºï¿½Ð¾Æ¬ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½
 				
 				break;
 			}
@@ -4275,9 +4275,9 @@ Status go_one_step(struct ssd_info * ssd, struct sub_request * sub1,struct sub_r
 	else if(command==TWO_PLANE)
 	{   
 		/**********************************************************************************************
-		*¸ß¼¶ÃüÁîTWO_PLANEµÄ´¦Àí£¬ÕâÀïµÄTWO_PLANE¸ß¼¶ÃüÁîÊÇ¶Á×ÓÇëÇóµÄ¸ß¼¶ÃüÁî
-		*×´Ì¬×ª±äÓëÆÕÍ¨ÃüÁîÒ»Ñù£¬²»Í¬µÄÊÇÔÚSR_R_C_A_TRANSFERÊ±¼ÆËãÊ±¼äÊÇ´®ÐÐµÄ£¬ÒòÎª¹²ÓÃÒ»¸öÍ¨µÀchannel
-		*»¹ÓÐSR_R_DATA_TRANSFERÒ²ÊÇ¹²ÓÃÒ»¸öÍ¨µÀ
+		*ï¿½ß¼ï¿½ï¿½ï¿½ï¿½ï¿½TWO_PLANEï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½TWO_PLANEï¿½ß¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ß¼ï¿½ï¿½ï¿½ï¿½ï¿½
+		*×´Ì¬×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½SR_R_C_A_TRANSFERÊ±ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ç´ï¿½ï¿½ÐµÄ£ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Í¨ï¿½ï¿½channel
+		*ï¿½ï¿½ï¿½ï¿½SR_R_DATA_TRANSFERÒ²ï¿½Ç¹ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Í¨ï¿½ï¿½
 		**********************************************************************************************/
 		if((sub1==NULL)||(sub2==NULL))
 		{
