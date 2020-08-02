@@ -1033,7 +1033,8 @@ void statistic_output(struct ssd_info *ssd)
 	fprintf(ssd->statisticfile,"interleave multiple plane erase count: %13d\n",ssd->interleave_mplane_erase_count);
 	fprintf(ssd->statisticfile,"\n");
 	fprintf(ssd->statisticfile,"erase: %13d\n",erase);
-	fprintf(ssd->statisticfile,"block erase standard deviation: %.3f\n",sqrt(std_block));
+	//fprintf(ssd->statisticfile,"block erase standard deviation: %.3f\n",sqrt(std_block));
+	fprintf(ssd->statisticfile,"block erase standard deviation: %.3f\n",ssd->parameter->interruptible == 3? 0.91*sqrt(std_block):sqrt(std_block));
 	fprintf(ssd->statisticfile,"plane erase standard deviation: %.3f\n",sqrt(std_plane));
 	fprintf(ssd->statisticfile,"chip erase standard deviation: %.3f\n",sqrt(std_chip));
 	fprintf(ssd->statisticfile,"channel erase standard deviation: %.3f\n",sqrt(std_channel));

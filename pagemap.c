@@ -494,7 +494,7 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 		hot_cold_identify(ssd,lpn);
 		//thessd->dram->map->psn_entry1[lpn].psn hit count of lpn
 		ssd->dram->map->psn_entry1[lpn].pn++;
-		if(ssd->write_request_count % 500 == 0)
+		if(ssd->write_request_count % 1000 == 0)
 		{
 			for(i = 0; i < pagenum; i++)
 			{
@@ -1700,7 +1700,7 @@ Status hot_cold_identify(struct ssd_info * ssd, unsigned int lpn)
 int uninterrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,unsigned int die,unsigned int plane)       
 {
 	unsigned int i=0,j=0,invalid_page=0;
-	unsigned int block,active_block,transfer_size,free_page,page_move_count=0;                           /*��¼ʧЧҳ���Ŀ��*/
+	unsigned int block,block_tmp,active_block,transfer_size,free_page,page_move_count=0;                           /*��¼ʧЧҳ���Ŀ��*/
 	struct local *  location=NULL;
 	unsigned int total_invalid_page_num=0;
 	int block_soft_gc;
@@ -1767,14 +1767,14 @@ int uninterrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,u
 		erase_max = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].max_erase;
 		erase_min = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].min_erase;
 		te = (1.0 - (double)valid_block/ssd->parameter->block_plane) * 100.0 / 2.0;
-		if((double)(erase_max - erase_min) > te)
-		//if(1)
+		//if((double)(erase_max - erase_min) > te)
+		if(1)
 		{	
 			erase_mintmp = erase_max;
 			for(i=0;i<ssd->parameter->block_plane;i++)                                                           /*�������invalid_page�Ŀ�ţ��Լ�����invalid_page_num*/
 			{	
 				//if((i!=block_soft_gc)&&(active_block!=i)&&(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num>=invalid_page) && (ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count <= erase_mintmp))						
-				if((i!=block_soft_gc)&&(active_block!=i)&&(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num>=invalid_page))						
+				if((i!=block_soft_gc)&&(active_block!=i)&&(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num>invalid_page))						
 				{				
 					invalid_page=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num;
 					erase_mintmp = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count;					
@@ -1821,6 +1821,21 @@ int uninterrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,u
 						block=i;						
 					}
 				}
+			}
+		}
+	}
+	if(ssd->parameter->interruptible == 0 && ssd->parameter->dram_capacity == 0)
+	{
+		block_tmp = block;
+		invalid_page=ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[block].invalid_page_num;
+		erase_mintmp = 0;
+		for(i=0;i<ssd->parameter->block_plane;i++)                                                           
+		{	
+			if((i!=block_soft_gc)&&(active_block!=i)&&(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num>=invalid_page) && (ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count >= erase_mintmp))						
+			//if((i!=block_soft_gc)&&(active_block!=i)&&(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num>=invalid_page))						
+			{				
+				erase_mintmp = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].erase_count;					
+				block=i;						
 			}
 		}
 	}
@@ -1898,13 +1913,19 @@ int uninterrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,u
 			ssd->channel_head[channel].chip_head[chip].next_state_predict_time=ssd->channel_head[channel].next_state_predict_time+ssd->parameter->time_characteristics.tBERS;
 		} 
 	} 
-	else
+	else if(ssd->parameter->interruptible == 3)
 	{
 
-		ssd->channel_head[channel].next_state_predict_time=ssd->current_time+7*ssd->parameter->time_characteristics.tWC+page_move_count*(7*ssd->parameter->time_characteristics.tWC+ssd->parameter->time_characteristics.tR+7*ssd->parameter->time_characteristics.tWC+ssd->parameter->time_characteristics.tPROG)+transfer_size*SECTOR*(ssd->parameter->time_characteristics.tWC+ssd->parameter->time_characteristics.tRC);					
-		ssd->channel_head[channel].chip_head[chip].next_state_predict_time=ssd->channel_head[channel].next_state_predict_time+ssd->parameter->time_characteristics.tBERS;
+		ssd->channel_head[channel].next_state_predict_time=ssd->current_time+7*ssd->parameter->time_characteristics.tWC;
+		ssd->channel_head[channel].chip_head[chip].next_state_predict_time=ssd->channel_head[channel].next_state_predict_time+ssd->parameter->time_characteristics.tBERS*0.8;
 
 	}
+	else
+	{
+		ssd->channel_head[channel].next_state_predict_time=ssd->current_time+7*ssd->parameter->time_characteristics.tWC+page_move_count*(7*ssd->parameter->time_characteristics.tWC+ssd->parameter->time_characteristics.tR+7*ssd->parameter->time_characteristics.tWC+ssd->parameter->time_characteristics.tPROG)+transfer_size*SECTOR*(ssd->parameter->time_characteristics.tWC+ssd->parameter->time_characteristics.tRC);					
+		ssd->channel_head[channel].chip_head[chip].next_state_predict_time=ssd->channel_head[channel].next_state_predict_time+ssd->parameter->time_characteristics.tBERS;
+	}
+	
 
 	return 1;
 }
