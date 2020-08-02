@@ -1757,13 +1757,13 @@ int uninterrupt_gc(struct ssd_info *ssd,unsigned int channel,unsigned int chip,u
 	else
 	{
 		valid_block = 0;
-		for(i=0;i<ssd->parameter->block_plane;i++)                                            
+		/*for(i=0;i<ssd->parameter->block_plane;i++)                                            
 		{
 			if(ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].blk_head[i].invalid_page_num == 0 )						
 			{				
 				valid_block++;
 			}
-		}
+		}*/
 		erase_max = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].max_erase;
 		erase_min = ssd->channel_head[channel].chip_head[chip].die_head[die].plane_head[plane].min_erase;
 		te = (1.0 - (double)valid_block/ssd->parameter->block_plane) * 100.0 / 2.0;
