@@ -493,16 +493,16 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 		ssd->fagc_count[channel]++;
 		hot_cold_identify(ssd,lpn);
 		//thessd->dram->map->psn_entry1[lpn].psn hit count of lpn
-		ssd->dram->map->psn_entry1[lpn].pn++;
+		/*ssd->dram->map->psn_entry1[lpn].pn++;
 		if(ssd->write_request_count % 1000 == 0)
 		{
 			for(i = 0; i < pagenum; i++)
 			{
 				ssd->dram->map->psn_entry1[i].pn = 0.6 * ssd->dram->map->psn_entry1[i].pn;
 			}
-		}
+		}*/
 	}
-	/*if(ssd->dram->map->update_fre2[lpn] > 12)
+	if(ssd->dram->map->update_fre2[lpn] > 12)
 	{
 		hot_flag = 3;
 	}
@@ -517,15 +517,15 @@ struct ssd_info *get_ppn(struct ssd_info *ssd,unsigned int channel,unsigned int 
 	else 
 	{
 		hot_flag = 0;
-	}*/
-	if(ssd->dram->map->psn_entry1[lpn].pn > 4)
+	}
+	/*if(ssd->dram->map->psn_entry1[lpn].pn > 4)
 	{
 		hot_flag = 3;
 	}
 	else
 	{
 		hot_flag = 0;
-	}
+	}*/
 	ssd->hot_cold_flag = hot_flag;
 	if(find_active_block(ssd,channel,chip,die,plane)==FAILURE)                      
 	{
@@ -1616,7 +1616,7 @@ Status move_page_hot_cold(struct ssd_info * ssd, struct local *location, unsigne
 	valid_state=ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].page_head[location->page].valid_state;
 	free_state=ssd->channel_head[location->channel].chip_head[location->chip].die_head[location->die].plane_head[location->plane].blk_head[location->block].page_head[location->page].free_state;
 	old_ppn=find_ppn(ssd,location->channel,location->chip,location->die,location->plane,location->block,location->page);      /*��¼�����Ч�ƶ�ҳ��ppn���Ա�map���߶���ӳ���ϵ�е�ppn������ɾ������Ӳ���*/
-	/*if(ssd->dram->map->update_fre2[lpn] > 12)
+	if(ssd->dram->map->update_fre2[lpn] > 12)
 	{
 		hot_flag = 0;
 	}
@@ -1631,15 +1631,15 @@ Status move_page_hot_cold(struct ssd_info * ssd, struct local *location, unsigne
 	else 
 	{
 		hot_flag = 3;
-	}*/
-	if(ssd->dram->map->psn_entry1[lpn].pn > 4)
+	}
+	/*if(ssd->dram->map->psn_entry1[lpn].pn > 4)
 	{
 		hot_flag = 3;
 	}
 	else
 	{
 		hot_flag = 0;
-	}
+	}*/
 	ssd->hot_cold_flag = hot_flag;
 	ppn=get_ppn_for_gc(ssd,location->channel,location->chip,location->die,location->plane);                /*�ҳ�����ppnһ�����ڷ���gc������plane��,����ʹ��copyback������Ϊgc������ȡppn*/
 
