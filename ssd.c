@@ -2750,7 +2750,7 @@ struct ssd_info *no_buffer_distribute_sch(struct ssd_info *ssd)
 	nearest_event_time=find_nearest_event(ssd);
 	if (nearest_event_time==MAX_INT64)
 	{
-		ssd->current_time=ssd->request_queue->time;           
+		ssd->current_time=ssd->next_request_time;        
 	}
 	else
 	{   
@@ -2885,7 +2885,7 @@ struct ssd_info *no_buffer_distribute_nosch(struct ssd_info *ssd)
 	nearest_event_time=find_nearest_event(ssd);
 	if (nearest_event_time==MAX_INT64)
 	{
-		ssd->current_time=ssd->request_queue->time;           
+		ssd->current_time=ssd->next_request_time;
 	}
 	else
 	{   
@@ -3059,7 +3059,7 @@ struct ssd_info *no_buffer_distribute_original(struct ssd_info *ssd)
 	nearest_event_time=find_nearest_event(ssd);
 	if (nearest_event_time==MAX_INT64)
 	{
-		ssd->current_time=ssd->request_queue->time;           
+		ssd->current_time=ssd->next_request_time;        
 	}
 	else
 	{   
@@ -3257,7 +3257,7 @@ struct ssd_info *no_buffer_distribute_s(struct ssd_info *ssd)
 	nearest_event_time=find_nearest_event(ssd);
 	if (nearest_event_time==MAX_INT64)
 	{
-		ssd->current_time=ssd->request_queue->time;           
+		ssd->current_time=ssd->next_request_time; 
 	}
 	else
 	{   
@@ -3447,7 +3447,7 @@ struct ssd_info *no_buffer_distribute_am(struct ssd_info *ssd)
 	nearest_event_time=find_nearest_event(ssd);
 	if (nearest_event_time==MAX_INT64)
 	{
-		ssd->current_time=ssd->request_queue->time;           
+		ssd->current_time=ssd->next_request_time;		        
 	}
 	else
 	{   
