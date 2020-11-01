@@ -171,6 +171,9 @@ int get_requests(struct ssd_info *ssd)
 	fgets(buffer, 200, ssd->tracefile);                   //�Ӹ����ļ��ж�ȡ
 	sscanf(buffer,"%lld %d %d %d %d",&time_t,&device,&lsn,&size,&ope);   //����������
     
+	if(ssd->read_request_count + ssd->write_request_count >= 1500000)
+         return 0;
+
 	if ((device<0)&&(lsn<0)&&(size<0)&&(ope<0))
 	{
 		return 100;
@@ -268,6 +271,7 @@ int get_requests(struct ssd_info *ssd)
 
 	request1->time = time_t;
 	request1->lsn = lsn;
+	//request1->size = size > 8? size/3: size;
 	request1->size = size;
 	request1->operation = ope;	
 	request1->begin_time = time_t;
@@ -332,6 +336,12 @@ int get_requests(struct ssd_info *ssd)
 	sscanf(buffer,"%lld %d %d %d %d",&time_t,&device,&lsn,&size,&ope);
 	ssd->next_request_time=time_t;
 	fseek(ssd->tracefile,filepoint,0);
+
+	if(ssd->next_request_time >= ssd->current_time + ssd->parameter->time_characteristics.tBERS)		
+	{
+		ssd->recent[ssd->recent_num] = 1;
+		ssd->recent_num = (ssd->recent_num + 1) % 3;
+	}
 
 	return 1;
 }

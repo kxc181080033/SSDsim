@@ -1108,7 +1108,8 @@ Status services_2_gc_sub(struct ssd_info * ssd, int channel,unsigned int * chann
 	struct  gc_operation *gc_node;
 	int64_t next_state_time = 0;
 	double random_num=rand()/(RAND_MAX+1.0);
-	double erase_p=(double)ssd->interval[3]/(ssd->interval[3]+ssd->interval[2]);
+	//double erase_p=(double)ssd->interval[3]/(ssd->interval[3]+ssd->interval[2]);
+	double erase_p=(double)((ssd->recent[0]+ssd->recent[1]+ssd->recent[2])+ssd->interval[3]/(ssd->interval[3]+ssd->interval[2]));
 	
 	if(sub->operation == READ)
 	{
@@ -1142,6 +1143,11 @@ Status services_2_gc_sub(struct ssd_info * ssd, int channel,unsigned int * chann
 	{
 		//next_state_time = ssd->channel_head[channel].next_state_predict_time+ssd->parameter->time_characteristics.tBERS;
 		
+		/*if(ssd->next_request_time >= ssd->current_time + ssd->parameter->time_characteristics.tBERS)		
+		{
+			ssd->recent[ssd->recent_num] = 1;
+			ssd->recent_num = (ssd->recent_num + 1) % 3;
+		}*/
 		if((ssd->channel_head[sub->location->channel].chip_head[sub->location->chip].current_state==CHIP_IDLE)||((ssd->channel_head[sub->location->channel].chip_head[sub->location->chip].next_state==CHIP_IDLE)&&
 				(ssd->channel_head[sub->location->channel].chip_head[sub->location->chip].next_state_predict_time<=ssd->current_time)))
 		{	
